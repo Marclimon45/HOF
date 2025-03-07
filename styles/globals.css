@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ✅ Force the entire body to match the reference image */
+body {
+    @apply bg-gray-100 text-gray-900;
+}
+
+/* ✅ Make sure buttons match reference */
+button {
+    @apply transition duration-200 ease-in-out;
+}

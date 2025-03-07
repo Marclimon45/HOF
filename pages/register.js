@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { FaUser, FaEnvelope, FaLock, FaDiscord, FaLinkedin, FaGithub } from 'react-icons/fa'; // Import icons
+import styles from '../styles/register.module.css'; // Import local CSS
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -39,87 +41,102 @@ const Register = () => {
   const interests = ['Cybersecurity', 'Data Science', 'Machine Learning', 'Frontend Development', 'Backend Development', 'Data Analysis'];
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-3xl">
-        <h1 className="text-xl font-bold text-gray-700 text-center mb-2">Xin | Kit of Fame</h1>
-        <h2 className="text-3xl font-extrabold text-blue-600 text-center mb-2">Join Our Collaborative Community</h2>
-        <p className="text-center text-gray-500 mb-6">
+    <div className={styles.container}>
+      <div className={styles.formCard}>
+        <h2 className={styles.title}>Join Our Collaborative Community</h2>
+        <p className={styles.subtitle}>
           Our lab focuses on ensuring the safety and reliability of cyber-physical systems
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit}>
           {/* Basic Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Basic Information</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <input type="text" name="firstName" placeholder="First Name" value={formData.firstName} onChange={handleInputChange} className="input-style" />
-              <input type="text" name="lastName" placeholder="Last Name" value={formData.lastName} onChange={handleInputChange} className="input-style" />
-              <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleInputChange} className="input-style col-span-2" />
-              <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleInputChange} className="input-style col-span-2" />
+          <h3 className={styles.sectionTitle}>Basic Information</h3>
+          <div className={styles.formGrid}>
+            {/* First Name */}
+            <div className={styles.inputContainer}>
+              <FaUser className={styles.icon} />
+              <input type="text" name="firstName" placeholder="Enter first name" value={formData.firstName} onChange={handleInputChange} className={styles.input} />
+            </div>
+
+            {/* Last Name */}
+            <div className={styles.inputContainer}>
+              <FaUser className={styles.icon} />
+              <input type="text" name="lastName" placeholder="Enter last name" value={formData.lastName} onChange={handleInputChange} className={styles.input} />
+            </div>
+
+            {/* Email */}
+            <div className={styles.inputContainer}>
+              <FaEnvelope className={styles.icon} />
+              <input type="email" name="email" placeholder="Enter email address" value={formData.email} onChange={handleInputChange} className={styles.input} />
+            </div>
+
+            {/* Password */}
+            <div className={styles.inputContainer}>
+              <FaLock className={styles.icon} />
+              <input type="password" name="password" placeholder="Enter Password" value={formData.password} onChange={handleInputChange} className={styles.input} />
             </div>
           </div>
 
           {/* Social & Professional Links */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Social & Professional Links</h3>
-            <input type="text" name="discordUsername" placeholder="Discord Username" value={formData.discordUsername} onChange={handleInputChange} className="input-style" />
-            <input type="url" name="githubUrl" placeholder="GitHub Profile URL" value={formData.githubUrl} onChange={handleInputChange} className="input-style" />
-            <input type="url" name="linkedinUrl" placeholder="LinkedIn Profile URL" value={formData.linkedinUrl} onChange={handleInputChange} className="input-style" />
+          <h3 className={styles.sectionTitle}>Social & Professional Links</h3>
+
+          {/* Discord Username */}
+          <div className={styles.inputContainer}>
+            <FaDiscord className={styles.icon} />
+            <input type="text" name="discordUsername" placeholder="Enter Discord username" value={formData.discordUsername} onChange={handleInputChange} className={styles.input} />
+          </div>
+
+          {/* LinkedIn Profile */}
+          <div className={styles.inputContainer}>
+            <FaLinkedin className={styles.icon} />
+            <input type="url" name="linkedinUrl" placeholder="Enter LinkedIn profile URL" value={formData.linkedinUrl} onChange={handleInputChange} className={styles.input} />
+          </div>
+
+          {/* GitHub Profile */}
+          <div className={styles.inputContainer}>
+            <FaGithub className={styles.icon} />
+            <input type="url" name="githubUrl" placeholder="Enter GitHub profile URL" value={formData.githubUrl} onChange={handleInputChange} className={styles.input} />
           </div>
 
           {/* Skills & Expertise */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Skills & Expertise</h3>
-            <div className="grid grid-cols-3 gap-2">
-              {skills.map((skill) => (
-                <label key={skill} className="flex items-center space-x-2">
-                  <input type="checkbox" value={skill} checked={formData.skills.includes(skill)} onChange={(e) => handleCheckboxChange(e, 'skills')} />
-                  <span>{skill}</span>
-                </label>
-              ))}
-            </div>
+          <h3 className={styles.sectionTitle}>Skills & Expertise</h3>
+          <div className={styles.checkboxContainer}>
+            {skills.map((skill) => (
+              <label key={skill} className={styles.checkboxLabel}>
+                <input type="checkbox" value={skill} checked={formData.skills.includes(skill)} onChange={(e) => handleCheckboxChange(e, 'skills')} />
+                {skill}
+              </label>
+            ))}
           </div>
 
           {/* Availability & Interests */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Availability & Interests</h3>
-            <div className="grid grid-cols-2 gap-2">
-              {days.map((day) => (
-                <label key={day} className="flex items-center space-x-2">
-                  <input type="checkbox" value={day} checked={formData.availability.includes(day)} onChange={(e) => handleCheckboxChange(e, 'availability')} />
-                  <span>{day} <span className="text-xs text-gray-500">(Add Time)</span></span>
-                </label>
-              ))}
-              {interests.map((interest) => (
-                <label key={interest} className="flex items-center space-x-2">
-                  <input type="checkbox" value={interest} checked={formData.availability.includes(interest)} onChange={(e) => handleCheckboxChange(e, 'availability')} />
-                  <span>{interest}</span>
-                </label>
-              ))}
-            </div>
+          <h3 className={styles.sectionTitle}>Availability & Interests</h3>
+          <div className={styles.checkboxContainer}>
+            {days.map((day) => (
+              <label key={day} className={styles.checkboxLabel}>
+                <input type="checkbox" value={day} checked={formData.availability.includes(day)} onChange={(e) => handleCheckboxChange(e, 'availability')} />
+                {day} <span className="text-xs text-gray-500">(Add Time)</span>
+              </label>
+            ))}
+            {interests.map((interest) => (
+              <label key={interest} className={styles.checkboxLabel}>
+                <input type="checkbox" value={interest} checked={formData.availability.includes(interest)} onChange={(e) => handleCheckboxChange(e, 'availability')} />
+                {interest}
+              </label>
+            ))}
           </div>
 
           {/* Terms & Submit */}
-          <div className="flex items-center space-x-2">
+          <label className={styles.terms}>
             <input type="checkbox" required />
-            <span className="text-sm">I agree to the <a href="#" className="text-blue-600">Terms of Service</a> and <a href="#" className="text-blue-600">Privacy Policy</a></span>
-          </div>
+            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+          </label>
 
-          <button type="submit" className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
-            Complete Profile
-          </button>
+          <button type="submit" className={styles.submitButton}>Complete Profile</button>
         </form>
       </div>
-
-      {/* Add styles directly or in a global CSS file */}
-      <style jsx>{`
-        .input-style {
-          @apply w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
-        }
-      `}</style>
     </div>
   );
 };
 
 export default Register;
-``

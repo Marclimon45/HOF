@@ -1,43 +1,41 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import styles from '../styles/index.module.css'; // ✅ Import local CSS
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex">
+    <div className={styles.container}>
       {/* Left Side - Image */}
-      <div className="relative w-1/2 h-screen">
+      <div className={styles.leftSection}>
         <Image
-          src="/MainScreen.png" // Make sure MainScreen.png is inside /public folder
-          alt="CPX Lab"
-          layout="fill"
-          objectFit="cover"
+          src="/MainScreen.png"
+          alt="CSULB Pyramid"
+          fill
+          className={styles.image}
           priority
         />
-        <div className="absolute top-4 left-4 text-white font-bold text-lg flex items-center">
-          <span role="img" aria-label="school" className="text-2xl mr-2">🏫</span> CSULB
-        </div>
       </div>
 
-      {/* Right Side - Form + Info */}
-      <div className="w-1/2 flex flex-col items-center justify-center bg-white p-12">
-        <h1 className="text-2xl font-bold">CPX LAB</h1>
-        <p className="text-gray-600 text-center mt-2">
+      {/* Right Side - Login Section */}
+      <div className={styles.rightSection}>
+        <h1 className={styles.title}>CPX LAB</h1>
+        <p className={styles.subtitle}>
           Focusing on ensuring the safety and <br />
           reliability of cyber-physical systems
         </p>
 
-        {/* Sign In Button (links to /register) */}
+        {/* Sign-In Button */}
         <Link href="/register">
-          <button className="mt-6 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-6 rounded shadow">
+          <button className={styles.signInButton}>
             Sign in with Single Sign-On
           </button>
         </Link>
 
-        <p className="text-xs text-gray-500 mt-4">
-          By signing in, you agree to our <a href="#" className="underline text-blue-600">Terms of Service</a> and <a href="#" className="underline text-blue-600">Privacy Policy</a>
+        <p className={styles.terms}>
+          By signing in, you agree to our <a href="#" className="underline">Terms of Service</a> and <a href="#" className="underline">Privacy Policy</a>.
         </p>
 
-        <footer className="mt-16 text-xs text-gray-500">
+        <footer className={styles.footer}>
           © 2024 California State University Long Beach
         </footer>
       </div>
