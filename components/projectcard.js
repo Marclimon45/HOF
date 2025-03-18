@@ -1,27 +1,29 @@
 import React from "react";
-import { Card, CardContent, Typography, Chip, Box } from "@mui/material";
+import { Card, CardContent, Typography, Chip, IconButton, Tooltip } from "@mui/material";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
-import styles from "../styles/projectcard.module.css";
 
-const ProjectCard = ({ project }) => {
+const ProjectCard = ({ project, onLikeToggle, duration }) => {
   return (
-    <Card elevation={2} className={styles.card}>
+    <Card style={{ marginBottom: "20px", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
       <CardContent>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">{project.title}</Typography>
-          <BookmarkBorderIcon className={styles.icon} />
-        </Box>
-        <Typography variant="body2" color="primary" className={styles.category}>{project.category}</Typography>
-        <Typography variant="body2" className={styles.description}>{project.description}</Typography>
-
-        <Box display="flex" gap={1} flexWrap="wrap" className={styles.tags}>
-          {project.tags.map((tag, index) => (
-            <Chip key={index} label={tag} size="small" />
-          ))}
-        </Box>
-
-        <Typography variant="caption" color="textSecondary">👥 {project.members} members</Typography>
-        <Typography variant="caption" color="textSecondary" className={styles.date}>📅 {project.date}</Typography>
+        <Typography variant="h6" component="div" gutterBottom>
+          {project.title} <IconButton onClick={onLikeToggle} color={project.liked ? "error" : "default"} style={{ float: "right" }}>
+            {project.liked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          </IconButton>
+        </Typography>
+        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+          {project.category}
+        </Typography>
+        <Typography variant="body2" paragraph>
+          {project.description}
+        </Typography>
+        {project.tags.map((tag, index) => (
+          <Chip key={index} label={tag} style={{ margin: "0 5px 5px 0" }} />
+        ))}
+        <Typography variant="caption" color="text.secondary">
+          <span role="img" aria-label="members">👥</span> {project.members} members <span role="img" aria-label="calendar">📅</span> {project.date} | Duration: {duration}
+        </Typography>
       </CardContent>
     </Card>
   );

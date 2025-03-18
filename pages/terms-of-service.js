@@ -1,6 +1,6 @@
 // pages/terms-of-service.js
 import React from "react";
-import styles from "../styles/terms-of-service.module.css"; // Create this CSS file
+import styles from "../styles/terms-of-service.module.css";
 
 export default function TermsOfService() {
   return (
@@ -87,7 +87,7 @@ export default function TermsOfService() {
           </p>
           <p className={styles.contact}>
             <a href="mailto:xin.qin@csulb.edu" className={styles.contactLink}>
-              terms@xinshof.com
+              xin.qin@csulb.edu
             </a>
           </p>
         </section>

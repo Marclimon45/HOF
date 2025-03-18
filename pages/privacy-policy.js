@@ -1,6 +1,6 @@
 // pages/privacy-policy.js
 import React from "react";
-import styles from "../styles/privacy-policy.module.css"; // Create this CSS file
+import styles from "../styles/privacy-policy.module.css";
 
 export default function PrivacyPolicy() {
   return (
@@ -86,7 +86,7 @@ export default function PrivacyPolicy() {
           </p>
           <p className={styles.contact}>
             <a href="mailto:xin.qin@csulb.edu" className={styles.contactLink}>
-              privacy@xinshof.com
+              xin.qin@csulb.edu
             </a>
           </p>
         </section>
