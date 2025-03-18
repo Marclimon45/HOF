@@ -1,140 +1,203 @@
-/* styles/register.module.css */
-
-/* Full page layout */
-.inputContainer {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-  }
-  
-  .icon {
-    position: absolute;
-    left: 12px;
-    color: #9ca3af;
-    font-size: 16px;
-  }
-
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f8fafc;
-    padding: 20px;
-  }
-  
-  /* Form Card */
-  .formCard {
-    background: white;
-    padding: 32px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 768px;
-  }
-  
-  /* Headings */
-  .title {
-    font-size: 24px;
-    font-weight: bold;
-    color: #1e3a8a;
-    text-align: center;
-    margin-bottom: 8px;
-  }
-  
-  .subtitle {
-    text-align: center;
-    color: #6b7280;
-    margin-bottom: 16px;
-  }
-  
-  /* Section Titles */
-  .sectionTitle {
-    font-size: 18px;
-    font-weight: 600;
-    margin-top: 20px;
-    color: #333;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
 
-  /* Form Grid */
+.formCard {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+}
+
+.title {
+  font-size: 24px;
+  color: #1e3a8a;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.heading {
+  font-size: 18px;
+  color: #1e3a8a;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  color: #1e3a8a;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.basicInfoContainer,
 .formGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
-  }  
-  
-  /* Inputs */
-  .input {
-    width: 100%;
-    padding: 10px 12px 10px 40px; /* Left padding for the icon */
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: 0.2s;
-  }
-  
-  .input:focus {
-    border-color: #2563eb;
-    outline: none;
-    box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
-  }
+  display: grid;
+  gap: 15px;
+  margin-bottom: 20px;
+}
 
-  /* Input Label */
-.inputLabel {
-    font-size: 14px;
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 4px;
-    display: block;
-  }
-  
-  /* Input Group */
-.inputGroup {
-    display: flex;
-    flex-direction: column; /* Ensures label is above input */
-    gap: 6px;
-  }
-  
-  /* Checkbox container */
-  .checkboxContainer {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(100px, 1fr));
-    gap: 8px;
-  }
-  
-  /* Checkboxes */
-  .checkboxLabel {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    color: #374151;
-  }
-  
-  /* Terms & Submit */
-  .terms {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    color: #6b7280;
-  }
-  
-  .submitButton {
-    width: 100%;
-    background-color: #2563eb;
-    color: white;
-    padding: 12px;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  .submitButton:hover {
-    background-color: #1e40af;
-  }
-  
+.inputWithIcon {
+  position: relative;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 10px 10px 35px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.skillInputContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.skillItem {
+  display: flex;
+  align-items: center;
+  background: #e5e7eb;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+.skillText {
+  margin-right: 5px;
+  font-size: 14px;
+}
+
+.removeIcon {
+  cursor: pointer;
+  color: #ef4444;
+}
+
+.skillInput {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+.toolsPlatformsGrid,
+.areasOfInterestGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.toolCheckboxLabel,
+.areaCheckboxLabel {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.customAreaInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+.availabilityGrid {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.availabilityRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.availabilityCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dayIcon {
+  color: #6b7280;
+}
+
+.timeContainer {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.timeInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.timeInput {
+  padding: 5px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+.timeSeparator {
+  margin: 0 5px;
+}
+
+.addTimeButton {
+  padding: 5px 10px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.removeTimeButton {
+  padding: 5px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 10px;
+  background: #1e3a8a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  background: #1a2e87;
+}

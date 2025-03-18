@@ -1,0 +1,33 @@
+.card {
+    transition: transform 0.2s ease-in-out;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .icon {
+    color: #666;
+    cursor: pointer;
+  }
+  
+  .category {
+    font-weight: bold;
+    margin-top: 5px;
+  }
+  
+  .description {
+    margin: 10px 0;
+    color: #555;
+  }
+  
+  .tags {
+    margin: 10px 0;
+  }
+  
+  .date {
+    margin-left: 10px;
+  }

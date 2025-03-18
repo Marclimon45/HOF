@@ -1,0 +1,225 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #fff;
+    font-family: Arial, sans-serif;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #1e3a8a;
+    color: #fff;
+  }
+  
+  .logo {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .nav a:hover {
+    text-decoration: underline;
+  }
+  
+  .settingsIcon {
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .main {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #1e3a8a;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .questions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+  
+  .question {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    background-color: #1e3a8a;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 6px;
+  }
+  
+  .questionIcon {
+    font-size: 20px;
+  }
+  
+  .founderSection {
+    margin-bottom: 30px;
+  }
+  
+  .sectionTitle {
+    font-size: 22px;
+    font-weight: bold;
+    color: #1e3a8a;
+    margin-bottom: 10px;
+  }
+  
+  .visionLink {
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: block;
+  }
+  
+  .visionLink:hover {
+    text-decoration: underline;
+  }
+  
+  .founderCard {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    background: #f8f9fc;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+  }
+  
+  .avatar {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+  }
+  
+  .founderInfo h3 {
+    font-size: 18px;
+    margin: 0;
+  }
+  
+  .founderInfo p {
+    font-size: 14px;
+    color: #374151;
+    margin: 5px 0 0;
+  }
+  
+  .membersSection {
+    margin-bottom: 30px;
+  }
+  
+  .membersGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  
+  .memberCard {
+    background: #f8f9fc;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .memberAvatar {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
+  
+  .memberInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .rankIcon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .noIcon {
+    width: 20px;
+  }
+  
+  .memberCard h3 {
+    font-size: 16px;
+    margin: 0;
+    color: #374151;
+  }
+  
+  .memberCard p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 5px 0;
+  }
+  
+  .websiteLink {
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .websiteLink:hover {
+    text-decoration: underline;
+  }
+  
+  .footer {
+    background-color: #2563eb;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    margin-top: auto;
+  }
+  
+  .cta h2 {
+    font-size: 20px;
+    margin: 0 0 10px;
+  }
+  
+  .cta p {
+    font-size: 14px;
+    margin: 0 0 15px;
+  }
+  
+  .emailLink {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 16px;
+    background-color: #1e40af;
+    border-radius: 4px;
+  }
+  
+  .emailLink:hover {
+    background-color: #1a2e87;
+  }
