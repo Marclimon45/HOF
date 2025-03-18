@@ -4,19 +4,21 @@
   align-items: center;
   min-height: 100vh;
   background-color: #f0f2f5;
+  font-family: Arial, sans-serif;
 }
 
 .formCard {
   background: white;
-  padding: 20px;
+  padding: 30px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 600px;
 }
 
 .title {
-  font-size: 24px;
+  font-size: 28px;
+  font-weight: bold;
   color: #1e3a8a;
   text-align: center;
   margin-bottom: 10px;
@@ -29,18 +31,12 @@
   margin-bottom: 20px;
 }
 
-.heading {
-  font-size: 18px;
-  color: #1e3a8a;
-  margin-top: 20px;
-  margin-bottom: 10px;
-}
-
 .sectionTitle {
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: bold;
   color: #1e3a8a;
   margin-top: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .basicInfoContainer,
@@ -60,14 +56,21 @@
   top: 50%;
   transform: translateY(-50%);
   color: #6b7280;
+  font-size: 16px;
 }
 
 .input {
   width: 100%;
-  padding: 10px 10px 10px 35px;
+  padding: 10px 10px 10px 40px; /* Adjusted padding to account for icon */
   border: 1px solid #d1d5db;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.input::placeholder {
+  color: #6b7280;
+  font-size: 16px;
 }
 
 .skillInputContainer {
@@ -96,10 +99,17 @@
 }
 
 .skillInput {
-  flex-grow: 1;
-  padding: 8px;
+  width: 100%;
+  padding: 10px;
   border: 1px solid #d1d5db;
   border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.skillInput::placeholder {
+  color: #6b7280;
+  font-size: 16px;
 }
 
 .toolsPlatformsGrid,
@@ -114,32 +124,41 @@
 .areaCheckboxLabel {
   display: flex;
   align-items: center;
+  gap: 8px;
   font-size: 14px;
+  color: #374151;
 }
 
 .customAreaInput {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   border: 1px solid #d1d5db;
   border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.customAreaInput::placeholder {
+  color: #6b7280;
+  font-size: 16px;
 }
 
 .availabilityGrid {
   display: grid;
-  gap: 10px;
+  gap: 15px;
   margin-bottom: 20px;
 }
 
 .availabilityRow {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 10px;
 }
 
 .availabilityCheckbox {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
 }
 
 .dayIcon {
@@ -147,7 +166,7 @@
 }
 
 .timeContainer {
-  flex-grow: 1;
+  margin-left: 30px; /* Indent time slots under the day */
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -156,48 +175,76 @@
 .timeInputWrapper {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
 }
 
 .timeInput {
   padding: 5px;
   border: 1px solid #d1d5db;
   border-radius: 4px;
+  font-size: 14px;
 }
 
 .timeSeparator {
   margin: 0 5px;
+  font-size: 14px;
 }
 
 .addTimeButton {
-  padding: 5px 10px;
+  padding: 5px 10px; /* Reduced size */
   background: #3b82f6;
   color: white;
   border: none;
   border-radius: 4px;
+  font-size: 14px;
   cursor: pointer;
+  align-self: flex-start; /* Align button to the left */
+}
+
+.addTimeButton:hover {
+  background: #2563eb;
 }
 
 .removeTimeButton {
-  padding: 5px;
+  padding: 2px 5px;
   background: #ef4444;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 50%;
+  font-size: 12px;
   cursor: pointer;
+}
+
+.removeTimeButton:hover {
+  background: #dc2626;
 }
 
 .submitButton {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background: #1e3a8a;
   color: white;
   border: none;
   border-radius: 4px;
   font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
 }
 
 .submitButton:hover {
   background: #1a2e87;
+}
+.addSkillButton {
+  padding: 5px 10px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.addSkillButton:hover {
+  background: #2563eb;
 }

@@ -1,6 +1,7 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import styles from '../styles/index.module.css'; // ✅ Import local CSS
+// pages/index.js
+import Image from "next/image";
+import Link from "next/link";
+import styles from "../styles/index.module.css";
 
 export default function Home() {
   return (
@@ -24,19 +25,29 @@ export default function Home() {
           reliability of cyber-physical systems
         </p>
 
-        {/* Sign-In Button */}
-        <Link href="/register">
-          <button className={styles.signInButton}>
-            Sign in with Single Sign-On
-          </button>
-        </Link>
+        {/* Sign-In and Create Account Buttons */}
+        <div className={styles.buttonGroup}>
+          <Link href="/login">
+            <button className={styles.signInButton}>
+              Sign in with Single Sign-On
+            </button>
+          </Link>
+
+          <Link href="/register">
+            <button className={styles.signInButton}>
+              Create Account
+            </button>
+          </Link>
+        </div>
 
         <p className={styles.terms}>
-          By signing in, you agree to our <a href="#" className="underline">Terms of Service</a> and <a href="#" className="underline">Privacy Policy</a>.
+          By signing in or creating an account, you agree to our{" "}
+          <a href="#" className="underline">Terms of Service</a> and{" "}
+          <a href="#" className="underline">Privacy Policy</a>.
         </p>
 
         <footer className={styles.footer}>
-          © 2024 California State University Long Beach
+          © 2025 California State University Long Beach
         </footer>
       </div>
     </div>

@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import styles from "../styles/register.module.css"; // Updated path
-import { FaDiscord, FaTimes, FaGithub, FaLinkedin, FaClock, FaUser, FaUserAlt, FaEnvelope, FaLock } from "react-icons/fa";
-import { db } from "../firebase/firebaseconfig"; // Updated path
+import styles from "../styles/register.module.css";
+import { FaDiscord, FaTimes, FaGithub, FaLinkedin, FaUser, FaUserAlt, FaEnvelope, FaLock } from "react-icons/fa";
+import { db, auth } from "../firebase/firebaseconfig";
 import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-
-// Rest of the code remains the same...
-const auth = getAuth();
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import Link from "next/link"; // Added for linking to TOS and Privacy Policy
+import { useRouter } from "next/router"; // Added for redirecting to homepage
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -22,9 +21,12 @@ const Register = () => {
     availability: {},
     areaOfInterest: [],
     customAreaOfInterest: "",
-    rank: "Unranked", // Default rank for new users
-    contributions: 0, // Default contributions for badge calculation
+    rank: "Unranked",
+    contributions: 0,
   });
+
+  const [isTosAccepted, setIsTosAccepted] = useState(false); // New state for checkbox
+  const router = useRouter(); // Initialize router for redirection
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,8 +37,12 @@ const Register = () => {
       return;
     }
 
+    if (!isTosAccepted) {
+      alert("Please agree to the Terms of Service and Privacy Policy before submitting.");
+      return;
+    }
+
     try {
-      // Check for duplicate email in Firestore
       const usersRef = collection(db, "users");
       const q = query(usersRef, where("email", "==", formData.email));
       const querySnapshot = await getDocs(q);
@@ -46,19 +52,13 @@ const Register = () => {
         return;
       }
 
-      // Create user with Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        formData.email,
-        formData.password
-      );
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
 
       if (!user) {
         throw new Error("User authentication failed.");
       }
 
-      // Add user data to Firestore
       const docRef = await addDoc(collection(db, "users"), {
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -69,15 +69,15 @@ const Register = () => {
         skills: formData.skills,
         tools: formData.tools,
         availability: formData.availability,
-        areaOfInterest: formData.areaOfInterest,
-        customAreaOfInterest: formData.customAreaOfInterest,
-        rank: formData.rank, // Save rank as Unranked
-        contributions: formData.contributions, // Save contributions for badge calculation
+        areaOfInterest: [...formData.areaOfInterest, formData.customAreaOfInterest].filter(Boolean),
+        rank: formData.rank,
+        contributions: formData.contributions,
         userId: user.uid,
       });
 
       console.log("Document written with ID: ", docRef.id);
       alert("Profile completed successfully!");
+      router.push("/"); // Redirect to homepage after success
     } catch (error) {
       console.error("Error: ", error);
       alert("Error submitting profile: " + error.message);
@@ -91,6 +91,7 @@ const Register = () => {
 
   const handleSkillInput = (e) => {
     if (e.key === "Enter" && e.target.value.trim() !== "") {
+      e.preventDefault(); // Prevent form submission
       const newSkill = e.target.value.trim();
       if (!formData.skills.includes(newSkill)) {
         setFormData((prev) => ({
@@ -196,7 +197,7 @@ const Register = () => {
         </p>
 
         <form onSubmit={handleSubmit}>
-          <h3>Basic Information</h3>
+          <h3 className={styles.sectionTitle}>Basic Information</h3>
           <div className={styles.basicInfoContainer}>
             <div className={styles.inputWithIcon}>
               <FaUser className={styles.inputIcon} />
@@ -248,7 +249,7 @@ const Register = () => {
             </div>
           </div>
 
-          <h3>Social & Professional Links</h3>
+          <h3 className={styles.sectionTitle}>Social & Professional Links</h3>
           <div className={styles.formGrid}>
             <div className={styles.inputWithIcon}>
               <FaDiscord className={styles.inputIcon} />
@@ -285,7 +286,7 @@ const Register = () => {
             </div>
           </div>
 
-          <h3>Skills & Expertise</h3>
+          <h3 className={styles.sectionTitle}>Skills & Expertise</h3>
           <div className={styles.skillInputContainer}>
             {formData.skills.map((skill, index) => (
               <span key={index} className={styles.skillItem}>
@@ -316,7 +317,7 @@ const Register = () => {
             ))}
           </div>
 
-          <h3>Availability</h3>
+          <h3 className={styles.sectionTitle}>Availability</h3>
           <div className={styles.availabilityGrid}>
             {days.map((day) => (
               <div key={day} className={styles.availabilityRow}>
@@ -326,7 +327,6 @@ const Register = () => {
                     checked={day in formData.availability}
                     onChange={() => toggleAvailability(day)}
                   />
-                  <FaClock className={styles.dayIcon} />
                   <span>{day}</span>
                 </label>
                 {formData.availability[day] && (
@@ -351,7 +351,7 @@ const Register = () => {
                           className={styles.removeTimeButton}
                           onClick={() => removeTimeSlot(day, index)}
                         >
-                          ✖
+                          ✕
                         </button>
                       </div>
                     ))}
@@ -391,7 +391,33 @@ const Register = () => {
             />
           </div>
 
-          <button type="submit" className={styles.submitButton}>
+          {/* TOS and Privacy Policy Checkbox */}
+          <div className={styles.tosContainer}>
+            <label className={styles.tosLabel}>
+              <input
+                type="checkbox"
+                checked={isTosAccepted}
+                onChange={(e) => setIsTosAccepted(e.target.checked)}
+                className={styles.tosCheckbox}
+              />
+              <span>
+                I have read and agree to the{" "}
+                <Link href="/terms-of-service" className={styles.tosLink}>
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy-policy" className={styles.tosLink}>
+                  Privacy Policy
+                </Link>
+              </span>
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            className={styles.submitButton}
+            disabled={!isTosAccepted} // Disable button if TOS not accepted
+          >
             Complete Profile
           </button>
         </form>
