@@ -15,84 +15,13 @@ import Navbar from "../components/navbar";
 import ProjectCard from "../components/projectcard";
 import styles from "../styles/homepage.module.css";
 import { db, auth } from "../firebase/firebaseconfig";
-import { collection, addDoc, getDocs, query, where, doc, updateDoc, setDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, doc, updateDoc, setDoc, onSnapshot, deleteDoc } from "firebase/firestore";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
-
-// Initial project data
-const initialProjectsData = [
-  {
-    title: "AI-Powered Learning Platform",
-    category: "Development",
-    description: "Building an adaptive learning system using machine learning algorithms...",
-    tags: ["Machine Learning", "Education", "Python"],
-    members: 7,
-    date: "Dec 15, 2024",
-    createdAt: new Date("Dec 15, 2024").toISOString(),
-    expectedCompletionDate: "2025-06-15",
-    liked: false,
-  },
-  {
-    title: "Sustainable Campus Initiative",
-    category: "Research",
-    description: "Research project focused on implementing sustainable practices...",
-    tags: ["Sustainability", "Research", "Environmental"],
-    members: 7,
-    date: "Jan 30, 2024",
-    createdAt: new Date("Jan 30, 2024").toISOString(),
-    expectedCompletionDate: "2025-03-30",
-    liked: false,
-  },
-  {
-    title: "Student Wellness App",
-    category: "Design",
-    description: "Designing a mobile application to help students manage stress...",
-    tags: ["UI/UX", "Mental Health", "Mobile"],
-    members: 7,
-    date: "Nov 28, 2024",
-    createdAt: new Date("Nov 28, 2024").toISOString(),
-    expectedCompletionDate: "2025-05-28",
-    liked: false,
-  },
-  {
-    title: "Market Research Analysis",
-    category: "Business",
-    description: "Conducting comprehensive market research for a new startup...",
-    tags: ["Market Research", "Analytics", "Business"],
-    members: 7,
-    date: "Feb 15, 2024",
-    createdAt: new Date("Feb 15, 2024").toISOString(),
-    expectedCompletionDate: "2025-04-15",
-    liked: false,
-  },
-  {
-    title: "Academic Journal Platform",
-    category: "Writing",
-    description: "Creating a platform for peer-reviewed academic journal publications...",
-    tags: ["Publishing", "Academic", "Writing"],
-    members: 7,
-    date: "Mar 1, 2024",
-    createdAt: new Date("Mar 1, 2024").toISOString(),
-    expectedCompletionDate: "2025-06-01",
-    liked: false,
-  },
-  {
-    title: "Virtual Lab Simulator",
-    category: "Development",
-    description: "Developing a virtual laboratory simulation system for remote science...",
-    tags: ["VR", "Education", "Science"],
-    members: 7,
-    date: "Apr 10, 2024",
-    createdAt: new Date("Apr 10, 2024").toISOString(),
-    expectedCompletionDate: "2025-07-10",
-    liked: false,
-  },
-];
 
 const defaultSkillsOptions = ["Project", "Python", "UI/UX Design", "Data Analysis", "Marketing", "Project Management", "Research", "Content Writing"];
 const areasOfInterestOptions = ["Technology", "Education", "Health", "Business", "Environment"];
 const defaultProjectTypes = ["Development", "Research", "Marketing", "Design", "Business", "Engineering"];
 const defaultProgressStatuses = ["Active", "Completed", "Looking for Members"];
-const commonRoleTypes = ["Project Leader", "Full Stack Developer", "Frontend Developer", "Backend Developer", "UI/UX Designer", "Data Analyst", "Researcher", "Content Writer", "Marketing Specialist", "Business Analyst"];
 
 // Map project types to icons
 const projectTypeIcons = {
@@ -116,7 +45,8 @@ const HomePage = () => {
   const [openCreateProject, setOpenCreateProject] = useState(false);
   const [openLogin, setOpenLogin] = useState(false);
   const [openFilter, setOpenFilter] = useState(false);
-  const [projectsData, setProjectsData] = useState(initialProjectsData);
+  const [projectsData, setProjectsData] = useState([]);
+  const [filteredProjects, setFilteredProjects] = useState([]);
   const [projectDetails, setProjectDetails] = useState({
     title: "",
     teamSize: "",
@@ -131,9 +61,7 @@ const HomePage = () => {
   const [customSkill, setCustomSkill] = useState("");
   const [customTag, setCustomTag] = useState("");
   const [customFilterSkill, setCustomFilterSkill] = useState("");
-  const [customFilterRole, setCustomFilterRole] = useState("");
   const [filterSkills, setFilterSkills] = useState(defaultSkillsOptions);
-  const [filterRoles, setFilterRoles] = useState(commonRoleTypes);
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [user, setUser] = useState(null);
@@ -145,14 +73,30 @@ const HomePage = () => {
     durationMin: "",
     durationMax: "",
     skillsRequired: [],
-    roleTypes: [],
   });
+
+  const projectsPerPage = 12; // Set to 12 projects per page
 
   const today = new Date("2025-03-18");
   const minDate = today.toISOString().split("T")[0];
 
+  // Fetch projects from Firebase
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = onSnapshot(collection(db, "projects"), (snapshot) => {
+      const projects = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt, // Use as string
+        expectedCompletionDate: doc.data().expectedCompletionDate, // Use as string
+      }));
+      const sortedProjects = projects.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setProjectsData(sortedProjects);
+      setFilteredProjects(sortedProjects); // Initialize filtered projects
+    }, (error) => {
+      console.error("Error fetching projects:", error);
+    });
+
+    const unsubscribeAuth = auth.onAuthStateChanged((user) => {
       if (user) {
         console.log("User signed in:", user.uid);
         setUser(user);
@@ -161,7 +105,11 @@ const HomePage = () => {
         setUser(null);
       }
     });
-    return unsubscribe;
+
+    return () => {
+      unsubscribe();
+      unsubscribeAuth();
+    };
   }, []);
 
   useEffect(() => {
@@ -179,8 +127,15 @@ const HomePage = () => {
     }
   }, [projectDetails.teamSize]);
 
+  // Calculate the projects to display based on the current page
+  const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
+  const startIndex = (page - 1) * projectsPerPage;
+  const endIndex = startIndex + projectsPerPage;
+  const currentProjects = filteredProjects.slice(startIndex, endIndex);
+
   const handlePageChange = (event, value) => {
     setPage(value);
+    window.scrollTo(0, 0); // Scroll to top on page change
   };
 
   const handleOpenCreateProject = () => {
@@ -216,15 +171,6 @@ const HomePage = () => {
 
   const handleCloseFilter = () => {
     setOpenFilter(false);
-    setFilter({
-      projectTypes: [],
-      progressStatuses: [],
-      expectedCompletionDate: "",
-      durationMin: "",
-      durationMax: "",
-      skillsRequired: [],
-      roleTypes: [],
-    });
   };
 
   const handleInputChange = (e) => {
@@ -288,13 +234,6 @@ const HomePage = () => {
     if (customFilterSkill && !filterSkills.includes(customFilterSkill) && customFilterSkill.trim() !== "") {
       setFilterSkills((prev) => [...prev, customFilterSkill.trim()]);
       setCustomFilterSkill("");
-    }
-  };
-
-  const addCustomFilterRole = () => {
-    if (customFilterRole && !filterRoles.includes(customFilterRole) && customFilterRole.trim() !== "") {
-      setFilterRoles((prev) => [...prev, customFilterRole.trim()]);
-      setCustomFilterRole("");
     }
   };
 
@@ -376,7 +315,7 @@ const HomePage = () => {
     };
 
     try {
-      await addDoc(collection(db, "projects"), newProject);
+      const docRef = await addDoc(collection(db, "projects"), newProject);
       const userRef = doc(db, "users", user.uid);
       const userDoc = await getDocs(query(collection(db, "users"), where("uid", "==", user.uid)));
       let currentCount = 0;
@@ -387,8 +326,7 @@ const HomePage = () => {
         contributionCount: currentCount + 1,
       }, { merge: true });
 
-      console.log("Project added to Firestore:", newProject);
-      setProjectsData((prev) => [...prev, newProject]);
+      console.log("Project added to Firestore with ID:", docRef.id);
       setSuccessOpen(true);
       setTimeout(() => {
         setSuccessOpen(false);
@@ -400,28 +338,84 @@ const HomePage = () => {
     }
   };
 
-  const handleLikeToggle = (index) => {
-    setProjectsData((prev) => {
-      const updatedProjects = [...prev];
-      updatedProjects[index] = {
-        ...updatedProjects[index],
-        liked: !updatedProjects[index].liked,
-      };
-      return updatedProjects;
-    });
+  const handleBookmarkToggle = async (index) => {
+    if (!user) {
+      alert("You must be signed in to bookmark a project. Please log in or sign up.");
+      setOpenLogin(true);
+      return;
+    }
+
+    const project = currentProjects[index];
+    const projectId = project.id;
+
+    if (project.liked) {
+      // Remove bookmark
+      const bookmarkQuery = query(collection(db, "users", user.uid, "bookmarks"), where("projectId", "==", projectId));
+      const bookmarkSnapshot = await getDocs(bookmarkQuery);
+      bookmarkSnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+      });
+      setProjectsData((prev) => {
+        const updatedProjects = [...prev];
+        const globalIndex = startIndex + index;
+        updatedProjects[globalIndex] = { ...updatedProjects[globalIndex], liked: false };
+        return updatedProjects;
+      });
+      setFilteredProjects((prev) => {
+        const updatedProjects = [...prev];
+        const globalIndex = startIndex + index;
+        updatedProjects[globalIndex] = { ...updatedProjects[globalIndex], liked: false };
+        return updatedProjects;
+      });
+    } else {
+      // Add bookmark
+      await addDoc(collection(db, "users", user.uid, "bookmarks"), {
+        projectId: projectId,
+        title: project.title,
+        category: project.category,
+        createdAt: new Date().toISOString(),
+      });
+      setProjectsData((prev) => {
+        const updatedProjects = [...prev];
+        const globalIndex = startIndex + index;
+        updatedProjects[globalIndex] = { ...updatedProjects[globalIndex], liked: true };
+        return updatedProjects;
+      });
+      setFilteredProjects((prev) => {
+        const updatedProjects = [...prev];
+        const globalIndex = startIndex + index;
+        updatedProjects[globalIndex] = { ...updatedProjects[globalIndex], liked: true };
+        return updatedProjects;
+      });
+    }
   };
 
   const applyFilters = () => {
-    let filteredProjects = [...initialProjectsData];
+    const noFiltersApplied =
+      filter.projectTypes.length === 0 &&
+      filter.progressStatuses.length === 0 &&
+      !filter.expectedCompletionDate &&
+      !filter.durationMin &&
+      !filter.durationMax &&
+      filter.skillsRequired.length === 0;
+
+    if (noFiltersApplied) {
+      setFilteredProjects([...projectsData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+      setPage(1); // Reset to first page
+      setOpenFilter(false);
+      return;
+    }
+
+    let filtered = [...projectsData];
 
     if (filter.projectTypes.length > 0) {
-      filteredProjects = filteredProjects.filter((project) =>
+      filtered = filtered.filter((project) =>
         filter.projectTypes.includes(project.category)
       );
     }
 
     if (filter.progressStatuses.length > 0) {
-      filteredProjects = filteredProjects.filter((project) => {
+      filtered = filtered.filter((project) => {
         const created = new Date(project.createdAt);
         const completion = new Date(project.expectedCompletionDate);
         const now = new Date("2025-03-18");
@@ -433,13 +427,13 @@ const HomePage = () => {
     }
 
     if (filter.expectedCompletionDate) {
-      filteredProjects = filteredProjects.filter((project) =>
+      filtered = filtered.filter((project) =>
         new Date(project.expectedCompletionDate) >= new Date(filter.expectedCompletionDate)
       );
     }
 
     if (filter.durationMin || filter.durationMax) {
-      filteredProjects = filteredProjects.filter((project) => {
+      filtered = filtered.filter((project) => {
         const created = new Date(project.createdAt);
         const completion = new Date(project.expectedCompletionDate);
         const durationDays = Math.ceil((completion - created) / (1000 * 60 * 60 * 24));
@@ -450,35 +444,86 @@ const HomePage = () => {
     }
 
     if (filter.skillsRequired.length > 0) {
-      filteredProjects = filteredProjects.filter((project) =>
+      filtered = filtered.filter((project) =>
         filter.skillsRequired.some((skill) => project.tags.includes(skill))
       );
     }
 
-    if (filter.roleTypes.length > 0) {
-      filteredProjects = filteredProjects.filter((project) =>
-        filter.roleTypes.includes(project.userRole || "")
-      );
-    }
-
-    setProjectsData(filteredProjects);
+    setFilteredProjects(filtered);
+    setPage(1); // Reset to first page after applying filters
     setOpenFilter(false);
   };
 
-  const calculateDuration = (createdAt, expectedCompletionDate) => {
-    const created = new Date(createdAt);
-    const completion = new Date(expectedCompletionDate);
-    const durationDays = Math.ceil((completion - created) / (1000 * 60 * 60 * 24));
-    return durationDays > 0 ? `${durationDays} days` : "Ongoing";
+  const removeFilter = (category, value) => {
+    setFilter((prev) => {
+      const updatedCategory = prev[category].filter((item) => item !== value);
+      const updatedFilter = { ...prev, [category]: updatedCategory };
+
+      const noFiltersApplied =
+        updatedFilter.projectTypes.length === 0 &&
+        updatedFilter.progressStatuses.length === 0 &&
+        !updatedFilter.expectedCompletionDate &&
+        !updatedFilter.durationMin &&
+        !updatedFilter.durationMax &&
+        updatedFilter.skillsRequired.length === 0;
+
+      if (noFiltersApplied) {
+        setFilteredProjects([...projectsData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+        setPage(1);
+      } else {
+        applyFilters();
+      }
+
+      return updatedFilter;
+    });
   };
 
   return (
     <>
       <Navbar />
       <div className={styles.pageBackground}>
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" style={{ paddingLeft: 0, paddingRight: 0 }}>
           <div className={styles.header}>
-            <h2>Projects</h2>
+            <h2>
+              Projects
+              {filter.projectTypes.length > 0 && (
+                <span style={{ marginLeft: "10px", fontSize: "16px", color: "#666" }}>
+                  Active Filters:
+                  {filter.projectTypes.map((type) => (
+                    <Chip
+                      key={`projectType-${type}`}
+                      label={type}
+                      onDelete={() => removeFilter("projectTypes", type)}
+                      style={{ margin: "0 5px" }}
+                    />
+                  ))}
+                </span>
+              )}
+              {filter.progressStatuses.length > 0 && (
+                <span style={{ marginLeft: "10px", fontSize: "16px", color: "#666" }}>
+                  {filter.progressStatuses.map((status) => (
+                    <Chip
+                      key={`progressStatus-${status}`}
+                      label={status}
+                      onDelete={() => removeFilter("progressStatuses", status)}
+                      style={{ margin: "0 5px" }}
+                    />
+                  ))}
+                </span>
+              )}
+              {filter.skillsRequired.length > 0 && (
+                <span style={{ marginLeft: "10px", fontSize: "16px", color: "#666" }}>
+                  {filter.skillsRequired.map((skill) => (
+                    <Chip
+                      key={`skill-${skill}`}
+                      label={skill}
+                      onDelete={() => removeFilter("skillsRequired", skill)}
+                      style={{ margin: "0 5px" }}
+                    />
+                  ))}
+                </span>
+              )}
+            </h2>
             <div>
               <Button variant="contained" color="primary" className={styles.newProjectButton} onClick={handleOpenCreateProject}>
                 + New Project
@@ -489,22 +534,58 @@ const HomePage = () => {
             </div>
           </div>
 
-          <Grid container spacing={3}>
-            {projectsData.map((project, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
+          <Grid
+            container
+            spacing={2}
+            sx={{
+              justifyContent: { xs: "center", sm: "space-between", md: "space-between" }, // Use space-between on sm and md to align with edges
+              alignItems: "flex-start",
+              margin: 0,
+              width: "100%",
+              paddingLeft: 0,
+              paddingRight: "8px", // Match the 8px padding of the filterButton
+            }}
+          >
+            {currentProjects.map((project, index) => (
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                key={index}
+                style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+              >
                 <ProjectCard
                   project={project}
-                  onLikeToggle={() => handleLikeToggle(index)}
-                  duration={calculateDuration(project.createdAt, project.expectedCompletionDate)}
+                  onBookmarkToggle={() => handleBookmarkToggle(index)}
                 />
               </Grid>
             ))}
           </Grid>
 
           <div className={styles.pagination}>
-            <Button variant="outlined">Previous</Button>
-            <Pagination count={8} page={page} onChange={handlePageChange} color="primary" />
-            <Button variant="outlined">Next</Button>
+            <Button
+              variant="outlined"
+              onClick={() => handlePageChange(null, page - 1)}
+              disabled={page === 1}
+            >
+              Previous
+            </Button>
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={handlePageChange}
+              color="primary"
+              showFirstButton
+              showLastButton
+            />
+            <Button
+              variant="outlined"
+              onClick={() => handlePageChange(null, page + 1)}
+              disabled={page === totalPages}
+            >
+              Next
+            </Button>
           </div>
         </Container>
       </div>
@@ -842,36 +923,9 @@ const HomePage = () => {
               <AddIcon />
             </IconButton>
           </div>
-          <h3 style={{ marginBottom: "10px", marginTop: "20px" }}>Role Type</h3>
-          <Box display="flex" flexWrap="wrap" gap={1}>
-            {filterRoles.map((role) => (
-              <Chip
-                key={role}
-                label={role}
-                onClick={() => handleFilterChange("roleTypes", role)}
-                onDelete={() => setFilterRoles((prev) => prev.filter((r) => r !== role))}
-                color={filter.roleTypes.includes(role) ? "primary" : "default"}
-                style={{ margin: "5px" }}
-              />
-            ))}
-          </Box>
-          <div style={{ display: "flex", alignItems: "center", marginTop: "10px" }}>
-            <TextField
-              label="Add Custom Role"
-              value={customFilterRole}
-              onChange={(e) => setCustomFilterRole(e.target.value)}
-              onKeyPress={(e) => { if (e.key === "Enter") addCustomFilterRole(); }}
-              fullWidth
-              size="small"
-              variant="outlined"
-            />
-            <IconButton color="primary" onClick={addCustomFilterRole} style={{ marginLeft: "5px" }}>
-              <AddIcon />
-            </IconButton>
-          </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => { handleCloseFilter(); setProjectsData(initialProjectsData); }} color="primary">
+          <Button onClick={() => { handleCloseFilter(); setFilteredProjects([...projectsData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))); setFilter({ projectTypes: [], progressStatuses: [], expectedCompletionDate: "", durationMin: "", durationMax: "", skillsRequired: [] }); setPage(1); }} color="primary">
             Clear all
           </Button>
           <Button onClick={applyFilters} color="primary" variant="contained">

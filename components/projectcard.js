@@ -1,30 +1,91 @@
 import React from "react";
-import { Card, CardContent, Typography, Chip, IconButton, Tooltip } from "@mui/material";
+import { Card, CardContent, CardActions, Typography, Chip, IconButton } from "@mui/material";
+import GroupIcon from "@mui/icons-material/Group";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 
-const ProjectCard = ({ project, onLikeToggle, duration }) => {
+const ProjectCard = ({ project, onBookmarkToggle }) => {
   return (
-    <Card style={{ marginBottom: "20px", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
-      <CardContent>
-        <Typography variant="h6" component="div" gutterBottom>
-          {project.title} <IconButton onClick={onLikeToggle} color={project.liked ? "error" : "default"} style={{ float: "right" }}>
-            {project.liked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-          </IconButton>
+    <Card
+      style={{
+        width: "300px", // Fixed width
+        height: "150px", // Fixed height
+        position: "relative",
+        padding: "8px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        boxSizing: "border-box", // Ensure padding is included in the size
+      }}
+    >
+      {/* Bookmark Icon in top-right corner */}
+      <IconButton
+        onClick={onBookmarkToggle}
+        color={project.liked ? "primary" : "default"}
+        style={{ position: "absolute", top: "4px", right: "4px" }}
+      >
+        {project.liked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+      </IconButton>
+
+      <CardContent style={{ flexGrow: 1, padding: "8px", overflow: "hidden" }}>
+        <Typography
+          variant="h6"
+          component="div"
+          gutterBottom
+          style={{
+            fontSize: "1.1rem",
+            marginBottom: "4px",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {project.title}
         </Typography>
-        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+        <Typography
+          variant="subtitle2"
+          color="primary"
+          gutterBottom
+          style={{ fontSize: "0.9rem", marginBottom: "4px" }}
+        >
           {project.category}
         </Typography>
-        <Typography variant="body2" paragraph>
-          {project.description}
-        </Typography>
-        {project.tags.map((tag, index) => (
-          <Chip key={index} label={tag} style={{ margin: "0 5px 5px 0" }} />
-        ))}
-        <Typography variant="caption" color="text.secondary">
-          <span role="img" aria-label="members">👥</span> {project.members} members <span role="img" aria-label="calendar">📅</span> {project.date} | Duration: {duration}
-        </Typography>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "4px",
+            marginBottom: "4px",
+            maxHeight: "40px",
+            overflowY: "auto",
+          }}
+        >
+          {project.tags.map((tag, index) => (
+            <Chip
+              key={index}
+              label={tag}
+              variant="outlined"
+              color="primary"
+              size="small"
+              style={{ fontSize: "0.7rem" }}
+            />
+          ))}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "auto" }}>
+          <Typography variant="caption" color="textSecondary" style={{ fontSize: "0.7rem" }}>
+            <GroupIcon fontSize="small" style={{ verticalAlign: "middle", marginRight: "4px" }} />
+            {project.members} members
+          </Typography>
+          <Typography variant="caption" color="textSecondary" style={{ fontSize: "0.7rem" }}>
+            <CalendarTodayIcon fontSize="small" style={{ verticalAlign: "middle", marginRight: "4px" }} />
+            {new Date(project.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+          </Typography>
+        </div>
       </CardContent>
+      <CardActions style={{ padding: "0 8px 8px 8px" }}>
+        {/* Optional: Add more actions here if needed */}
+      </CardActions>
     </Card>
   );
 };
