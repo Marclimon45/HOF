@@ -482,7 +482,7 @@ const HomePage = () => {
     <>
       <Navbar />
       <div className={styles.pageBackground}>
-        <Container maxWidth="lg" style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <Container maxWidth="x1" style={{ paddingLeft: 100, paddingRight: 100}}>
           <div className={styles.header}>
             <h2>
               Projects
@@ -536,14 +536,14 @@ const HomePage = () => {
 
           <Grid
             container
-            spacing={2}
+            spacing={1.5}
             sx={{
               justifyContent: { xs: "center", sm: "space-between", md: "space-between" }, // Use space-between on sm and md to align with edges
               alignItems: "flex-start",
               margin: 0,
               width: "100%",
-              paddingLeft: 0,
-              paddingRight: "8px", // Match the 8px padding of the filterButton
+              paddingLeft: 3,
+              paddingRight: "100px", // Match the 8px padding of the filterButton
             }}
           >
             {currentProjects.map((project, index) => (
