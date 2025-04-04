@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import styles from "../styles/register.module.css";
-import { FaDiscord, FaTimes, FaGithub, FaLinkedin, FaUser, FaUserAlt, FaEnvelope, FaLock } from "react-icons/fa";
+import { 
+  FaDiscord, FaTimes, FaGithub, FaLinkedin, FaUser, FaUserAlt, 
+  FaEnvelope, FaLock, FaCode, FaDatabase, FaPalette, FaBrain,
+  FaChartLine, FaServer, FaRobot, FaLaptopCode, FaDocker,
+  FaFigma, FaAws, FaJira, FaSlack, FaStickyNote
+} from "react-icons/fa";
+import { SiGit, SiAdobexd, SiNotion } from "react-icons/si";
 import { db, auth } from "../firebase/firebaseconfig";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, setDoc, getDocs, query, where, doc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import Link from "next/link"; // Added for linking to TOS and Privacy Policy
-import { useRouter } from "next/router"; // Added for redirecting to homepage
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +19,7 @@ const Register = () => {
     lastName: "",
     email: "",
     password: "",
+    confirmPassword: "",
     discordUsername: "",
     githubUrl: "",
     linkedinUrl: "",
@@ -25,15 +32,25 @@ const Register = () => {
     contributions: 0,
   });
 
-  const [isTosAccepted, setIsTosAccepted] = useState(false); // New state for checkbox
-  const router = useRouter(); // Initialize router for redirection
+  const [isTosAccepted, setIsTosAccepted] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
       alert("Please fill out all required fields before submitting.");
-      console.log("Form Data:", formData);
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setPasswordError("Password must be at least 6 characters long");
       return;
     }
 
@@ -43,15 +60,6 @@ const Register = () => {
     }
 
     try {
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("email", "==", formData.email));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        alert("This email is already registered. Please use a different email.");
-        return;
-      }
-
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
 
@@ -59,7 +67,7 @@ const Register = () => {
         throw new Error("User authentication failed.");
       }
 
-      const docRef = await addDoc(collection(db, "users"), {
+      await setDoc(doc(db, "users", user.uid), {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -72,12 +80,13 @@ const Register = () => {
         areaOfInterest: [...formData.areaOfInterest, formData.customAreaOfInterest].filter(Boolean),
         rank: formData.rank,
         contributions: formData.contributions,
-        userId: user.uid,
+        createdAt: new Date().toISOString(),
       });
 
-      console.log("Document written with ID: ", docRef.id);
-      alert("Profile completed successfully!");
-      router.push("/"); // Redirect to homepage after success
+      console.log("User profile created successfully");
+      setTimeout(() => {
+        router.push("/");
+      }, 500);
     } catch (error) {
       console.error("Error: ", error);
       alert("Error submitting profile: " + error.message);
@@ -91,7 +100,7 @@ const Register = () => {
 
   const handleSkillInput = (e) => {
     if (e.key === "Enter" && e.target.value.trim() !== "") {
-      e.preventDefault(); // Prevent form submission
+      e.preventDefault();
       const newSkill = e.target.value.trim();
       if (!formData.skills.includes(newSkill)) {
         setFormData((prev) => ({
@@ -167,25 +176,25 @@ const Register = () => {
 
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const areasOfInterest = [
-    "Cybersecurity",
-    "Data Science",
-    "Frontend Development",
-    "Backend Development",
-    "UI/UX Design",
-    "Machine Learning",
-    "AI Specialist",
-    "Data Analysis",
+    { name: "Cybersecurity", icon: <FaLock className={styles.areaIcon} /> },
+    { name: "Data Science", icon: <FaDatabase className={styles.areaIcon} /> },
+    { name: "Frontend Development", icon: <FaCode className={styles.areaIcon} /> },
+    { name: "Backend Development", icon: <FaServer className={styles.areaIcon} /> },
+    { name: "UI/UX Design", icon: <FaPalette className={styles.areaIcon} /> },
+    { name: "Machine Learning", icon: <FaBrain className={styles.areaIcon} /> },
+    { name: "AI Specialist", icon: <FaRobot className={styles.areaIcon} /> },
+    { name: "Data Analysis", icon: <FaChartLine className={styles.areaIcon} /> }
   ];
   const toolsAndPlatforms = [
-    "VS Code",
-    "Git",
-    "Docker",
-    "Figma",
-    "AWS",
-    "Jira",
-    "Adobe XD",
-    "Slack",
-    "Notion",
+    { name: "VS Code", icon: <FaLaptopCode className={styles.toolIcon} /> },
+    { name: "Git", icon: <SiGit className={styles.toolIcon} /> },
+    { name: "Docker", icon: <FaDocker className={styles.toolIcon} /> },
+    { name: "Figma", icon: <FaFigma className={styles.toolIcon} /> },
+    { name: "AWS", icon: <FaAws className={styles.toolIcon} /> },
+    { name: "Jira", icon: <FaJira className={styles.toolIcon} /> },
+    { name: "Adobe XD", icon: <SiAdobexd className={styles.toolIcon} /> },
+    { name: "Slack", icon: <FaSlack className={styles.toolIcon} /> },
+    { name: "Notion", icon: <SiNotion className={styles.toolIcon} /> }
   ];
 
   return (
@@ -247,6 +256,19 @@ const Register = () => {
                 className={styles.input}
               />
             </div>
+            <div className={styles.inputWithIcon}>
+              <FaLock className={styles.inputIcon} />
+              <input
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                required
+                className={styles.input}
+              />
+            </div>
+            {passwordError && <div className={styles.errorMessage}>{passwordError}</div>}
           </div>
 
           <h3 className={styles.sectionTitle}>Social & Professional Links</h3>
@@ -263,7 +285,7 @@ const Register = () => {
               />
             </div>
             <div className={styles.inputWithIcon}>
-              <FaLinkedin className={styles.inputIcon} style={{ color: "#0A66C2" }} />
+              <FaLinkedin className={styles.inputIcon} />
               <input
                 type="url"
                 name="linkedinUrl"
@@ -305,14 +327,15 @@ const Register = () => {
           <h3 className={styles.sectionTitle}>Tools & Platforms</h3>
           <div className={styles.toolsPlatformsGrid}>
             {toolsAndPlatforms.map((tool) => (
-              <label key={tool} className={styles.toolCheckboxLabel}>
+              <label key={tool.name} className={styles.toolCheckboxLabel}>
                 <input
                   type="checkbox"
-                  value={tool}
-                  checked={formData.tools.includes(tool)}
-                  onChange={() => toggleCheckbox("tools", tool)}
+                  value={tool.name}
+                  checked={formData.tools.includes(tool.name)}
+                  onChange={() => toggleCheckbox("tools", tool.name)}
                 />
-                <span>{tool}</span>
+                {tool.icon}
+                <span>{tool.name}</span>
               </label>
             ))}
           </div>
@@ -371,14 +394,15 @@ const Register = () => {
           <h3 className={styles.sectionTitle}>Areas of Interest</h3>
           <div className={styles.areasOfInterestGrid}>
             {areasOfInterest.map((interest) => (
-              <label key={interest} className={styles.areaCheckboxLabel}>
+              <label key={interest.name} className={styles.areaCheckboxLabel}>
                 <input
                   type="checkbox"
-                  value={interest}
-                  checked={formData.areaOfInterest.includes(interest)}
-                  onChange={() => toggleCheckbox("areaOfInterest", interest)}
+                  value={interest.name}
+                  checked={formData.areaOfInterest.includes(interest.name)}
+                  onChange={() => toggleCheckbox("areaOfInterest", interest.name)}
                 />
-                <span>{interest}</span>
+                {interest.icon}
+                <span>{interest.name}</span>
               </label>
             ))}
             <input
@@ -391,7 +415,6 @@ const Register = () => {
             />
           </div>
 
-          {/* TOS and Privacy Policy Checkbox */}
           <div className={styles.tosContainer}>
             <label className={styles.tosLabel}>
               <input
@@ -416,7 +439,7 @@ const Register = () => {
           <button
             type="submit"
             className={styles.submitButton}
-            disabled={!isTosAccepted} // Disable button if TOS not accepted
+            disabled={!isTosAccepted}
           >
             Complete Profile
           </button>

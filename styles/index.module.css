@@ -1,7 +1,20 @@
 /* Full page layout */
 .container {
-  display: flex;
   min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff9f0;
+  padding: 20px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
 }
 
 /* Left section - Image */
@@ -32,50 +45,77 @@
 
 /* Title & text */
 .title {
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
   color: #333;
+  margin-bottom: 1rem !important;
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
+  font-size: 1.1rem !important;
   color: #666;
-  text-align: center;
-  margin-top: 10px;
+  margin-bottom: 2.5rem !important;
+  line-height: 1.5 !important;
+  max-width: 400px;
 }
 
 /* Button Group Layout */
-.buttonGroup {
-  display: flex;
-  flex-direction: column; /* Stack buttons vertically */
-  gap: 15px; /* Space between buttons */
+.buttonContainer {
   width: 100%;
-  max-width: 250px; /* Limit button group width for better centering */
-  margin-top: 20px; /* Match the original margin-top of signInButton */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 /* Sign-In Button (shared style for both buttons) */
 .signInButton {
-  background-color: #facc15;
-  color: black;
-  font-weight: 600;
-  padding: 12px 32px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
-  width: 100%; /* Ensure full width within buttonGroup */
+  background-color: #ffc107 !important;
+  color: #000 !important;
+  padding: 12px 24px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
 }
 
 .signInButton:hover {
-  background-color: #eab308;
+  background-color: #ffb300 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.signUpButton {
+  color: #666 !important;
+  border-color: #666 !important;
+  padding: 12px 24px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: 8px !important;
+}
+
+.signUpButton:hover {
+  background-color: rgba(102, 102, 102, 0.04) !important;
 }
 
 /* Terms & Privacy */
 .terms {
-  font-size: 12px;
-  color: #888;
-  text-align: center;
-  margin-top: 10px;
+  margin-bottom: 1rem !important;
+  color: #666 !important;
+}
+
+.terms a {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+.terms a:hover {
+  text-decoration: underline;
+}
+
+.copyright {
+  color: #999 !important;
+  font-size: 0.875rem !important;
 }
 
 /* Footer */
@@ -83,4 +123,24 @@
   margin-top: 40px;
   font-size: 12px;
   color: #888;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+  .container {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 2rem !important;
+  }
+
+  .subtitle {
+    font-size: 1rem !important;
+    margin-bottom: 2rem !important;
+  }
+
+  .buttonContainer {
+    gap: 0.75rem;
+  }
 }

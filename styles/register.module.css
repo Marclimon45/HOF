@@ -1,10 +1,24 @@
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  width: 100%;
+  min-height: 100%;
   background-color: #f0f2f5;
   font-family: Arial, sans-serif;
+  padding: 2rem 1rem;
+  overflow-y: auto;
+  position: relative;
+  display: block;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-y: auto !important;
+}
+
+html {
+  height: 100%;
+  overflow-y: auto;
 }
 
 .formCard {
@@ -14,6 +28,8 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 600px;
+  margin: 0 auto;
+  margin-bottom: 2rem;
 }
 
 .title {
@@ -61,7 +77,7 @@
 
 .input {
   width: 100%;
-  padding: 10px 10px 10px 40px; /* Adjusted padding to account for icon */
+  padding: 10px 10px 10px 40px;
   border: 1px solid #d1d5db;
   border-radius: 4px;
   font-size: 16px;
@@ -71,6 +87,12 @@
 .input::placeholder {
   color: #6b7280;
   font-size: 16px;
+}
+
+.errorMessage {
+  color: #ef4444;
+  font-size: 14px;
+  margin-top: 4px;
 }
 
 .skillInputContainer {
@@ -127,6 +149,22 @@
   gap: 8px;
   font-size: 14px;
   color: #374151;
+  padding: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.toolCheckboxLabel:hover,
+.areaCheckboxLabel:hover {
+  background-color: #f3f4f6;
+}
+
+.toolIcon,
+.areaIcon {
+  width: 20px;
+  height: 20px;
+  color: #6b7280;
 }
 
 .customAreaInput {
@@ -161,12 +199,8 @@
   gap: 10px;
 }
 
-.dayIcon {
-  color: #6b7280;
-}
-
 .timeContainer {
-  margin-left: 30px; /* Indent time slots under the day */
+  margin-left: 30px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -191,14 +225,14 @@
 }
 
 .addTimeButton {
-  padding: 5px 10px; /* Reduced size */
+  padding: 5px 10px;
   background: #3b82f6;
   color: white;
   border: none;
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  align-self: flex-start; /* Align button to the left */
+  align-self: flex-start;
 }
 
 .addTimeButton:hover {
@@ -219,6 +253,32 @@
   background: #dc2626;
 }
 
+.tosContainer {
+  margin: 20px 0;
+}
+
+.tosLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.tosCheckbox {
+  width: 16px;
+  height: 16px;
+}
+
+.tosLink {
+  color: #1e3a8a;
+  text-decoration: none;
+}
+
+.tosLink:hover {
+  text-decoration: underline;
+}
+
 .submitButton {
   width: 100%;
   padding: 12px;
@@ -234,17 +294,22 @@
 .submitButton:hover {
   background: #1a2e87;
 }
-.addSkillButton {
-  padding: 5px 10px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  margin-left: 10px;
+
+.submitButton:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
 }
 
-.addSkillButton:hover {
-  background: #2563eb;
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .formCard {
+    padding: 20px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
 }

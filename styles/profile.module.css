@@ -1,135 +1,281 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: #fff;
-    font-family: Arial, sans-serif;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #1e3a8a;
-    color: #fff;
-  }
-  
-  .logo {
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
-  .main {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  .title {
-    font-size: 28px;
-    font-weight: bold;
-    color: #1e3a8a;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .section {
-    margin-bottom: 30px;
-  }
-  
-  .sectionTitle {
-    font-size: 22px;
-    font-weight: bold;
-    color: #1e3a8a;
-    margin-bottom: 15px;
-  }
-  
-  .infoItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #d1d5db;
-  }
-  
-  .infoItem span {
-    font-weight: bold;
-    color: #374151;
-  }
-  
-  .infoItem a {
-    color: #2563eb;
-    text-decoration: none;
-  }
-  
-  .infoItem a:hover {
-    text-decoration: underline;
-  }
-  
-  .copyContainer {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .copyIcon {
-    cursor: pointer;
-    color: #2563eb;
-  }
-  
-  .copyIcon:hover {
-    color: #1e40af;
-  }
-  
-  .list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .listItem {
-    background-color: #f8f9fc;
-    padding: 5px 10px;
-    border-radius: 4px;
-    border: 1px solid #d1d5db;
-    font-size: 14px;
-    color: #374151;
-  }
-  
-  .projects {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .projectCard {
-    background: #f8f9fc;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    padding: 15px;
-  }
-  
-  .projectCard h3 {
-    font-size: 16px;
-    margin: 0 0 5px;
-    color: #374151;
-  }
-  
-  .projectCard p {
-    font-size: 14px;
-    color: #6b7280;
-    margin: 0;
-  }
-  
-  .popup {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #2563eb;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 4px;
-    font-size: 14px;
-    z-index: 1000;
-  }
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  min-height: 100vh;
+}
+
+.profileHeader {
+  position: relative;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.avatarSection {
+  margin-bottom: 1.5rem;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.userName {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem;
+  color: #333;
+}
+
+.rankContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.rank {
+  display: inline-block;
+  padding: 0.3rem 1rem;
+  background: linear-gradient(135deg, #b4dced, #89a3f4);
+  color: #fff;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.rankIcon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.socialLinks {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.socialLink {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border-radius: 50%;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.socialLink:hover {
+  background: #e0e0e0;
+  color: #333;
+  transform: translateY(-2px);
+}
+
+.editButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1.5rem;
+  background: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.editButton:hover {
+  background: #1976d2;
+}
+
+.section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.4rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.badgesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.badgeCard {
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #2196f3;
+}
+
+.badgeCard h3 {
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem;
+  color: #333;
+}
+
+.badgeCard p {
+  color: #666;
+  margin: 0 0 0.5rem;
+}
+
+.badgeCard span {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.skillsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.skillColumn h3 {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.skillTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skillTag {
+  padding: 0.4rem 0.8rem;
+  background: white;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #666;
+  border: 1px solid #e0e0e0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.25rem;
+}
+
+.skillTag svg {
+  font-size: 1.2rem;
+  color: #2196f3;
+}
+
+.availabilityGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.dayColumn {
+  text-align: center;
+}
+
+.dayColumn h3 {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.timeSlot {
+  background: #e8f5e9;
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  color: #2e7d32;
+}
+
+.busySlot {
+  background: #ffebee;
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  color: #c62828;
+  display: inline-block;
+  width: 100%;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: #f44336;
+}
+
+.footer {
+  text-align: center;
+  padding: 2rem 0;
+  color: #666;
+  font-size: 0.9rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-top: 1px solid #eee;
+}
+
+.roleContainer,
+.roleSelect,
+.roleDropdown,
+.editRoleButton,
+.cancelButton {
+  display: none;
+}
+
+.projectRoles {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.rolesTitle {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.rolesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.roleTag {
+  padding: 0.3rem 0.8rem;
+  background: #f0f7ff;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: #2196f3;
+  border: 1px solid #e3f2fd;
+}

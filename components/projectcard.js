@@ -1,113 +1,192 @@
 import React from "react";
-import { Card, CardContent, CardActions, Typography, Chip, IconButton } from "@mui/material";
-import GroupIcon from "@mui/icons-material/Group";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import {
+  Card,
+  CardContent,
+  CardActions,
+  Typography,
+  IconButton,
+  Chip,
+  Box,
+  LinearProgress,
+} from "@mui/material";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import styles from "../styles/projectcard.module.css";
 
 const ProjectCard = ({ project, onBookmarkToggle }) => {
-  return (
-    <Card
-  style={{
-    width: "350px", // Keep consistent width
-    height: "250px", // Use `minHeight` instead of `height`
-    // maxHeight: "250px", // Limit height to prevent excessive stretching
-    position: "relative",
-    padding: "12px",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    boxSizing: "border-box",
-  }}
->
-      {/* Bookmark Icon in top-right corner */}
-      <IconButton
-        onClick={onBookmarkToggle}
-        color={project.liked ? "primary" : "default"}
-        style={{ position: "absolute", top: "4px", right: "4px" }}
-      >
-        {project.liked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-      </IconButton>
+  // Add null checks and default values
+  const progress = project?.members && project?.teamSize 
+    ? (project.members / project.teamSize) * 100 
+    : 0;
 
-      <CardContent style={{ flexGrow: 1, padding: "8px", overflow: "hidden" }}>
+  const tags = project?.tags || [];
+  const teamMembers = project?.teamMembers || [];
+  const createdAt = project?.createdAt ? new Date(project.createdAt).toLocaleDateString() : 'N/A';
+  const expectedCompletionDate = project?.expectedCompletionDate 
+    ? new Date(project.expectedCompletionDate).toLocaleDateString() 
+    : 'N/A';
+
+  return (
+    <Card 
+      sx={{
+        width: "100%",
+        height: "280px", // Fixed height
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        backgroundColor: "#fff",
+        transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
+        "&:hover": {
+          transform: "translateY(-4px)",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+        },
+      }}
+    >
+      <CardContent sx={{ flex: 1, p: 2 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+          <Typography
+            variant="h6"
+            component="h2"
+            sx={{
+              fontSize: "1.1rem",
+              fontWeight: 600,
+              mb: 1,
+              pr: 4, // Space for bookmark icon
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: 1,
+              WebkitBoxOrient: "vertical",
+            }}
+          >
+            {project?.title || 'Untitled Project'}
+          </Typography>
+          <IconButton 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onBookmarkToggle();
+            }} 
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              color: project?.isBookmarked ? "#ff1744" : "#666",
+              "&:hover": {
+                color: project?.isBookmarked ? "#ff1744" : "#1976d2",
+              },
+            }}
+          >
+            {project?.isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          </IconButton>
+        </Box>
+
         <Typography
-          variant="h6"
-          component="div"
-          gutterBottom
-          style={{
-            fontSize: "1.1rem",
-            marginBottom: "4px",
-            whiteSpace: "nowrap",
+          color="primary"
+          sx={{
+            fontSize: "0.875rem",
+            mb: 1,
             overflow: "hidden",
             textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
           }}
         >
-          {project.title}
+          {project?.category || 'Uncategorized'}
         </Typography>
-        <Typography
-          variant="subtitle2"
-          color="primary"
-          gutterBottom
-          style={{ fontSize: "0.9rem", marginBottom: "4px" }}
-        >
-          {project.category}
-        </Typography>
-        <div
-  style={{
-    display: "flex",
-    flexWrap: "wrap",  // ✅ Allow tags to wrap naturally
-    gap: "6px",
-    overflow: "visible",  // ✅ Ensure no cut-off
-    marginBottom: "8px",
-  }}
->
-          {project.tags.map((tag, index) => (
-            <Chip
-              key={index}
-              label={tag}
-              variant="outlined"
-              color="primary"
-              size="small"
-              style={{ fontSize: "0.7rem" }}
-            />
-          ))}
-        </div>
-        {/* 🔹 Project Description (Limited to 3 lines) */}
-        <Typography
-  variant="body2"
-  color="textSecondary"
-  style={{
-    fontSize: "0.85rem",
-    marginBottom: "10px",
-    overflow: "hidden",
-    display: "-webkit-box",
-    WebkitLineClamp: 2, // ✅ Limits to 2 lines
-    WebkitBoxOrient: "vertical",
-    textOverflow: "ellipsis",
-  }}
->
-  {project.description}
-</Typography>
 
-<CardActions style={{ 
-  padding: "0 8px 8px 8px", 
-  display: "flex", 
-  justifyContent: "space-between" // ✅ Ensures spacing between left & right
-}}></CardActions>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto" }}>
-        <Typography variant="caption" color="textSecondary" style={{ fontSize: "0.75rem" }}>
-    <GroupIcon fontSize="small" style={{ verticalAlign: "middle", marginRight: "4px" }} />
-    {project.members} members
-  </Typography>
-  <Typography variant="caption" color="textSecondary" style={{ fontSize: "0.75rem" }}>
-    <CalendarTodayIcon fontSize="small" style={{ verticalAlign: "middle", marginRight: "4px" }} />
-    {new Date(project.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-  </Typography>
-</div>
+        <Typography
+          variant="body2"
+          sx={{
+            color: "#666",
+            mb: 2,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            height: "40px", // Fixed height for 2 lines
+          }}
+        >
+          {project?.description || 'No description available'}
+        </Typography>
+
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
+            Skills Required:
+          </Typography>
+          <Box 
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 0.5,
+              maxHeight: "48px",
+              overflow: "hidden",
+            }}
+          >
+            {tags.length > 0 ? (
+              tags.map((tag, index) => (
+                <Chip
+                  key={index}
+                  label={tag}
+                  size="small"
+                  sx={{
+                    height: "20px",
+                    fontSize: "0.75rem",
+                    backgroundColor: "#e3f2fd",
+                    color: "#1976d2",
+                  }}
+                />
+              ))
+            ) : (
+              <Typography variant="body2" color="textSecondary">
+                No skills specified
+              </Typography>
+            )}
+          </Box>
+        </Box>
+
+        <Box sx={{ mb: 1 }}>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
+            Team Progress:
+          </Typography>
+          <Box display="flex" alignItems="center" gap={1}>
+            <LinearProgress
+              variant="determinate"
+              value={progress}
+              sx={{
+                flexGrow: 1,
+                height: 6,
+                borderRadius: 3,
+                backgroundColor: "#e0e0e0",
+                "& .MuiLinearProgress-bar": {
+                  backgroundColor: "#1976d2",
+                },
+              }}
+            />
+            <Typography variant="body2" color="textSecondary" sx={{ minWidth: "45px" }}>
+              {project?.members || 0}/{project?.teamSize || 0}
+            </Typography>
+          </Box>
+        </Box>
       </CardContent>
-      {/* <CardActions style={{ padding: "0 8px 8px 8px" }}> */}
-        {/* Optional: Add more actions here if needed */}
-      {/* </CardActions> */}
+
+      <CardActions 
+        sx={{ 
+          borderTop: "1px solid #e0e0e0",
+          p: 2,
+          pt: 1,
+          pb: 1,
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <Typography variant="caption" color="textSecondary">
+          Created: {createdAt}
+        </Typography>
+        <Typography variant="caption" color="textSecondary">
+          Due: {expectedCompletionDate}
+        </Typography>
+      </CardActions>
     </Card>
   );
 };

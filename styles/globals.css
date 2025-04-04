@@ -11,3 +11,18 @@ body {
 button {
     @apply transition duration-200 ease-in-out;
 }
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto !important;
+}
+
+#__next {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
