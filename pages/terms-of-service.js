@@ -14,7 +14,7 @@ export default function TermsOfService() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Terms of Service Statement</h2>
           <p className={styles.paragraph}>
-            By accessing and using Xin’s Hall of Fame ("the Service"), you agree to comply with and be bound by these Terms of Service. If you disagree with these terms, you must discontinue your use of our services immediately.
+            By accessing and using Xin's Hall of Fame ("the Service"), you agree to comply with and be bound by these Terms of Service. If you disagree with these terms, you must discontinue your use of our services immediately.
           </p>
         </section>
 
@@ -33,7 +33,7 @@ export default function TermsOfService() {
             Users retain ownership of all content they create and share.
           </p>
           <p className={styles.paragraph}>
-            By uploading content, you grant Xin’s Hall of Fame a limited license to display, host, and distribute your content within the platform, solely to provide our service.
+            By uploading content, you grant Xin's Hall of Fame a limited license to display, host, and distribute your content within the platform, solely to provide our service.
           </p>
         </section>
 
@@ -55,7 +55,7 @@ export default function TermsOfService() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Limitation of Liability</h2>
           <p className={styles.paragraph}>
-            Xin’s Hall of Fame is provided "as is." We make no warranties regarding uninterrupted or error-free service. We are not liable for indirect, incidental, or consequential damages arising from your use of or inability to use our platform.
+            Xin's Hall of Fame is provided "as is." We make no warranties regarding uninterrupted or error-free service. We are not liable for indirect, incidental, or consequential damages arising from your use of or inability to use our platform.
           </p>
         </section>
 
@@ -76,7 +76,7 @@ export default function TermsOfService() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Modifications</h2>
           <p className={styles.paragraph}>
-            Xin’s Hall of Fame may update these terms periodically. Users will be notified of significant changes.
+            Xin's Hall of Fame may update these terms periodically. Users will be notified of significant changes.
           </p>
         </section>
 
@@ -88,6 +88,18 @@ export default function TermsOfService() {
           <p className={styles.contact}>
             <a href="mailto:xin.qin@csulb.edu" className={styles.contactLink}>
               xin.qin@csulb.edu
+            </a>
+          </p>
+        </section>
+
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Misc </h2>
+          <p className={styles.paragraph}>
+          🌞 Coming soon...
+          </p>
+          <p className={styles.paragraph}>
+            <a href="https://xinqin23.github.io/fun/encouragement.html" className={styles.contactLink} target="_blank" rel="noopener noreferrer">
+              Try
             </a>
           </p>
         </section>

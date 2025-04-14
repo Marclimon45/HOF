@@ -20,11 +20,12 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Autocomplete
+  Autocomplete,
+  Divider
 } from "@mui/material";
 import { db, auth, storage } from "../../firebase/firebaseconfig";
 import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import Navbar from "../../components/navbar";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -35,6 +36,67 @@ import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import CircularProgress from '@mui/material/CircularProgress';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import EditIcon from '@mui/icons-material/Edit';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import LinkIcon from '@mui/icons-material/Link';
+import AddIcon from '@mui/icons-material/Add';
+import CodeIcon from '@mui/icons-material/Code';
+import SearchIcon from '@mui/icons-material/Search';
+import CampaignIcon from '@mui/icons-material/Campaign';
+import DesignServicesIcon from '@mui/icons-material/DesignServices';
+import BusinessIcon from '@mui/icons-material/Business';
+import BuildIcon from '@mui/icons-material/Build';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import SchoolIcon from '@mui/icons-material/School';
+import MovieIcon from '@mui/icons-material/Movie';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
+import ArchiveIcon from '@mui/icons-material/Archive';
+
+const defaultProjectTypes = [
+  "Development",
+  "Research",
+  "Marketing",
+  "Design",
+  "Business",
+  "Engineering",
+  "Health",
+  "Education",
+  "Entertainment",
+  "Other"
+];
+
+const defaultProgressStatuses = [
+  "Active",
+  "Completed",
+  "Looking for Members",
+  "Archived"
+];
+
+// Map project types to icons
+const projectTypeIcons = {
+  Development: <CodeIcon />,
+  Research: <SearchIcon />,
+  Marketing: <CampaignIcon />,
+  Design: <DesignServicesIcon />,
+  Business: <BusinessIcon />,
+  Engineering: <BuildIcon />,
+  Health: <LocalHospitalIcon />,
+  Education: <SchoolIcon />,
+  Entertainment: <MovieIcon />,
+  Other: <MoreHorizIcon />
+};
+
+// Map progress statuses to icons
+const progressStatusIcons = {
+  Active: <PlayCircleOutlineIcon />,
+  Completed: <CheckCircleOutlineIcon />,
+  "Looking for Members": <GroupAddIcon />,
+  Archived: <ArchiveIcon />
+};
 
 const ProjectDetails = () => {
   const router = useRouter();
@@ -45,7 +107,21 @@ const ProjectDetails = () => {
   const [isCurrentUserMember, setIsCurrentUserMember] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [editedProject, setEditedProject] = useState(null);
+  const [editedProject, setEditedProject] = useState({
+    title: '',
+    description: '',
+    category: '',
+    status: 'active',
+    lookingFor: [],
+    teamSize: 0,
+    duration: '',
+    startDate: '',
+    endDate: '',
+    keyAchievements: [],
+    technologies: [],
+    timeline: [],
+    media: []
+  });
   const [newAchievement, setNewAchievement] = useState('');
   const [newTimelineEntry, setNewTimelineEntry] = useState({
     date: new Date().toISOString().split('T')[0],
@@ -68,137 +144,126 @@ const ProjectDetails = () => {
   const [customSubRole, setCustomSubRole] = useState('');
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
   const [selectedJoinRole, setSelectedJoinRole] = useState(null);
+  const [isCreator, setIsCreator] = useState(false);
 
-  // Get unique roles from the project
-  const projectRoles = project?.roles
-    ?.map(roleData => typeof roleData.role === 'string' ? roleData.role : roleData.role?.role)
-    ?.filter((role, index, self) => role && self.indexOf(role) === index) || [];
+  // Add getStatusColor function
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Completed':
+        return 'success';
+      case 'Archived':
+        return 'error';
+      case 'Looking for Members':
+        return 'info';
+      case 'Active':
+      default:
+        return 'primary';
+    }
+  };
 
-  const projectSubRoles = project?.roles
-    ?.map(roleData => typeof roleData.subRole === 'string' ? roleData.subRole : roleData.role?.subRole)
-    ?.filter((role, index, self) => role && self.indexOf(role) === index) || [];
+  // Update the projectRoles and projectSubRoles definitions
+  const projectRoles = Array.isArray(project?.roles) 
+    ? project.roles
+        .map(roleData => roleData.role)
+        .filter(role => role !== null && role !== undefined)
+    : [];
 
-  useEffect(() => {
+  const projectSubRoles = Array.isArray(project?.roles)
+    ? project.roles
+        .map(roleData => roleData.subRole)
+        .filter(subRole => subRole !== null && subRole !== undefined)
+    : [];
+
     const fetchProject = async () => {
       if (!id) return;
 
-      try {
-        // Wait for auth to initialize
-        if (!auth.currentUser) {
-          const unsubscribe = auth.onAuthStateChanged(async (user) => {
-            if (user) {
               try {
                 const projectRef = doc(db, "projects", id);
                 const projectSnap = await getDoc(projectRef);
 
                 if (projectSnap.exists()) {
-                  const projectData = { id: projectSnap.id, ...projectSnap.data() };
-                  console.log("Project data:", projectData); // Debug log
+                  const projectData = { 
+                    id: projectSnap.id, 
+                    ...projectSnap.data(),
+                    keyAchievements: projectSnap.data().keyAchievements || [],
+                    technologies: projectSnap.data().technologies || [],
+                    timeline: projectSnap.data().timeline || [],
+                    media: projectSnap.data().media || []
+                  };
+        console.log("Project data:", projectData);
                   setProject(projectData);
-                  setIsCurrentUserMember(projectData.creatorUid === user.uid);
-                  
-                  // Fetch team members data
-                  const memberPromises = projectData.roles?.map(async (roleData, index) => {
-                    const roleTitle = typeof roleData.role === 'object' ? roleData.role.role : roleData.role;
-                    const roleSubTitle = typeof roleData.role === 'object' ? roleData.role.subRole : roleData.subRole;
-                    
+        setEditedProject(projectData);
+        
+        // Check if user is creator or has a role in the project
+        const isCreator = projectData.creatorUid === auth.currentUser?.uid;
+        const userRoles = Array.isArray(projectData.roles) 
+          ? projectData.roles.filter(role => role.userId === auth.currentUser?.uid)
+          : [];
+        const hasRole = userRoles.length > 0;
+        
+        setIsCurrentUserMember(hasRole);
+        setIsCreator(isCreator);
+        
+        // Fetch team members data
+        if (Array.isArray(projectData.roles)) {
+          const memberPromises = projectData.roles.map(async (roleData) => {
                     if (roleData.userId) {
-                      // Get user's data if role is assigned
                       const userDoc = await getDoc(doc(db, "users", roleData.userId));
                       if (userDoc.exists()) {
                         const userData = userDoc.data();
                         return {
                           uid: roleData.userId,
-                          role: roleTitle || '',
-                          subRole: roleSubTitle || '',
-                          name: userData.name || userData.email || 'Anonymous',
+                  role: roleData.role || '',
+                  subRole: roleData.subRole || '',
+                  name: userData.displayName || userData.email?.split('@')[0] || 'Anonymous',
                           email: userData.email || '',
-                          photoURL: userData.photoURL || ''
+                  photoURL: userData.photoURL || '/jeff1.jpg',
+                  status: roleData.status || 'Active'
                         };
                       }
                     }
                     return {
-                      role: roleTitle || '',
-                      subRole: roleSubTitle || '',
+              role: roleData.role || '',
+              subRole: roleData.subRole || '',
                       name: 'Open Position',
                       email: '',
-                      photoURL: ''
+              photoURL: null,
+              status: 'Open'
                     };
-                  }) || [];
+          });
 
                   const members = await Promise.all(memberPromises);
-                  setTeamMembers(members);
+          setTeamMembers(members.filter(member => member !== null));
+        } else {
+          setTeamMembers([]);
+        }
                 } else {
                   console.log("No project found with ID:", id);
                   setError("Project not found");
                 }
               } catch (err) {
-                console.error("Error fetching project details:", err);
+      console.error("Error fetching project:", err);
                 setError(`Failed to load project: ${err.message}`);
               }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (!auth.currentUser) {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        if (user) {
+          fetchProject();
             } else {
               console.log("No authenticated user");
               setError("Please sign in to view project details");
+          router.push('/');
             }
-            setLoading(false);
             unsubscribe();
           });
         } else {
-          const projectRef = doc(db, "projects", id);
-          const projectSnap = await getDoc(projectRef);
-
-          if (projectSnap.exists()) {
-            const projectData = { id: projectSnap.id, ...projectSnap.data() };
-            console.log("Project data:", projectData);
-            setProject(projectData);
-            setIsCurrentUserMember(projectData.creatorUid === auth.currentUser.uid);
-
-            // Fetch team members data
-            const memberPromises = projectData.roles?.map(async (roleData, index) => {
-              const roleTitle = typeof roleData.role === 'object' ? roleData.role.role : roleData.role;
-              const roleSubTitle = typeof roleData.role === 'object' ? roleData.role.subRole : roleData.subRole;
-              
-              if (roleData.userId) {
-                // Get user's data if role is assigned
-                const userDoc = await getDoc(doc(db, "users", roleData.userId));
-                if (userDoc.exists()) {
-                  const userData = userDoc.data();
-                  return {
-                    uid: roleData.userId,
-                    role: roleTitle || '',
-                    subRole: roleSubTitle || '',
-                    name: userData.name || userData.email || 'Anonymous',
-                    email: userData.email || '',
-                    photoURL: userData.photoURL || ''
-                  };
-                }
-              }
-              return {
-                role: roleTitle || '',
-                subRole: roleSubTitle || '',
-                name: 'Open Position',
-                email: '',
-                photoURL: ''
-              };
-            }) || [];
-
-            const members = await Promise.all(memberPromises);
-            setTeamMembers(members);
-          } else {
-            console.log("No project found with ID:", id);
-            setError("Project not found");
-          }
-          setLoading(false);
-        }
-      } catch (err) {
-        console.error("Error in fetchProject:", err);
-        setError(`Failed to load project: ${err.message}`);
-        setLoading(false);
-      }
-    };
-
-    fetchProject();
-  }, [id]);
+      fetchProject();
+    }
+  }, [id, router]);
 
   const handleEditOpen = () => {
     // Prefill the editedProject state with existing project data
@@ -207,8 +272,9 @@ const ProjectDetails = () => {
       description: project.description || '',
       category: project.category || '',
       tags: project.tags || [],
-      achievements: project.achievements || [],
-      timeline: project.timeline || [],
+      keyAchievements: Array.isArray(project.keyAchievements) ? [...project.keyAchievements] : [],
+      technologies: Array.isArray(project.technologies) ? [...project.technologies] : [],
+      timeline: Array.isArray(project.timeline) ? [...project.timeline] : [],
       duration: project.duration || '',
       teamSize: project.teamSize || 2,
       roles: project.roles?.map(roleData => ({
@@ -227,36 +293,82 @@ const ProjectDetails = () => {
     setEditDialogOpen(false);
   };
 
+  const handleEditChange = (field, value) => {
+    setEditedProject(prev => {
+      if (!prev) return null;
+      if (field === 'roles' && !Array.isArray(value)) {
+        // If roles is not an array, initialize it
+        value = [];
+      }
+      return { ...prev, [field]: value };
+    });
+  };
+
   const handleSaveChanges = async () => {
     try {
-      const projectRef = doc(db, "projects", id);
-      await updateDoc(projectRef, {
-        title: editedProject.title,
-        description: editedProject.description,
-        category: editedProject.category,
-        tags: editedProject.tags,
-        achievements: editedProject.achievements,
-        timeline: editedProject.timeline,
-        duration: editedProject.duration,
-        teamSize: editedProject.teamSize,
-        roles: editedProject.roles,
-        projectType: editedProject.projectType,
-        projectLink: editedProject.projectLink,
-        status: editedProject.status,
-        updatedAt: new Date().toISOString()
-      });
+      if (!editedProject || !id) return;
 
-      // Update local state
-      setProject({
-        ...project,
+      // Check if project is being marked as completed
+      if (editedProject.status === 'Completed') {
+        // Validate requirements for completed projects
+        const errors = [];
+        
+        if (!editedProject.projectLink) {
+          errors.push('Project link is required for completed projects');
+        }
+        
+        if (!editedProject.category) {
+          errors.push('Project category is required for completed projects');
+        }
+        
+        const teamMembers = editedProject.roles?.filter(role => role.userId) || [];
+        if (teamMembers.length < 1) {
+          errors.push('At least one team member is required for completed projects');
+        }
+        
+        if (!Array.isArray(editedProject.keyAchievements) || editedProject.keyAchievements.length < 3) {
+          errors.push('At least 3 key achievements are required for completed projects');
+        }
+        
+        if (!Array.isArray(editedProject.timeline) || editedProject.timeline.length < 3) {
+          errors.push('At least 3 timeline entries are required for completed projects');
+        }
+        
+        if (errors.length > 0) {
+          setSnackbar({
+            open: true,
+            message: errors.join('\n'),
+            severity: 'error'
+          });
+          return;
+        }
+
+        // Update duration to include completion date
+        const completionDate = new Date().toISOString().split('T')[0];
+        editedProject.duration = `${project.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0]} - ${completionDate}`;
+      }
+
+      // Ensure roles is an array
+      const updatedProject = {
         ...editedProject,
-        updatedAt: new Date().toISOString()
-      });
+        roles: Array.isArray(editedProject.roles) ? editedProject.roles : []
+      };
 
-      handleEditClose();
+      await updateDoc(doc(db, "projects", id), updatedProject);
+      setProject(updatedProject);
+      setEditDialogOpen(false);
+      setSnackbar({
+        open: true,
+        message: 'Project updated successfully',
+        severity: 'success'
+      });
     } catch (error) {
-      console.error("Error updating project:", error);
-      // You might want to show an error message to the user here
+      console.error('Error updating project:', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to update project: ' + error.message,
+        severity: 'error'
+      });
     }
   };
 
@@ -280,29 +392,36 @@ const ProjectDetails = () => {
   };
 
   const handleAddTimelineEntry = () => {
-    if (newTimelineEntry.title && newTimelineEntry.description) {
-      setEditedProject({
-        ...editedProject,
-        timeline: [...(editedProject.timeline || []), newTimelineEntry]
-      });
-      setNewTimelineEntry({
+    setEditedProject(prev => ({
+      ...prev,
+      timeline: Array.isArray(prev.timeline) ? [
+        ...prev.timeline,
+        {
         date: new Date().toISOString().split('T')[0],
         title: '',
         description: '',
-        media: null,
+          media: [],
         mediaType: null,
         mediaUrl: ''
-      });
-    }
+        }
+      ] : [{
+        date: new Date().toISOString().split('T')[0],
+        title: '',
+        description: '',
+        media: [],
+        mediaType: null,
+        mediaUrl: ''
+      }]
+    }));
   };
 
   const handleRemoveTimelineEntry = (index) => {
-    const newTimeline = [...editedProject.timeline];
-    newTimeline.splice(index, 1);
-    setEditedProject({
-      ...editedProject,
-      timeline: newTimeline
-    });
+    setEditedProject(prev => ({
+      ...prev,
+      timeline: Array.isArray(prev.timeline)
+        ? prev.timeline.filter((_, i) => i !== index)
+        : []
+    }));
   };
 
   const handleFileSelect = (file, index = null) => {
@@ -524,36 +643,120 @@ const ProjectDetails = () => {
   };
 
   const handleJoinProject = async () => {
+    if (!auth.currentUser) {
+      setSnackbar({
+        open: true,
+        message: 'Please sign in to join the project',
+        severity: 'error'
+      });
+      return;
+    }
+
+    try {
+      const projectRef = doc(db, "projects", id);
+      const projectDoc = await getDoc(projectRef);
+      
+      if (!projectDoc.exists()) {
+        throw new Error('Project not found');
+      }
+
+      const projectData = projectDoc.data();
+      const selectedRoles = Array.isArray(selectedJoinRole) ? selectedJoinRole : [selectedJoinRole];
+      
+      // Check if any selected roles are already taken
+      const invalidRoles = selectedRoles.filter(roleIndex => 
+        projectData.roles[roleIndex]?.userId
+      );
+
+      if (invalidRoles.length > 0) {
+        throw new Error('Some selected roles are no longer available');
+      }
+
+      // Update the project roles
+      const updatedRoles = [...projectData.roles];
+      const now = new Date().toISOString();
+
+      selectedRoles.forEach(roleIndex => {
+        updatedRoles[roleIndex] = {
+          ...updatedRoles[roleIndex],
+          userId: auth.currentUser.uid,
+          status: 'Active',
+          joinedAt: now
+        };
+      });
+
+      // Update project document
+      await updateDoc(projectRef, {
+        roles: updatedRoles,
+        members: (projectData.members || 0) + selectedRoles.length
+      });
+
+      // Update user's profile with current project
+      const userRef = doc(db, "users", auth.currentUser.uid);
+      await updateDoc(userRef, {
+        currentProject: {
+          projectId: id,
+          name: projectData.title,
+          roles: selectedRoles.map(index => ({
+            role: projectData.roles[index].role,
+            joinedAt: now
+          }))
+        }
+      });
+
+      setIsCurrentUserMember(true);
+      setJoinDialogOpen(false);
+        setSnackbar({
+          open: true,
+        message: 'Successfully joined the project!',
+        severity: 'success'
+      });
+
+      // Refresh project data
+      fetchProject();
+    } catch (error) {
+      console.error('Error joining project:', error);
+      setSnackbar({
+        open: true,
+        message: error.message || 'Failed to join project',
+          severity: 'error'
+        });
+    }
+  };
+
+  const handleLeaveProject = async () => {
     try {
       const projectRef = doc(db, "projects", id);
       const newRoles = [...project.roles];
+      const userRoleIndex = newRoles.findIndex(role => role.userId === auth.currentUser.uid);
       
-      // Find the first empty role position
-      const emptyRoleIndex = newRoles.findIndex(role => !role.userId);
-      
-      if (emptyRoleIndex === -1) {
-        setSnackbar({
-          open: true,
-          message: 'No available roles in this project',
-          severity: 'error'
-        });
-        return;
-      }
+      if (userRoleIndex !== -1) {
+        // Remove user ID from the role
+        newRoles[userRoleIndex] = {
+          ...newRoles[userRoleIndex],
+          userId: null
+        };
+        
+        // Count remaining members
+        const remainingMembers = newRoles.filter(role => role.userId).length;
 
-      // Update the role with the current user's ID
-      newRoles[emptyRoleIndex] = {
-        ...newRoles[emptyRoleIndex],
-        userId: auth.currentUser.uid
-      };
-
+        // Update project roles and status
       await updateDoc(projectRef, {
-        roles: newRoles
+          roles: newRoles,
+          status: remainingMembers === 0 ? 'Looking for Members' : project.status
+        });
+
+        // Remove current project from user's profile
+        const userRef = doc(db, "users", auth.currentUser.uid);
+        await updateDoc(userRef, {
+          currentProject: null
       });
 
       // Update local state
       setProject({
         ...project,
-        roles: newRoles
+          roles: newRoles,
+          status: remainingMembers === 0 ? 'Looking for Members' : project.status
       });
 
       // Refresh team members
@@ -575,7 +778,7 @@ const ProjectDetails = () => {
         return {
           role: roleData.role || '',
           subRole: roleData.subRole || '',
-          name: roleData.userId ? 'Loading...' : 'Open Position',
+            name: 'Open Position',
           email: '',
           photoURL: ''
         };
@@ -583,88 +786,322 @@ const ProjectDetails = () => {
 
       const members = await Promise.all(memberPromises);
       setTeamMembers(members);
-      setJoinDialogOpen(false);
-      setSelectedJoinRole(null);
-      setIsCurrentUserMember(true);
+        setRoleChangeDialogOpen(false);
+        setSelectedRole(null);
+        setIsCurrentUserMember(false);
       
       setSnackbar({
         open: true,
-        message: 'Successfully joined the project!',
+          message: 'Successfully left the project',
         severity: 'success'
       });
+
+        // Redirect to home page
+        router.push('/home');
+      }
     } catch (error) {
-      console.error("Error joining project:", error);
+      console.error("Error leaving project:", error);
       setSnackbar({
         open: true,
-        message: 'Failed to join project. Please try again.',
+        message: 'Failed to leave project. Please try again.',
         severity: 'error'
       });
     }
   };
 
-  if (loading) return (
-    <Box sx={{ p: 3, display: 'flex', justifyContent: 'center' }}>
-      <Typography>Loading project details...</Typography>
+  const handleKeyAchievementChange = (index, value) => {
+    setEditedProject(prev => {
+      const newAchievements = Array.isArray(prev.keyAchievements) ? [...prev.keyAchievements] : [];
+      newAchievements[index] = value;
+      return {
+        ...prev,
+        keyAchievements: newAchievements
+      };
+    });
+  };
+
+  const handleAddKeyAchievement = () => {
+    setEditedProject(prev => ({
+      ...prev,
+      keyAchievements: Array.isArray(prev.keyAchievements) ? [...prev.keyAchievements, ''] : ['']
+    }));
+  };
+
+  const handleRemoveKeyAchievement = (index) => {
+    setEditedProject(prev => ({
+      ...prev,
+      keyAchievements: Array.isArray(prev.keyAchievements) 
+        ? prev.keyAchievements.filter((_, i) => i !== index)
+        : []
+    }));
+  };
+
+  const handleTechnologyChange = (index, value) => {
+    setEditedProject(prev => {
+      const newTechnologies = Array.isArray(prev.technologies) ? [...prev.technologies] : [];
+      newTechnologies[index] = value;
+      return {
+        ...prev,
+        technologies: newTechnologies
+      };
+    });
+  };
+
+  const handleAddTechnology = () => {
+    setEditedProject(prev => ({
+      ...prev,
+      technologies: Array.isArray(prev.technologies) ? [...prev.technologies, ''] : ['']
+    }));
+  };
+
+  const handleRemoveTechnology = (index) => {
+    setEditedProject(prev => ({
+      ...prev,
+      technologies: Array.isArray(prev.technologies)
+        ? prev.technologies.filter((_, i) => i !== index)
+        : []
+    }));
+  };
+
+  const handleTimelineChange = (index, field, value) => {
+    setEditedProject(prev => {
+      const newTimeline = Array.isArray(prev.timeline) ? [...prev.timeline] : [];
+      if (!newTimeline[index]) {
+        newTimeline[index] = {
+          date: new Date().toISOString().split('T')[0],
+          title: '',
+          description: '',
+          media: [],
+          mediaType: null,
+          mediaUrl: ''
+        };
+      }
+      newTimeline[index] = {
+        ...newTimeline[index],
+        [field]: value
+      };
+      return {
+        ...prev,
+        timeline: newTimeline
+      };
+    });
+  };
+
+  const handleMediaUpload = async (e, timelineIndex) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error('No user logged in');
+
+      // Create a reference to the storage location
+      const storageRef = ref(storage, `project-media/${user.uid}/${Date.now()}-${file.name}`);
+
+      // Upload the file
+      await uploadBytes(storageRef, file);
+
+      // Get the download URL
+      const downloadURL = await getDownloadURL(storageRef);
+
+      // Update the timeline entry with the new media
+      const newTimeline = [...editedProject.timeline];
+      newTimeline[timelineIndex] = {
+        ...newTimeline[timelineIndex],
+        media: [...(newTimeline[timelineIndex].media || []), {
+          url: downloadURL,
+          type: file.type.startsWith('image/') ? 'image' : 'video'
+        }]
+      };
+
+      setEditedProject(prev => ({
+        ...prev,
+        timeline: newTimeline
+      }));
+
+      setSnackbar({
+        open: true,
+        message: 'Media uploaded successfully!',
+        severity: 'success'
+      });
+    } catch (error) {
+      console.error('Error uploading media:', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to upload media. Please try again.',
+        severity: 'error'
+      });
+    }
+  };
+
+  const handleRemoveMedia = async (timelineIndex, mediaIndex) => {
+    try {
+      const mediaUrl = editedProject.timeline[timelineIndex].media[mediaIndex].url;
+      const storageRef = ref(storage, mediaUrl);
+
+      // Delete the file from storage
+      await deleteObject(storageRef);
+
+      // Update the timeline entry by removing the media
+      const newTimeline = [...editedProject.timeline];
+      newTimeline[timelineIndex] = {
+        ...newTimeline[timelineIndex],
+        media: newTimeline[timelineIndex].media.filter((_, i) => i !== mediaIndex)
+      };
+
+      setEditedProject(prev => ({
+        ...prev,
+        timeline: newTimeline
+      }));
+
+      setSnackbar({
+        open: true,
+        message: 'Media removed successfully!',
+        severity: 'success'
+      });
+    } catch (error) {
+      console.error('Error removing media:', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to remove media. Please try again.',
+        severity: 'error'
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <CircularProgress />
     </Box>
   );
+  }
   
-  if (error) return (
-    <Box sx={{ p: 3, display: 'flex', justifyContent: 'center' }}>
+  if (error) {
+    return (
+      <Box sx={{ p: 3, textAlign: 'center' }}>
       <Typography color="error">{error}</Typography>
     </Box>
   );
-  
-  if (!project) return (
-    <Box sx={{ p: 3, display: 'flex', justifyContent: 'center' }}>
-      <Typography>No project data available</Typography>
+  }
+
+  if (!project) {
+    return (
+      <Box sx={{ p: 3, textAlign: 'center' }}>
+        <Typography>Project not found</Typography>
     </Box>
   );
+  }
 
   return (
     <Box sx={{ bgcolor: '#F5F5F5', minHeight: '100vh' }}>
       <Navbar />
       <Container maxWidth="lg" sx={{ pt: 3, pb: 8 }}>
         {/* Header */}
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <IconButton 
-            onClick={() => router.back()} 
-            sx={{ 
-              mr: 2,
-              color: 'text.secondary',
-              '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.04)' }
-            }}
-          >
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, maxWidth: '1200px', margin: '0 auto', padding: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <IconButton onClick={() => router.back()}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h5" component="h1" sx={{ fontWeight: 500 }}>
-            {project.title}
+            <Typography variant="h4" component="h1">
+              {project?.title || 'Loading...'}
           </Typography>
-        </Box>
-
-        {/* Status and Last Updated */}
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+            {project?.creatorUid === auth.currentUser?.uid && (
           <Chip 
-            label={project.status || 'Active'} 
+                label="Creator"
+                color="primary"
             size="small" 
             sx={{ 
-              bgcolor: project.status === 'Completed' 
-                ? '#EDE7F6' 
-                : project.status === 'Archived'
-                ? '#FFEBEE'
-                : '#E8F5E9',
-              color: project.status === 'Completed' 
-                ? '#5E35B1' 
-                : project.status === 'Archived'
-                ? '#C62828'
-                : '#2E7D32',
+                  backgroundColor: 'primary.main',
+                  color: 'white',
+                  fontWeight: 'medium'
+                }}
+              />
+            )}
+            <Box sx={{ flexGrow: 1 }} />
+            {project?.projectLink && (
+              <Button
+                variant="contained"
+                color="info"
+                onClick={() => window.open(project.projectLink, '_blank')}
+                startIcon={<LinkIcon />}
+                sx={{ 
+                  minWidth: 100, 
               mr: 1,
-              height: '24px',
-              fontSize: '0.75rem'
-            }} 
-          />
-          <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-            Last updated: {new Date(project.updatedAt || project.createdAt).toLocaleDateString()}
+                  backgroundColor: '#2196F3',
+                  '&:hover': {
+                    backgroundColor: '#1976D2'
+                  }
+                }}
+              >
+                View Project
+              </Button>
+            )}
+            {isCurrentUserMember && (
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleEditOpen}
+                startIcon={<EditIcon />}
+                sx={{ 
+                  minWidth: 100,
+                  mr: isCurrentUserMember && !isCreator ? 1 : 0,
+                  backgroundColor: '#4CAF50',
+                  '&:hover': {
+                    backgroundColor: '#388E3C'
+                  }
+                }}
+              >
+                Edit
+              </Button>
+            )}
+            {!isCurrentUserMember && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setJoinDialogOpen(true)}
+                startIcon={<GroupAddIcon />}
+                sx={{ 
+                  minWidth: 100,
+                  backgroundColor: '#1976D2',
+                  '&:hover': {
+                    backgroundColor: '#1565C0'
+                  }
+                }}
+              >
+                Join Project
+              </Button>
+            )}
+            {isCurrentUserMember && !isCreator && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleLeaveProject}
+                startIcon={<ExitToAppIcon />}
+                sx={{ 
+                  minWidth: 100, 
+                  ml: 1,
+                  backgroundColor: '#F44336',
+                  '&:hover': {
+                    backgroundColor: '#D32F2F'
+                  }
+                }}
+              >
+                Leave Project
+              </Button>
+            )}
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Chip
+              label={project?.status || 'Unknown Status'}
+              color={getStatusColor(project?.status)}
+              size="small"
+            />
+            <Typography variant="body2" color="text.secondary">
+              Last updated: {project?.updatedAt ? new Date(project.updatedAt).toLocaleDateString() : 'Unknown'}
           </Typography>
+          </Box>
         </Box>
 
         <Grid container spacing={3}>
@@ -673,28 +1110,33 @@ const ProjectDetails = () => {
             <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
               <Typography variant="h6" gutterBottom sx={{ fontWeight: 500 }}>Project Overview</Typography>
               <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
-                {project.description}
+                {project?.description || 'No description available'}
               </Typography>
             </Paper>
 
             <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
               <Typography variant="h6" gutterBottom sx={{ fontWeight: 500 }}>Key Achievements</Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {project.achievements?.map((achievement, index) => (
+                {Array.isArray(project?.keyAchievements) && project.keyAchievements.length > 0 ? (
+                  project.keyAchievements.map((achievement, index) => (
                   <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
                     <CheckCircleIcon sx={{ color: '#2E7D32', fontSize: 20, mt: 0.3 }} />
                     <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
                       {achievement}
                     </Typography>
                   </Box>
-                ))}
+                  ))
+                ) : (
+                  <Typography color="text.secondary">No achievements added yet</Typography>
+                )}
               </Box>
             </Paper>
 
             <Paper sx={{ p: 3, borderRadius: 2 }}>
               <Typography variant="h6" gutterBottom sx={{ fontWeight: 500 }}>Project Timeline</Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                {/* Vertical line */}
+                {Array.isArray(project?.timeline) && project.timeline.length > 0 ? (
+                  <>
                 <Box
                   sx={{
                     position: 'absolute',
@@ -706,7 +1148,7 @@ const ProjectDetails = () => {
                     zIndex: 0
                   }}
                 />
-                {project.timeline?.map((update, index) => (
+                    {project.timeline.map((update, index) => (
                   <Box key={index} sx={{ display: 'flex', gap: 3, mb: 4, position: 'relative' }}>
                     <Box sx={{ 
                       width: 16, 
@@ -729,6 +1171,10 @@ const ProjectDetails = () => {
                     </Box>
                   </Box>
                 ))}
+                  </>
+                ) : (
+                  <Typography color="text.secondary">No timeline entries yet</Typography>
+                )}
               </Box>
             </Paper>
           </Grid>
@@ -738,7 +1184,8 @@ const ProjectDetails = () => {
             <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
               <Typography variant="h6" gutterBottom sx={{ fontWeight: 500 }}>Technologies Used</Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {project.tags?.map((tech) => (
+                {Array.isArray(editedProject?.technologies) && editedProject.technologies.length > 0 ? (
+                  editedProject.technologies.map((tech) => (
                   <Chip 
                     key={tech}
                     label={tech}
@@ -754,7 +1201,10 @@ const ProjectDetails = () => {
                       }
                     }}
                   />
-                ))}
+                  ))
+                ) : (
+                  <Typography color="text.secondary">No technologies specified</Typography>
+                )}
               </Box>
 
               <Grid container spacing={2} sx={{ mt: 2 }}>
@@ -776,10 +1226,10 @@ const ProjectDetails = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                    Project Type
+                    Project Category
                   </Typography>
                   <Typography variant="body2">
-                    {project.projectType || 'Not specified'}
+                    {project.category || 'Not specified'}
                   </Typography>
                 </Grid>
               </Grid>
@@ -787,109 +1237,95 @@ const ProjectDetails = () => {
 
             <Paper sx={{ p: 3, borderRadius: 2 }}>
               <Typography variant="h6" gutterBottom sx={{ fontWeight: 500 }}>Team Members</Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mb: 3 }}>
-                {teamMembers.map((member, index) => (
-                  <Box key={index} sx={{ 
-                    p: 2, 
-                    bgcolor: '#F5F5F5', 
-                    borderRadius: 2,
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {Array.isArray(teamMembers) && teamMembers.length > 0 ? (
+                  teamMembers.map((member, index) => (
+                    <Box
+                      key={index}
+                      sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 2
-                  }}>
-                    <Avatar 
-                      src={member.photoURL || ''} 
-                      sx={{ 
-                        width: 40, 
-                        height: 40,
-                        bgcolor: member.name === 'Open Position' ? '#E0E0E0' : '#1976D2'
+                        p: 2,
+                        borderRadius: 1,
+                        bgcolor: 'background.paper',
+                        boxShadow: 1,
+                        cursor: member.uid ? 'pointer' : 'default',
+                        '&:hover': member.uid ? {
+                          bgcolor: 'rgba(0, 0, 0, 0.04)',
+                          transform: 'translateY(-2px)',
+                          transition: 'all 0.2s ease-in-out'
+                        } : {}
+                      }}
+                      onClick={() => {
+                        if (member.uid) {
+                          router.push(`/profile/${member.uid}`);
+                        }
                       }}
                     >
-                      {member.name && member.name !== 'Open Position' ? member.name.charAt(0) : '?'}
+                      {member.photoURL ? (
+                    <Avatar 
+                          src={member.photoURL}
+                          alt={member.name}
+                      sx={{ 
+                            width: 48,
+                            height: 48,
+                            border: '2px solid #fff',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                          }}
+                        />
+                      ) : (
+                        <Avatar
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            bgcolor: '#e0e0e0',
+                            color: '#757575'
+                          }}
+                        >
+                          {member.name === 'Open Position' ? '?' : member.name.charAt(0)}
                     </Avatar>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 500, color: member.name === 'Open Position' ? '#757575' : '#1976D2' }}>
-                        {member.name || 'Open Position'}
+                      )}
+                      <Box sx={{ ml: 2, flex: 1 }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+                          {member.name}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {member.role || 'No Role Assigned'}
+                          {member.role}
+                          {member.subRole && ` - ${member.subRole}`}
                       </Typography>
-                      {member.subRole && (
-                        <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-                          {member.subRole}
-                        </Typography>
-                      )}
                     </Box>
-                    {isCurrentUserMember && (
+                      {isCurrentUserMember ? (
+                        member.uid === auth.currentUser?.uid && (
                       <Button
                         variant="outlined"
                         size="small"
                         onClick={() => handleRoleChange(index)}
-                        disabled={member.name === 'Open Position'}
+                            sx={{ minWidth: 100 }}
                       >
-                        Change Role
+                            CHANGE ROLE
                       </Button>
-                    )}
-                  </Box>
-                ))}
-              </Box>
-
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                {isCurrentUserMember ? (
-                  <Button
-                    variant="outlined"
-                    onClick={handleEditOpen}
-                    sx={{ 
-                      borderColor: '#1976D2',
-                      color: '#1976D2',
-                      '&:hover': {
-                        borderColor: '#1565C0',
-                        bgcolor: 'rgba(25, 118, 210, 0.04)'
-                      }
-                    }}
-                  >
-                    Edit
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outlined"
-                    fullWidth
-                    onClick={() => setJoinDialogOpen(true)}
-                    sx={{ 
-                      color: '#1976D2',
-                      borderColor: '#1976D2',
-                      '&:hover': {
-                        borderColor: '#1565C0',
-                        bgcolor: 'rgba(25, 118, 210, 0.04)'
-                      }
-                    }}
-                  >
-                    Join
-                  </Button>
-                )}
+                        )
+                      ) : (
+                        !member.uid && (
                 <Button
                   variant="contained"
-                  fullWidth
+                            color="primary"
+                            size="small"
                   onClick={() => {
-                    if (project.projectLink) {
-                      window.open(project.projectLink, '_blank');
-                    } else {
-                      setSnackbar({
-                        open: true,
-                        message: 'No project link available',
-                        severity: 'info'
-                      });
-                    }
-                  }}
-                  sx={{ 
-                    bgcolor: '#1976D2',
-                    '&:hover': {
-                      bgcolor: '#1565C0'
-                    }
-                  }}
-                >
-                  View
+                              setSelectedJoinRole(index);
+                              setJoinDialogOpen(true);
+                            }}
+                            sx={{ minWidth: 100 }}
+                          >
+                            JOIN
                 </Button>
+                        )
+                      )}
+                    </Box>
+                  ))
+                ) : (
+                  <Typography color="text.secondary">No team members yet</Typography>
+                )}
               </Box>
             </Paper>
           </Grid>
@@ -905,482 +1341,316 @@ const ProjectDetails = () => {
       >
         <DialogTitle>Edit Project</DialogTitle>
         <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 2 }}>
-            {/* Project Title and Status */}
-            <Grid container spacing={2}>
-              <Grid item xs={8}>
+          <Box component="form" sx={{ mt: 2 }}>
+            {/* Project Title */}
                 <TextField
                   fullWidth
                   label="Project Title"
                   value={editedProject?.title || ''}
-                  onChange={(e) => setEditedProject({ ...editedProject, title: e.target.value })}
-                />
-              </Grid>
-              <Grid item xs={4}>
-                <FormControl fullWidth>
-                  <InputLabel>Status</InputLabel>
-                  <Select
-                    value={editedProject?.status || 'Active'}
-                    onChange={(e) => setEditedProject({ ...editedProject, status: e.target.value })}
-                    label="Status"
-                  >
-                    <MenuItem value="Active">Active</MenuItem>
-                    <MenuItem value="Archived">Archived</MenuItem>
-                    <MenuItem value="Completed">Completed</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
+              onChange={(e) => handleEditChange('title', e.target.value)}
+              sx={{ mb: 2 }}
+            />
 
-            {/* Project Type and Duration */}
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <FormControl fullWidth>
-                  <InputLabel>Project Type</InputLabel>
-                  <Select
-                    value={editedProject?.projectType || ''}
-                    onChange={(e) => setEditedProject({ ...editedProject, projectType: e.target.value })}
-                    label="Project Type"
-                  >
-                    <MenuItem value="Education">Education</MenuItem>
-                    <MenuItem value="Technology">Technology</MenuItem>
-                    <MenuItem value="Business">Business</MenuItem>
-                    <MenuItem value="Healthcare">Healthcare</MenuItem>
-                    <MenuItem value="Entertainment">Entertainment</MenuItem>
-                    <MenuItem value="Other">Other</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={6}>
+            {/* Project Description */}
                 <TextField
                   fullWidth
-                  label="Duration"
-                  value={editedProject?.duration || ''}
-                  onChange={(e) => setEditedProject({ ...editedProject, duration: e.target.value })}
-                  placeholder="e.g., 3 months"
-                />
-              </Grid>
-            </Grid>
-
-            {/* Team Size */}
-            <TextField
-              fullWidth
-              label="Team Size"
-              type="number"
-              value={editedProject?.teamSize || 2}
-              onChange={(e) => {
-                const newSize = parseInt(e.target.value);
-                if (newSize > 0) {
-                  const currentRoles = editedProject.roles || [];
-                  const newRoles = [...currentRoles];
-                  
-                  // Add or remove roles based on new size
-                  if (newSize > currentRoles.length) {
-                    for (let i = currentRoles.length; i < newSize; i++) {
-                      newRoles.push({ role: '', subRole: '', userId: null });
-                    }
-                  } else if (newSize < currentRoles.length) {
-                    newRoles.splice(newSize);
-                  }
-
-                  setEditedProject({
-                    ...editedProject,
-                    teamSize: newSize,
-                    roles: newRoles
-                  });
-                }
-              }}
-              InputProps={{
-                inputProps: { min: 1 }
-              }}
-            />
-
-            {/* Project Overview */}
-            <TextField
-              fullWidth
-              label="Project Overview"
               multiline
               rows={4}
+              label="Project Description"
               value={editedProject?.description || ''}
-              onChange={(e) => setEditedProject({ ...editedProject, description: e.target.value })}
+              onChange={(e) => handleEditChange('description', e.target.value)}
+              sx={{ mb: 2 }}
             />
 
+            {/* Project Link */}
+            <TextField
+              fullWidth
+              label="Project Link"
+              value={editedProject?.projectLink || ''}
+              onChange={(e) => handleEditChange('projectLink', e.target.value)}
+              sx={{ mb: 2 }}
+            />
+
+            {/* Team Roles */}
+            <Typography variant="h6" sx={{ mb: 2 }}>Team Roles</Typography>
+            {Array.isArray(editedProject?.roles) ? (
+              editedProject.roles.map((role, index) => (
+                <Box key={index} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                    <TextField
+                      fullWidth
+                    label="Role Title"
+                    value={role.role || ''}
+                    onChange={(e) => {
+                      const updatedRoles = [...editedProject.roles];
+                      updatedRoles[index] = { ...updatedRoles[index], role: e.target.value };
+                      handleEditChange('roles', updatedRoles);
+                    }}
+                    sx={{ mb: 1 }}
+                  />
+            <TextField
+              fullWidth
+                    label="Sub Role (Optional)"
+                    value={role.subRole || ''}
+                    onChange={(e) => {
+                      const updatedRoles = [...editedProject.roles];
+                      updatedRoles[index] = { ...updatedRoles[index], subRole: e.target.value };
+                      handleEditChange('roles', updatedRoles);
+                    }}
+                    sx={{ mb: 1 }}
+                  />
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      {role.userId ? 'Filled' : 'Open Position'}
+                    </Typography>
+                    {!role.userId && (
+                      <Button
+                          size="small"
+                        color="error"
+                        onClick={() => {
+                          const updatedRoles = editedProject.roles.filter((_, i) => i !== index);
+                          handleEditChange('roles', updatedRoles);
+                        }}
+                      >
+                        Remove Role
+                                  </Button>
+                              )}
+                            </Box>
+                          </Box>
+              ))
+            ) : (
+              <Typography color="text.secondary">No roles defined</Typography>
+            )}
+
+                            <Button
+                              variant="outlined"
+              startIcon={<AddIcon />}
+              onClick={() => {
+                const updatedRoles = Array.isArray(editedProject?.roles) 
+                  ? [...editedProject.roles, { role: '', subRole: '', userId: null }]
+                  : [{ role: '', subRole: '', userId: null }];
+                handleEditChange('roles', updatedRoles);
+              }}
+              sx={{ mt: 2 }}
+            >
+              Add Role
+                            </Button>
+
             {/* Project Category */}
-            <FormControl fullWidth>
+            <FormControl fullWidth sx={{ mt: 2 }}>
               <InputLabel>Project Category</InputLabel>
               <Select
                 value={editedProject?.category || ''}
-                onChange={(e) => setEditedProject({ ...editedProject, category: e.target.value })}
+                onChange={(e) => handleEditChange('category', e.target.value)}
                 label="Project Category"
               >
-                <MenuItem value="Web Development">Web Development</MenuItem>
-                <MenuItem value="Mobile Development">Mobile Development</MenuItem>
-                <MenuItem value="Data Science">Data Science</MenuItem>
-                <MenuItem value="Machine Learning">Machine Learning</MenuItem>
-                <MenuItem value="UI/UX Design">UI/UX Design</MenuItem>
-                <MenuItem value="Other">Other</MenuItem>
+                {defaultProjectTypes.map((type) => (
+                  <MenuItem key={type} value={type}>{type}</MenuItem>
+                ))}
               </Select>
             </FormControl>
 
-            {/* Skills */}
-            <Box>
-              <Typography variant="subtitle1" sx={{ mb: 1 }}>Skills</Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {editedProject?.tags?.map((skill, index) => (
-                  <Chip
-                    key={index}
-                    label={skill}
-                    onDelete={() => {
-                      const newSkills = [...editedProject.tags];
-                      newSkills.splice(index, 1);
-                      setEditedProject({ ...editedProject, tags: newSkills });
-                    }}
-                  />
-                ))}
-              </Box>
-              <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                <TextField
-                  size="small"
-                  placeholder="Add skill"
-                  value={newSkill}
-                  onChange={(e) => setNewSkill(e.target.value)}
-                />
-                <Button onClick={handleAddSkill} variant="outlined">Add</Button>
-              </Box>
-            </Box>
-
-            {/* Roles */}
-            <Box>
-              <Typography variant="subtitle1" sx={{ mb: 1 }}>Roles</Typography>
-              {editedProject?.roles?.map((roleData, index) => (
-                <Box key={index} sx={{ display: 'flex', gap: 1, mb: 1 }}>
-                  <TextField
-                    size="small"
-                    placeholder="Role"
-                    value={roleData.role || ''}
-                    onChange={(e) => handleEditRole(index, 'role', e.target.value)}
-                  />
-                  <TextField
-                    size="small"
-                    placeholder="Sub-role (optional)"
-                    value={roleData.subRole || ''}
-                    onChange={(e) => handleEditRole(index, 'subRole', e.target.value)}
-                  />
-                  <IconButton 
-                    onClick={() => handleRemoveRole(index)} 
-                    color="error"
-                    disabled={roleData.userId !== null} // Prevent removing roles that have assigned users
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Box>
-              ))}
-              <Button 
-                variant="outlined" 
-                onClick={handleAddRole}
-                disabled={editedProject?.roles?.length >= (editedProject?.teamSize || 0)}
-                sx={{ mt: 1 }}
+            {/* Project Status */}
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <InputLabel>Project Status</InputLabel>
+              <Select
+                value={editedProject?.status || 'Active'}
+                onChange={(e) => handleEditChange('status', e.target.value)}
+                label="Project Status"
               >
-                Add Role
-              </Button>
-            </Box>
+                {defaultProgressStatuses.map((status) => (
+                  <MenuItem key={status} value={status}>{status}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-            {/* Key Achievements */}
-            <Typography variant="h6" sx={{ mt: 2 }}>Key Achievements</Typography>
-            {editedProject?.achievements?.map((achievement, index) => (
-              <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* Expected Completion Date */}
                 <TextField
                   fullWidth
+              type="date"
+              label="Expected Completion Date"
+              value={editedProject?.expectedCompletionDate || ''}
+              onChange={(e) => handleEditChange('expectedCompletionDate', e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              sx={{ mt: 2 }}
+            />
+
+            {/* Key Achievements Section */}
+            <Typography variant="h6" sx={{ mb: 2, mt: 3 }}>Key Achievements</Typography>
+            {Array.isArray(editedProject?.keyAchievements) ? editedProject.keyAchievements.map((achievement, index) => (
+              <Box key={index} sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <TextField
+                  fullWidth
                   value={achievement}
-                  disabled
+                  onChange={(e) => handleKeyAchievementChange(index, e.target.value)}
+                  placeholder="Enter key achievement"
+                  sx={{ flex: 1 }}
                 />
-                <IconButton onClick={() => handleRemoveAchievement(index)} color="error">
-                  <DeleteIcon />
-                </IconButton>
-              </Box>
-            ))}
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField
-                fullWidth
-                label="New Achievement"
-                value={newAchievement}
-                onChange={(e) => setNewAchievement(e.target.value)}
-              />
-              <Button onClick={handleAddAchievement} variant="contained">
-                Add
+                <Button
+                    size="small"
+                    color="error"
+                  onClick={() => handleRemoveKeyAchievement(index)}
+                  >
+                  Remove
+                </Button>
+                </Box>
+            )) : null}
+              <Button 
+                variant="outlined" 
+              startIcon={<AddIcon />}
+              onClick={handleAddKeyAchievement}
+              >
+              Add Achievement
+              </Button>
+
+            {/* Technologies Section */}
+            <Typography variant="h6" sx={{ mb: 2, mt: 3 }}>Technologies Used</Typography>
+            {Array.isArray(editedProject?.technologies) ? editedProject.technologies.map((technology, index) => (
+              <Box key={index} sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <TextField
+                  fullWidth
+                  value={technology}
+                  onChange={(e) => handleTechnologyChange(index, e.target.value)}
+                  placeholder="Enter technology"
+                  sx={{ flex: 1 }}
+                />
+                <Button
+                  size="small"
+                  color="error"
+                  onClick={() => handleRemoveTechnology(index)}
+                >
+                  Remove
               </Button>
             </Box>
+            )) : null}
+            <Button
+              variant="outlined"
+              startIcon={<AddIcon />}
+              onClick={handleAddTechnology}
+            >
+              Add Technology
+            </Button>
 
-            {/* Timeline */}
-            <Typography variant="h6" sx={{ mt: 2 }}>Timeline</Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {editedProject?.timeline?.map((entry, index) => (
-                <Box key={index} sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2, p: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* Project Timeline Section */}
+            <Typography variant="h6" sx={{ mb: 2, mt: 3 }}>Project Timeline</Typography>
+            {Array.isArray(editedProject?.timeline) ? editedProject.timeline.map((entry, index) => (
+              <Box key={index} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
                     <TextField
                       type="date"
                       value={entry.date}
-                      onChange={(e) => handleEditTimelineEntry(index, 'date', e.target.value)}
-                      sx={{ width: '150px' }}
-                    />
-                    <TextField
-                      fullWidth
-                      value={entry.title}
-                      onChange={(e) => handleEditTimelineEntry(index, 'title', e.target.value)}
-                      placeholder="Entry Title"
-                    />
-                    <IconButton onClick={() => handleRemoveTimelineEntry(index)} color="error">
-                      <DeleteIcon />
-                    </IconButton>
+                    onChange={(e) => handleTimelineChange(index, 'date', e.target.value)}
+                    sx={{ flex: 1 }}
+                  />
+                  <Button
+                    size="small"
+                    color="error"
+                    onClick={() => handleRemoveTimelineEntry(index)}
+                  >
+                    Remove Entry
+                  </Button>
                   </Box>
                   <TextField
                     fullWidth
-                    value={entry.description}
-                    onChange={(e) => handleEditTimelineEntry(index, 'description', e.target.value)}
                     multiline
                     rows={2}
-                    placeholder="Entry Description"
-                  />
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    {entry.mediaUrl ? (
-                      <Box sx={{ position: 'relative', width: 200, height: 'auto' }}>
-                        {entry.mediaType === 'image' ? (
-                          <img 
-                            src={entry.mediaUrl} 
-                            alt="Timeline media" 
-                            style={{ 
-                              width: '100%', 
-                              height: 'auto', 
-                              borderRadius: 4,
-                              objectFit: 'cover'
-                            }}
+                  value={entry.description}
+                  onChange={(e) => handleTimelineChange(index, 'description', e.target.value)}
+                  placeholder="Enter milestone description"
+                  sx={{ mb: 2 }}
+                />
+                
+                {/* Media Upload Section */}
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>Media</Typography>
+                  <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                    {entry.media?.map((mediaItem, mediaIndex) => (
+                      <Box key={mediaIndex} sx={{ position: 'relative' }}>
+                        {mediaItem.type === 'image' ? (
+                          <img
+                            src={mediaItem.url}
+                            alt={`Timeline media ${mediaIndex + 1}`}
+                            style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '4px' }}
                           />
                         ) : (
                           <video 
-                            src={entry.mediaUrl} 
+                            src={mediaItem.url}
+                            style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '4px' }}
                             controls 
-                            style={{ 
-                              width: '100%', 
-                              height: 'auto', 
-                              borderRadius: 4 
-                            }}
                           />
                         )}
                         <IconButton
                           size="small"
-                          onClick={() => handleEditTimelineEntry(index, 'mediaUrl', '')}
+                          onClick={() => handleRemoveMedia(index, mediaIndex)}
                           sx={{ 
                             position: 'absolute', 
-                            top: 4, 
-                            right: 4, 
-                            bgcolor: 'rgba(0,0,0,0.5)',
-                            '&:hover': { bgcolor: 'rgba(0,0,0,0.7)' }
+                            top: -10,
+                            right: -10,
+                            bgcolor: 'white',
+                            '&:hover': { bgcolor: 'white' }
                           }}
                         >
-                          <DeleteIcon sx={{ color: 'white' }} />
+                          <DeleteIcon fontSize="small" />
                         </IconButton>
                       </Box>
-                    ) : (
-                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        {previewMedia && previewMedia.index === index && (
-                          <Box sx={{ position: 'relative', width: 200 }}>
-                            {previewMedia.preview.type === 'image' ? (
-                              <img 
-                                src={previewMedia.preview.url} 
-                                alt="Preview" 
-                                style={{ 
-                                  width: '100%', 
-                                  height: 'auto', 
-                                  borderRadius: 4,
-                                  objectFit: 'cover'
-                                }}
-                              />
-                            ) : (
-                              <video 
-                                src={previewMedia.preview.url} 
-                                controls 
-                                style={{ 
-                                  width: '100%', 
-                                  height: 'auto', 
-                                  borderRadius: 4 
-                                }}
-                              />
-                            )}
-                            <Box sx={{ 
-                              position: 'absolute', 
-                              top: '50%', 
-                              left: '50%', 
-                              transform: 'translate(-50%, -50%)',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              gap: 1
-                            }}>
-                              {uploadLoading ? (
-                                <CircularProgress size={24} sx={{ color: 'white' }} />
-                              ) : (
-                                <>
-                                  <Button
-                                    variant="contained"
-                                    size="small"
-                                    onClick={() => handleTimelineMediaUpload(previewMedia.preview.file, index)}
-                                  >
-                                    Upload
-                                  </Button>
+                    ))}
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
                                   <Button
                                     variant="outlined"
-                                    size="small"
-                                    onClick={() => setPreviewMedia(null)}
-                                    sx={{ color: 'white', borderColor: 'white' }}
-                                  >
-                                    Cancel
-                                  </Button>
-                                </>
-                              )}
-                            </Box>
-                          </Box>
-                        )}
-                        <Box sx={{ display: 'flex', gap: 1 }}>
+                      startIcon={<AddPhotoAlternateIcon />}
+                      component="label"
+                      onClick={() => handleFileSelect(null, index)}
+                    >
+                      Add Image
                           <input
                             type="file"
-                            accept="image/*,video/*"
-                            style={{ display: 'none' }}
-                            id={`timeline-media-${index}`}
-                            onChange={(e) => handleFileSelect(e.target.files[0], index)}
-                          />
-                          <label htmlFor={`timeline-media-${index}`}>
-                            <Button
-                              component="span"
-                              variant="outlined"
-                              size="small"
-                              startIcon={<AddPhotoAlternateIcon />}
-                              disabled={uploadLoading}
-                            >
-                              Add Photo
+                        accept="image/*"
+                        hidden
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            handleFileSelect(file, index);
+                          }
+                        }}
+                      />
                             </Button>
-                          </label>
-                          <label htmlFor={`timeline-media-${index}`}>
                             <Button
-                              component="span"
                               variant="outlined"
-                              size="small"
                               startIcon={<VideoLibraryIcon />}
-                              disabled={uploadLoading}
+                      component="label"
+                      onClick={() => handleFileSelect(null, index)}
                             >
                               Add Video
-                            </Button>
-                          </label>
-                        </Box>
-                      </Box>
-                    )}
-                  </Box>
-                </Box>
-              ))}
-
-              {/* Add new timeline entry */}
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, p: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                  <TextField
-                    type="date"
-                    value={newTimelineEntry.date}
-                    onChange={(e) => setNewTimelineEntry({ ...newTimelineEntry, date: e.target.value })}
-                    sx={{ width: '150px' }}
-                  />
-                  <TextField
-                    fullWidth
-                    label="Title"
-                    value={newTimelineEntry.title}
-                    onChange={(e) => setNewTimelineEntry({ ...newTimelineEntry, title: e.target.value })}
-                  />
-                </Box>
-                <TextField
-                  fullWidth
-                  label="Description"
-                  multiline
-                  rows={2}
-                  value={newTimelineEntry.description}
-                  onChange={(e) => setNewTimelineEntry({ ...newTimelineEntry, description: e.target.value })}
-                />
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  {newTimelineEntry.mediaUrl ? (
-                    <Box sx={{ position: 'relative', width: 200, height: 'auto' }}>
-                      {newTimelineEntry.mediaType === 'image' ? (
-                        <img 
-                          src={newTimelineEntry.mediaUrl} 
-                          alt="New timeline media" 
-                          style={{ width: '100%', height: 'auto', borderRadius: 4 }}
-                        />
-                      ) : (
-                        <video 
-                          src={newTimelineEntry.mediaUrl} 
-                          controls 
-                          style={{ width: '100%', height: 'auto', borderRadius: 4 }}
-                        />
-                      )}
-                      <IconButton
-                        size="small"
-                        onClick={() => setNewTimelineEntry({ ...newTimelineEntry, mediaUrl: '', mediaType: null })}
-                        sx={{ position: 'absolute', top: 4, right: 4, bgcolor: 'rgba(0,0,0,0.5)' }}
-                      >
-                        <DeleteIcon sx={{ color: 'white' }} />
-                      </IconButton>
-                    </Box>
-                  ) : (
-                    <Box sx={{ display: 'flex', gap: 1 }}>
                       <input
                         type="file"
-                        accept="image/*,video/*"
-                        style={{ display: 'none' }}
-                        id="new-timeline-media"
-                        onChange={(e) => handleFileSelect(e.target.files[0])}
+                        accept="video/*"
+                        hidden
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            handleFileSelect(file, index);
+                          }
+                        }}
                       />
-                      <label htmlFor="new-timeline-media">
+                            </Button>
+                        </Box>
+                      </Box>
+                  </Box>
+            )) : null}
                         <Button
-                          component="span"
                           variant="outlined"
-                          size="small"
-                          startIcon={<AddPhotoAlternateIcon />}
-                          disabled={uploadLoading}
-                        >
-                          Add Photo
-                        </Button>
-                      </label>
-                      <label htmlFor="new-timeline-media">
-                        <Button
-                          component="span"
-                          variant="outlined"
-                          size="small"
-                          startIcon={<VideoLibraryIcon />}
-                          disabled={uploadLoading}
-                        >
-                          Add Video
-                        </Button>
-                      </label>
-                    </Box>
-                  )}
-                </Box>
-                <Button onClick={handleAddTimelineEntry} variant="contained" sx={{ mt: 1 }}>
+              startIcon={<AddIcon />}
+              onClick={handleAddTimelineEntry}
+            >
                   Add Timeline Entry
                 </Button>
-              </Box>
-            </Box>
-
-            {/* Project Link */}
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Project Link"
-                value={editedProject?.projectLink || ''}
-                onChange={(e) => setEditedProject({ ...editedProject, projectLink: e.target.value })}
-                placeholder="Enter project URL (e.g., https://github.com/username/project)"
-                helperText="Enter the URL where users can view the project"
-              />
-            </Grid>
           </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleEditClose}>Cancel</Button>
-          <Button onClick={handleSaveChanges} variant="contained">Save Changes</Button>
+          <Button onClick={handleSaveChanges} variant="contained" color="primary">
+            Save Changes
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -1474,6 +1744,18 @@ const ProjectDetails = () => {
                 placeholder="Enter custom sub-role"
               />
             )}
+
+            <Divider sx={{ my: 2 }} />
+
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleLeaveProject}
+              startIcon={<ExitToAppIcon />}
+              sx={{ mt: 2 }}
+            >
+              Leave Project
+            </Button>
           </Box>
         </DialogContent>
         <DialogActions>
@@ -1500,7 +1782,8 @@ const ProjectDetails = () => {
             <Typography variant="body1" color="text.secondary">
               Select a role to join the project:
             </Typography>
-            {(project?.roles || []).map((roleData, index) => {
+            {Array.isArray(project?.roles) && project.roles.length > 0 ? (
+              project.roles.map((roleData, index) => {
               const roleTitle = typeof roleData.role === 'object' ? roleData.role.role : roleData.role;
               const roleSubTitle = typeof roleData.role === 'object' ? roleData.role.subRole : roleData.subRole;
               
@@ -1538,7 +1821,10 @@ const ProjectDetails = () => {
                   )}
                 </Box>
               );
-            })}
+              })
+            ) : (
+              <Typography color="text.secondary">No roles available</Typography>
+            )}
           </Box>
         </DialogContent>
         <DialogActions>

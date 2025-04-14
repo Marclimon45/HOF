@@ -28,9 +28,19 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Allow initial user creation during registration
-    match /users/{userId} {
-      allow create: if request.auth != null && request.auth.uid == userId;
+    // Rules for notifications collection
+    match /notifications/{notificationId} {
+      // Allow users to read their own notifications
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      // Allow users to create notifications for projects they're part of
+      allow create: if request.auth != null && (
+        request.resource.data.userId == request.auth.uid ||
+        exists(/databases/$(database)/documents/projects/$(request.resource.data.projectId)/roles/$(request.auth.uid))
+      );
+      // Allow users to update (mark as read) their own notifications
+      allow update: if request.auth != null && 
+        resource.data.userId == request.auth.uid && 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
     }
 
     // Rules for ideas collection
@@ -48,6 +58,11 @@ service cloud.firestore {
       allow update: if request.auth != null 
         && (request.resource.data.diff(resource.data).affectedKeys()
             .hasOnly(['likes', 'comments']));
+    }
+
+    // Default deny for anything not explicitly allowed
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 } 

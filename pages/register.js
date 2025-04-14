@@ -4,7 +4,7 @@ import {
   FaDiscord, FaTimes, FaGithub, FaLinkedin, FaUser, FaUserAlt, 
   FaEnvelope, FaLock, FaCode, FaDatabase, FaPalette, FaBrain,
   FaChartLine, FaServer, FaRobot, FaLaptopCode, FaDocker,
-  FaFigma, FaAws, FaJira, FaSlack, FaStickyNote
+  FaFigma, FaAws, FaJira, FaSlack, FaStickyNote, FaGlobe
 } from "react-icons/fa";
 import { SiGit, SiAdobexd, SiNotion } from "react-icons/si";
 import { db, auth } from "../firebase/firebaseconfig";
@@ -12,10 +12,14 @@ import { collection, setDoc, getDocs, query, where, doc } from "firebase/firesto
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { TextField } from "@mui/material";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import LanguageIcon from "@mui/icons-material/Language";
 
 const Register = () => {
   const [formData, setFormData] = useState({
     firstName: "",
+    middleName: "",
     lastName: "",
     email: "",
     password: "",
@@ -30,6 +34,8 @@ const Register = () => {
     customAreaOfInterest: "",
     rank: "Unranked",
     contributions: 0,
+    github: "",
+    website: "",
   });
 
   const [isTosAccepted, setIsTosAccepted] = useState(false);
@@ -69,6 +75,7 @@ const Register = () => {
 
       await setDoc(doc(db, "users", user.uid), {
         firstName: formData.firstName,
+        middleName: formData.middleName,
         lastName: formData.lastName,
         email: formData.email,
         discordUsername: formData.discordUsername,
@@ -81,11 +88,13 @@ const Register = () => {
         rank: formData.rank,
         contributions: formData.contributions,
         createdAt: new Date().toISOString(),
+        github: formData.github,
+        website: formData.website,
       });
 
       console.log("User profile created successfully");
       setTimeout(() => {
-        router.push("/");
+        router.push("/home");
       }, 500);
     } catch (error) {
       console.error("Error: ", error);
@@ -221,6 +230,17 @@ const Register = () => {
               />
             </div>
             <div className={styles.inputWithIcon}>
+              <FaUser className={styles.inputIcon} />
+              <input
+                type="text"
+                name="middleName"
+                placeholder="Enter middle name (optional)"
+                value={formData.middleName}
+                onChange={handleInputChange}
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.inputWithIcon}>
               <FaUserAlt className={styles.inputIcon} />
               <input
                 type="text"
@@ -302,6 +322,17 @@ const Register = () => {
                 name="githubUrl"
                 placeholder="Enter GitHub profile URL"
                 value={formData.githubUrl}
+                onChange={handleInputChange}
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.inputWithIcon}>
+              <FaGlobe className={styles.inputIcon} />
+              <input
+                type="url"
+                name="website"
+                placeholder="Enter personal website URL"
+                value={formData.website}
                 onChange={handleInputChange}
                 className={styles.input}
               />

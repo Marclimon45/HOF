@@ -1,42 +1,63 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Toolbar, Typography, InputBase, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
+import { AppBar, Toolbar, Typography, Avatar, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Button, Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import SearchIcon from "@mui/icons-material/Search";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import styles from "../styles/navbar.module.css";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { auth } from "../firebase/firebaseconfig";
+import { auth, db } from "../firebase/firebaseconfig";
 import { signOut } from "firebase/auth";
-import { onAuthStateChanged } from "firebase/auth";
-
-const Search = styled("div")(() => ({
-  display: "flex",
-  alignItems: "center",
-  backgroundColor: "#f1f1f1",
-  padding: "6px 12px",
-  borderRadius: "5px",
-  marginLeft: "20px",
-  width: "200px",
-}));
-
-const SearchInput = styled(InputBase)({
-  marginLeft: 5,
-  flex: 1,
-  fontSize: "14px",
-});
+import { doc, getDoc } from "firebase/firestore";
 
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  const isActivePage = (path) => {
+    return router.pathname === path;
+  };
+
+  const getRankImage = (contributions, isCPSMember) => {
+    if (isCPSMember) return '/CPS.webp';
+    if (contributions >= 15) return '/Master.webp';
+    if (contributions >= 10) return '/Diamond.webp';
+    if (contributions >= 5) return '/Platinum.webp';
+    if (contributions >= 3) return '/Gold.webp';
+    if (contributions >= 2) return '/Silver.webp';
+    if (contributions >= 1) return '/Bronze.webp';
+    return null;  // Don't show any rank image for unranked users
+  };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    setMounted(true);
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        try {
+          // Fetch user data including contributions
+          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            console.log('User data:', data); // Debug log
+            
+            // Ensure we have a contributions value
+            const contributions = data.contributions || 0;
+            setUserData({
+              ...data,
+              contributions: contributions
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      } else {
+        setUserData(null);
+      }
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -63,11 +84,38 @@ const Navbar = () => {
     }
   };
 
+  const handleBucketClick = (e) => {
+    e.preventDefault();
+    router.push('/bucket');
+  };
+
+  const handleNavigation = (path) => {
+    router.push(path);
+  };
+
+  // Render a simple loading state during SSR
+  if (!mounted) {
+    return (
+      <AppBar position="static" color="default" elevation={0} className={styles.navbar}>
+        <Toolbar className={styles.toolbar}>
+          <Link href="/home" passHref>
+            <div className={styles.logoContainer}>
+              <img src="/cpx.png" alt="Logo" className={styles.logo} />
+              <Typography variant="h6" className={styles.logoText}>
+                Xin's Hall of Fame
+              </Typography>
+            </div>
+          </Link>
+        </Toolbar>
+      </AppBar>
+    );
+  }
+
   return (
     <AppBar position="static" color="default" elevation={0} className={styles.navbar}>
       <Toolbar className={styles.toolbar}>
         {/* Logo */}
-        <Link href="/" passHref>
+        <Link href="/home" passHref>
           <div className={styles.logoContainer}>
             <img src="/cpx.png" alt="Logo" className={styles.logo} />
             <Typography variant="h6" className={styles.logoText}>
@@ -76,40 +124,55 @@ const Navbar = () => {
           </div>
         </Link>
 
-        {/* Search Bar */}
-        <Search>
-          <SearchIcon style={{ fontSize: "18px", color: "#999" }} />
-          <SearchInput placeholder="Search projects..." />
-        </Search>
-
         {/* Navigation Links */}
         <div className={styles.navLinks}>
-          <Link href="/" passHref>
-            <Typography className={styles.navLink} color="primary">Home</Typography>
+          <Link href="/home">
+            <Typography className={`${styles.navLink} ${isActivePage('/home') ? styles.activeNavLink : ''}`}>
+              Home
+            </Typography>
           </Link>
-          <Link href="/contribution" passHref>
-            <Typography className={styles.navLink}>Contribution</Typography>
+          <Link href="/contribution">
+            <Typography className={`${styles.navLink} ${isActivePage('/contribution') ? styles.activeNavLink : ''}`}>
+              Contribution
+            </Typography>
           </Link>
-          <Link href="/bucket" passHref>
-            <Typography className={styles.navLink}>Bucket</Typography>
+          <Link href="/bucket">
+            <Typography className={`${styles.navLink} ${isActivePage('/bucket') ? styles.activeNavLink : ''}`}>
+              Bucket
+            </Typography>
           </Link>
-          <Link href="/projects" passHref>
-            <Typography className={styles.navLink}>Projects & Publication</Typography>
+          <Link href="/projects-and-publications">
+            <Typography className={`${styles.navLink} ${isActivePage('/projects-and-publications') ? styles.activeNavLink : ''}`}>
+              Projects & Publications
+            </Typography>
           </Link>
-          <Link href="/about" passHref>
-            <Typography className={styles.navLink}>About us</Typography>
-          </Link>
+          <Button
+            color="inherit"
+            onClick={() => handleNavigation('/team')}
+            className={router.pathname === '/team' ? styles.activeLink : ''}
+          >
+            About Us
+          </Button>
         </div>
 
         {/* User Profile or Auth Buttons */}
         {user ? (
           <>
             <div className={styles.profileSection} onClick={handleMenuOpen}>
-              <Avatar src="/jeff1.jpg" className={styles.avatar} />
-              <Typography className={styles.username}>
-                {user.email?.split('@')[0] || 'User'}
-              </Typography>
-              <ArrowDropDownIcon />
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Avatar src={userData?.photoURL || user.photoURL || '/jeff1.jpg'} className={styles.avatar} />
+                <Typography className={styles.username}>
+                  {userData?.displayName || user.email?.split('@')[0] || 'User'}
+                </Typography>
+                {(userData?.contributions > 0 || userData?.isCPSMember) && getRankImage(userData?.contributions, userData?.isCPSMember) && (
+                  <img
+                    src={getRankImage(userData?.contributions, userData?.isCPSMember)}
+                    alt={userData?.isCPSMember ? 'CPS Rank' : `Rank ${userData?.contributions}`}
+                    className={styles.rankIcon}
+                  />
+                )}
+                <ArrowDropDownIcon sx={{ color: '#666' }} />
+              </Box>
             </div>
 
             {/* Dropdown Menu */}
@@ -117,7 +180,9 @@ const Navbar = () => {
               <Link href="/profile" passHref>
                 <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
               </Link>
-              <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+              <Link href="/settings" passHref>
+                <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+              </Link>
               <MenuItem onClick={handleLogoutClick} sx={{ color: 'error.main' }}>Logout</MenuItem>
             </Menu>
 

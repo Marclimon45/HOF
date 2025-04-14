@@ -25,6 +25,8 @@ import {
   FormControlLabel,
   Menu,
   Radio,
+  CircularProgress,
+  InputAdornment,
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import AddIcon from "@mui/icons-material/Add";
@@ -37,6 +39,12 @@ import BuildIcon from "@mui/icons-material/Build"; // Engineering
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline"; // Active
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"; // Completed
 import GroupAddIcon from "@mui/icons-material/GroupAdd"; // Looking for Members
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import WorkIcon from '@mui/icons-material/Work';
+import SchoolIcon from '@mui/icons-material/School';
+import BiotechIcon from '@mui/icons-material/Biotech';
+import PaletteIcon from '@mui/icons-material/Palette';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import Navbar from "../components/navbar";
 import ProjectCard from "../components/projectcard";
 import { db, auth } from "../firebase/firebaseconfig";
@@ -62,6 +70,23 @@ const areasOfInterestOptions = ["Technology", "Education", "Health", "Business",
 const defaultProjectTypes = ["Development", "Research", "Marketing", "Design", "Business", "Engineering"];
 const defaultProgressStatuses = ["Active", "Completed", "Looking for Members"];
 
+const defaultRoleTypes = [
+  { label: "Developer", icon: <CodeIcon /> },
+  { label: "Designer", icon: <PaletteIcon /> },
+  { label: "Researcher", icon: <BiotechIcon /> },
+  { label: "Project Manager", icon: <AccountTreeIcon /> },
+  { label: "Student", icon: <SchoolIcon /> },
+  { label: "Professional", icon: <WorkIcon /> }
+];
+
+const durationOptions = [
+  { label: "Less than 1 month", value: "0-1" },
+  { label: "1-3 months", value: "1-3" },
+  { label: "3-6 months", value: "3-6" },
+  { label: "6-12 months", value: "6-12" },
+  { label: "Over 12 months", value: "12+" }
+];
+
 // Map project types to icons
 const projectTypeIcons = {
   Development: <CodeIcon />,
@@ -81,9 +106,11 @@ const progressStatusIcons = {
 
 const Home = () => {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [projects, setProjects] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
   const [page, setPage] = useState(1);
   const [bookmarkedProjects, setBookmarkedProjects] = useState([]);
   const [openCreateProject, setOpenCreateProject] = useState(false);
@@ -94,6 +121,7 @@ const Home = () => {
   const [customSkill, setCustomSkill] = useState("");
   const [customTag, setCustomTag] = useState("");
   const [roles, setRoles] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Project creation state
   const [projectDetails, setProjectDetails] = useState({
@@ -112,11 +140,12 @@ const Home = () => {
     projectTypes: [],
     progressStatuses: [],
     skillsRequired: [],
+    roleTypes: [],
+    duration: "",
     teamSizeMin: "",
     teamSizeMax: "",
-    customTags: [],
-    roles: [],
-    timeCompletion: ""
+    customSkills: [],
+    customRoles: []
   });
 
   // Add new state for input fields
@@ -126,29 +155,64 @@ const Home = () => {
     roleSearch: ""
   });
 
+  // Add custom input state
+  const [customInput, setCustomInput] = useState({
+    skill: "",
+    role: ""
+  });
+
   const today = new Date();
   const minDate = today.toISOString().split("T")[0];
 
+  // Add mounted effect
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Separate auth effect
+  useEffect(() => {
+    if (!mounted) return;
+
     const unsubscribeAuth = auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        console.log("User signed in:", user.uid);
-        setUser(user);
-        
-        const userDocRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
-        
-        if (!userDoc.exists()) {
-          await setDoc(userDocRef, { bookmarkedProjects: [] });
-          setBookmarkedProjects([]);
+      try {
+        if (user) {
+          console.log("User signed in:", user.uid);
+          setUser(user);
+          
+          const userDocRef = doc(db, "users", user.uid);
+          const userDoc = await getDoc(userDocRef);
+          
+          if (!userDoc.exists()) {
+            await setDoc(userDocRef, { bookmarkedProjects: [] });
+            setBookmarkedProjects([]);
+          } else {
+            setBookmarkedProjects(userDoc.data().bookmarkedProjects || []);
+          }
         } else {
-          setBookmarkedProjects(userDoc.data().bookmarkedProjects || []);
+          console.log("No user signed in");
+          setUser(null);
         }
-      } else {
-        console.log("No user signed in");
-        router.push("/");
+      } catch (error) {
+        console.error("Error checking auth:", error);
+      } finally {
+        setAuthChecked(true);
       }
     });
+
+    return () => unsubscribeAuth();
+  }, [mounted]);
+
+  // Separate routing effect
+  useEffect(() => {
+    if (!mounted) return;
+    if (authChecked && !user) {
+      router.replace("/");
+    }
+  }, [authChecked, user, router, mounted]);
+
+  // Projects fetch effect
+  useEffect(() => {
+    if (!mounted || !user) return;
 
     const unsubscribe = onSnapshot(
       collection(db, "projects"),
@@ -168,11 +232,8 @@ const Home = () => {
       }
     );
 
-    return () => {
-      unsubscribe();
-      unsubscribeAuth();
-    };
-  }, [router, bookmarkedProjects]);
+    return () => unsubscribe();
+  }, [user, bookmarkedProjects, mounted]);
 
   useEffect(() => {
     const teamSize = parseInt(projectDetails.teamSize) || 0;
@@ -189,6 +250,11 @@ const Home = () => {
       setRoles([]);
     }
   }, [projectDetails.teamSize]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredProjects.length / PROJECTS_PER_PAGE);
+  const startIndex = (page - 1) * PROJECTS_PER_PAGE;
+  const currentProjects = filteredProjects.slice(startIndex, startIndex + PROJECTS_PER_PAGE);
 
   const handleBookmarkToggle = async (index) => {
     if (!user) return;
@@ -260,33 +326,34 @@ const Home = () => {
   };
 
   const handleSkillsChange = (event) => {
-    const { value } = event.target;
+    const selectedSkills = event.target.value;
     setProjectDetails(prev => ({
       ...prev,
-      skillsRequired: typeof value === 'string' ? value.split(',') : value
-    }));
-  };
-
-  const handleTagsChange = (event) => {
-    const { value } = event.target;
-    setProjectDetails(prev => ({
-      ...prev,
-      projectTags: typeof value === 'string' ? value.split(',') : value
+      skillsRequired: selectedSkills,
+      projectTags: [...new Set([...selectedSkills, ...prev.projectTags])] // Add skills to tags while keeping existing tags
     }));
   };
 
   const addCustomSkill = () => {
-    if (customSkill && !projectDetails.skillsRequired.includes(customSkill) && customSkill.trim() !== "") {
+    if (customSkill.trim() && !projectDetails.skillsRequired.includes(customSkill.trim())) {
       setProjectDetails(prev => ({
         ...prev,
-        skillsRequired: [...prev.skillsRequired, customSkill.trim()]
+        skillsRequired: [...prev.skillsRequired, customSkill.trim()],
+        projectTags: [...new Set([...prev.projectTags, customSkill.trim()])] // Add custom skill to tags
       }));
       setCustomSkill("");
     }
   };
 
+  const handleTagsChange = (event) => {
+    setProjectDetails(prev => ({
+      ...prev,
+      projectTags: event.target.value
+    }));
+  };
+
   const addCustomTag = () => {
-    if (customTag && !projectDetails.projectTags.includes(customTag) && customTag.trim() !== "") {
+    if (customTag.trim() && !projectDetails.projectTags.includes(customTag.trim())) {
       setProjectDetails(prev => ({
         ...prev,
         projectTags: [...prev.projectTags, customTag.trim()]
@@ -364,83 +431,86 @@ const Home = () => {
     });
   };
 
+  // Update useEffect for search
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setFilteredProjects(projects);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = projects.filter(project => {
+      // Add null checks for all properties
+      const title = project?.title?.toLowerCase() || '';
+      const description = project?.description?.toLowerCase() || '';
+      const tags = project?.tags || [];
+      const category = project?.category?.toLowerCase() || '';
+      
+      return title.includes(query) ||
+             description.includes(query) ||
+             tags.some(tag => (tag || '').toLowerCase().includes(query)) ||
+             category.includes(query);
+    });
+    setFilteredProjects(filtered);
+  }, [searchQuery, projects]);
+
+  // Update applyFilters function
   const applyFilters = () => {
     let filtered = [...projects];
 
+    // Project type filter
     if (filter.projectTypes.length > 0) {
       filtered = filtered.filter(project => 
-        filter.projectTypes.includes(project.category)
+        project?.category && filter.projectTypes.includes(project.category)
       );
     }
 
+    // Progress status filter
     if (filter.progressStatuses.length > 0) {
       filtered = filtered.filter(project => 
-        filter.progressStatuses.includes(project.status)
+        project?.status && filter.progressStatuses.includes(project.status)
       );
     }
 
-    if (filter.timeCompletion) {
-      filtered = filtered.filter(project => {
-        const startDate = new Date();
-        const completionDate = new Date(project.expectedCompletionDate);
-        const monthsDiff = (completionDate.getFullYear() - startDate.getFullYear()) * 12 + 
-                          (completionDate.getMonth() - startDate.getMonth());
-
-        switch (filter.timeCompletion) {
-          case 'less_than_1_month':
-            return monthsDiff < 1;
-          case '1_to_3_months':
-            return monthsDiff >= 1 && monthsDiff <= 3;
-          case '3_to_6_months':
-            return monthsDiff > 3 && monthsDiff <= 6;
-          case '6_to_12_months':
-            return monthsDiff > 6 && monthsDiff <= 12;
-          case 'more_than_12_months':
-            return monthsDiff > 12;
-          default:
-            return true;
-        }
-      });
-    }
-
-    if (filter.skillsRequired.length > 0) {
-      filtered = filtered.filter(project =>
-        filter.skillsRequired.some(skill => project.tags?.includes(skill))
-      );
-    }
-
-    if (filter.customTags.length > 0) {
-      filtered = filtered.filter(project =>
-        filter.customTags.some(tag => project.projectTags?.includes(tag))
-      );
-    }
-
-    if (filter.teamSizeMin !== "") {
+    // Skills filter (including custom skills)
+    if (filter.skillsRequired.length > 0 || filter.customSkills.length > 0) {
+      const allSkills = [...filter.skillsRequired, ...filter.customSkills];
       filtered = filtered.filter(project => 
-        project.teamSize >= parseInt(filter.teamSizeMin)
-      );
-    }
-
-    if (filter.teamSizeMax !== "") {
-      filtered = filtered.filter(project => 
-        project.teamSize <= parseInt(filter.teamSizeMax)
-      );
-    }
-
-    if (filter.roles.length > 0) {
-      filtered = filtered.filter(project =>
-        filter.roles.some(role => 
-          project.roles?.some(projectRole => 
-            projectRole.toLowerCase().includes(role.toLowerCase())
-          ) || 
-          project.userRole?.toLowerCase().includes(role.toLowerCase())
+        project?.tags && allSkills.some(skill => 
+          project.tags.includes(skill)
         )
       );
     }
 
+    // Role types filter (including custom roles)
+    if (filter.roleTypes.length > 0 || filter.customRoles.length > 0) {
+      const allRoles = [...filter.roleTypes, ...filter.customRoles];
+      filtered = filtered.filter(project => 
+        project?.roles && project.roles.some(role => 
+          allRoles.includes(role.role)
+        )
+      );
+    }
+
+    // Duration filter
+    if (filter.duration) {
+      filtered = filtered.filter(project => {
+        if (!project?.expectedCompletionDate) return false;
+        const start = new Date(project.createdAt);
+        const end = new Date(project.expectedCompletionDate);
+        const monthsDiff = (end.getFullYear() - start.getFullYear()) * 12 + 
+                          (end.getMonth() - start.getMonth());
+        
+        const [min, max] = filter.duration.split('-');
+        if (max === '+') {
+          return monthsDiff >= parseInt(min);
+        } else {
+          return monthsDiff >= parseInt(min) && monthsDiff <= parseInt(max);
+        }
+      });
+    }
+
     setFilteredProjects(filtered);
-    setPage(1);
-    setOpenFilter(false);
   };
 
   const removeFilter = (category, value) => {
@@ -450,62 +520,83 @@ const Home = () => {
     }));
   };
 
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredProjects.length / PROJECTS_PER_PAGE);
-  const startIndex = (page - 1) * PROJECTS_PER_PAGE;
-  const currentProjects = filteredProjects.slice(startIndex, startIndex + PROJECTS_PER_PAGE);
+  // Don't render anything until mounted
+  if (!mounted) {
+    return null;
+  }
 
-  if (loading) {
+  // Show loading state
+  if (!authChecked || loading) {
     return (
       <>
         <Navbar />
         <Container>
-          <Typography variant="h6" sx={{ mt: 4, textAlign: "center" }}>
-            Loading projects...
-          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+            <CircularProgress />
+          </Box>
         </Container>
       </>
     );
   }
 
+  // Don't render anything if not authenticated
+  if (!user) {
+    return null;
+  }
+
   return (
     <>
       <Navbar />
-      <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 3,
-          }}
-        >
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Typography variant="h4" component="h1">
             Projects
-            {filter.projectTypes.length > 0 && (
-              <Box sx={{ display: 'inline-flex', ml: 2, gap: 1 }}>
-                {filter.projectTypes.map(type => (
-                  <Chip
-                    key={type}
-                    label={type}
-                    onDelete={() => removeFilter("projectTypes", type)}
-                  />
-                ))}
-              </Box>
-            )}
           </Typography>
-          <Box>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <TextField
+              placeholder="Search projects..."
+              size="small"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                const query = e.target.value.toLowerCase();
+                const filtered = projects.filter(project => {
+                  // Add null checks for all properties
+                  const title = project?.title?.toLowerCase() || '';
+                  const description = project?.description?.toLowerCase() || '';
+                  const tags = project?.tags || [];
+                  const category = project?.category?.toLowerCase() || '';
+                  
+                  return title.includes(query) ||
+                         description.includes(query) ||
+                         tags.some(tag => (tag || '').toLowerCase().includes(query)) ||
+                         category.includes(query);
+                });
+                setFilteredProjects(filtered);
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ width: 250 }}
+            />
+            <Button
+              variant="outlined"
+              startIcon={<FilterListIcon />}
+              onClick={() => setOpenFilter(true)}
+            >
+              Filter
+            </Button>
             <Button
               variant="contained"
-              color="primary"
-              sx={{ mr: 2 }}
+              startIcon={<AddIcon />}
               onClick={handleOpenCreateProject}
             >
-              + New Project
+              NEW PROJECT
             </Button>
-            <IconButton onClick={() => setOpenFilter(true)}>
-              <FilterListIcon />
-            </IconButton>
           </Box>
         </Box>
 
@@ -632,8 +723,8 @@ const Home = () => {
               />
             </Box>
 
-            <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>Skills Required *</InputLabel>
+            <FormControl fullWidth>
+              <InputLabel>Skills Required</InputLabel>
               <Select
                 multiple
                 value={projectDetails.skillsRequired}
@@ -655,25 +746,33 @@ const Home = () => {
               </Select>
             </FormControl>
 
-            <Box sx={{ display: 'flex', mt: 1 }}>
-              <TextField
-                fullWidth
-                label="Add Custom Skill"
-                value={customSkill}
-                onChange={(e) => setCustomSkill(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    addCustomSkill();
-                  }
-                }}
-              />
-              <IconButton onClick={addCustomSkill}>
-                <AddIcon />
-              </IconButton>
+            <Box>
+              <Typography variant="subtitle2" gutterBottom>
+                Custom Skills
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                <TextField
+                  fullWidth
+                  placeholder="Add a custom skill"
+                  value={customSkill}
+                  onChange={(e) => setCustomSkill(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addCustomSkill();
+                    }
+                  }}
+                />
+                <Button
+                  onClick={addCustomSkill}
+                  disabled={!customSkill.trim()}
+                >
+                  Add
+                </Button>
+              </Box>
             </Box>
 
-            <FormControl fullWidth sx={{ mt: 2 }}>
+            <FormControl fullWidth>
               <InputLabel>Project Tags</InputLabel>
               <Select
                 multiple
@@ -687,7 +786,7 @@ const Home = () => {
                   </Box>
                 )}
               >
-                {defaultSkillsOptions.map((tag) => (
+                {[...new Set([...defaultSkillsOptions, ...projectDetails.projectTags])].map((tag) => (
                   <MenuItem key={tag} value={tag}>
                     <Checkbox checked={projectDetails.projectTags.indexOf(tag) > -1} />
                     <ListItemText primary={tag} />
@@ -696,22 +795,30 @@ const Home = () => {
               </Select>
             </FormControl>
 
-            <Box sx={{ display: 'flex', mt: 1 }}>
-              <TextField
-                fullWidth
-                label="Add Custom Tag"
-                value={customTag}
-                onChange={(e) => setCustomTag(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    addCustomTag();
-                  }
-                }}
-              />
-              <IconButton onClick={addCustomTag}>
-                <AddIcon />
-              </IconButton>
+            <Box>
+              <Typography variant="subtitle2" gutterBottom>
+                Custom Tags
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                <TextField
+                  fullWidth
+                  placeholder="Add a custom tag"
+                  value={customTag}
+                  onChange={(e) => setCustomTag(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addCustomTag();
+                    }
+                  }}
+                />
+                <Button
+                  onClick={addCustomTag}
+                  disabled={!customTag.trim()}
+                >
+                  Add
+                </Button>
+              </Box>
             </Box>
 
             <FormControl fullWidth sx={{ mt: 2 }}>
@@ -785,349 +892,208 @@ const Home = () => {
         </Dialog>
 
         {/* Filter Dialog */}
-        <Dialog 
-          open={openFilter} 
-          onClose={() => setOpenFilter(false)} 
-          maxWidth="sm" 
-          fullWidth
-          PaperProps={{
-            sx: {
-              borderRadius: '16px',
-              p: 1
-            }
-          }}
-        >
-          <DialogTitle sx={{ fontSize: '20px', fontWeight: 500 }}>
-            Filters
-            <IconButton
-              onClick={() => setOpenFilter(false)}
-              sx={{ 
-                position: 'absolute', 
-                right: 8, 
-                top: 8,
-                color: 'text.secondary'
-              }}
-            >
-              ×
-            </IconButton>
-          </DialogTitle>
+        <Dialog open={openFilter} onClose={() => setOpenFilter(false)} maxWidth="sm" fullWidth>
+          <DialogTitle>Filter Projects</DialogTitle>
           <DialogContent>
-            <Typography sx={{ fontSize: '16px', fontWeight: 500, mb: 2 }}>Project Type</Typography>
-            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, mb: 3 }}>
-              {[
-                { type: 'Software Development', icon: <CodeIcon sx={{ fontSize: 20 }} /> },
-                { type: 'Research', icon: <SearchIcon sx={{ fontSize: 20 }} /> },
-                { type: 'Marketing', icon: <CampaignIcon sx={{ fontSize: 20 }} /> },
-                { type: 'Design', icon: <DesignServicesIcon sx={{ fontSize: 20 }} /> },
-                { type: 'Business', icon: <BusinessIcon sx={{ fontSize: 20 }} /> },
-                { type: 'Engineering', icon: <BuildIcon sx={{ fontSize: 20 }} /> }
-              ].map(({ type, icon }) => (
-                <FormControlLabel
-                  key={type}
-                  control={
-                    <Checkbox
-                      checked={filter.projectTypes.includes(type)}
-                      onChange={() => handleFilterChange("projectTypes", type)}
-                      sx={{ 
-                        '&.Mui-checked': {
-                          color: 'primary.main',
+            <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {/* Project Type section */}
+              <Box>
+                <Typography variant="subtitle1" gutterBottom>Project Type</Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  {defaultProjectTypes.map((type) => (
+                    <Chip
+                      key={type}
+                      label={type}
+                      onClick={() => handleFilterChange('projectTypes', type)}
+                      color={filter.projectTypes.includes(type) ? 'primary' : 'default'}
+                      icon={projectTypeIcons[type]}
+                    />
+                  ))}
+                </Box>
+              </Box>
+
+              {/* Status section */}
+              <Box>
+                <Typography variant="subtitle1" gutterBottom>Status</Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  {defaultProgressStatuses.map((status) => (
+                    <Chip
+                      key={status}
+                      label={status}
+                      onClick={() => handleFilterChange('progressStatuses', status)}
+                      color={filter.progressStatuses.includes(status) ? 'primary' : 'default'}
+                      icon={progressStatusIcons[status]}
+                    />
+                  ))}
+                </Box>
+              </Box>
+
+              {/* Duration section */}
+              <Box>
+                <Typography variant="subtitle1" gutterBottom>Duration</Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  {durationOptions.map((option) => (
+                    <Chip
+                      key={option.value}
+                      label={option.label}
+                      onClick={() => setFilter(prev => ({ ...prev, duration: option.value }))}
+                      color={filter.duration === option.value ? 'primary' : 'default'}
+                      icon={<AccessTimeIcon />}
+                    />
+                  ))}
+                </Box>
+              </Box>
+
+              {/* Skills section */}
+              <Box>
+                <Typography variant="subtitle1" gutterBottom>Skills Required</Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                    {defaultSkillsOptions.map((skill) => (
+                      <Chip
+                        key={skill}
+                        label={skill}
+                        onClick={() => handleFilterChange('skillsRequired', skill)}
+                        color={filter.skillsRequired.includes(skill) ? 'primary' : 'default'}
+                      />
+                    ))}
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <TextField
+                      size="small"
+                      placeholder="Add custom skill"
+                      value={customInput.skill}
+                      onChange={(e) => setCustomInput(prev => ({ ...prev, skill: e.target.value }))}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && customInput.skill.trim()) {
+                          setFilter(prev => ({
+                            ...prev,
+                            customSkills: [...prev.customSkills, customInput.skill.trim()]
+                          }));
+                          setCustomInput(prev => ({ ...prev, skill: '' }));
                         }
                       }}
                     />
-                  }
-                  label={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      {icon}
-                      <Typography sx={{ fontSize: '14px' }}>{type}</Typography>
+                    <Button
+                      variant="outlined"
+                      onClick={() => {
+                        if (customInput.skill.trim()) {
+                          setFilter(prev => ({
+                            ...prev,
+                            customSkills: [...prev.customSkills, customInput.skill.trim()]
+                          }));
+                          setCustomInput(prev => ({ ...prev, skill: '' }));
+                        }
+                      }}
+                    >
+                      Add
+                    </Button>
+                  </Box>
+                  {filter.customSkills.length > 0 && (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                      {filter.customSkills.map((skill) => (
+                        <Chip
+                          key={skill}
+                          label={skill}
+                          onDelete={() => setFilter(prev => ({
+                            ...prev,
+                            customSkills: prev.customSkills.filter(s => s !== skill)
+                          }))}
+                          color="primary"
+                        />
+                      ))}
                     </Box>
-                  }
-                  sx={{
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    borderRadius: '8px',
-                    p: 1,
-                    m: 0,
-                    '&:hover': {
-                      bgcolor: 'action.hover'
-                    }
-                  }}
-                />
-              ))}
-            </Box>
+                  )}
+                </Box>
+              </Box>
 
-            <Typography sx={{ fontSize: '16px', fontWeight: 500, mb: 2 }}>Progress Status</Typography>
-            <Box sx={{ mb: 3 }}>
-              {[
-                { status: 'Active', icon: <PlayCircleOutlineIcon sx={{ fontSize: 20 }} /> },
-                { status: 'Completed', icon: <CheckCircleOutlineIcon sx={{ fontSize: 20 }} /> },
-                { status: 'Looking for Members', icon: <GroupAddIcon sx={{ fontSize: 20 }} /> }
-              ].map(({ status, icon }) => (
-                <FormControlLabel
-                  key={status}
-                  control={
-                    <Radio
-                      checked={filter.progressStatuses.includes(status)}
-                      onChange={() => setFilter(prev => ({
-                        ...prev,
-                        progressStatuses: [status]
-                      }))}
-                      sx={{
-                        '&.Mui-checked': {
-                          color: 'primary.main',
+              {/* Role Types section */}
+              <Box>
+                <Typography variant="subtitle1" gutterBottom>Role Types</Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                    {defaultRoleTypes.map((role) => (
+                      <Chip
+                        key={role.label}
+                        label={role.label}
+                        onClick={() => handleFilterChange('roleTypes', role.label)}
+                        color={filter.roleTypes.includes(role.label) ? 'primary' : 'default'}
+                        icon={role.icon}
+                      />
+                    ))}
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <TextField
+                      size="small"
+                      placeholder="Add custom role"
+                      value={customInput.role}
+                      onChange={(e) => setCustomInput(prev => ({ ...prev, role: e.target.value }))}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && customInput.role.trim()) {
+                          setFilter(prev => ({
+                            ...prev,
+                            customRoles: [...prev.customRoles, customInput.role.trim()]
+                          }));
+                          setCustomInput(prev => ({ ...prev, role: '' }));
                         }
                       }}
                     />
-                  }
-                  label={status}
-                  sx={{ 
-                    display: 'block', 
-                    mb: 1,
-                    '& .MuiTypography-root': {
-                      fontSize: '14px'
-                    }
-                  }}
-                />
-              ))}
-            </Box>
-
-            <Typography sx={{ fontSize: '16px', fontWeight: 500, mb: 2 }}>Time Completion</Typography>
-            <Box sx={{ mb: 3 }}>
-              {[
-                { value: 'less_than_1_month', label: 'Less than 1 month' },
-                { value: '1_to_3_months', label: '1-3 months' },
-                { value: '3_to_6_months', label: '3-6 months' },
-                { value: '6_to_12_months', label: '6-12 months' },
-                { value: 'more_than_12_months', label: 'More than 12 months' }
-              ].map(({ value, label }) => (
-                <FormControlLabel
-                  key={value}
-                  control={
-                    <Radio
-                      checked={filter.timeCompletion === value}
-                      onChange={() => setFilter(prev => ({
-                        ...prev,
-                        timeCompletion: value
-                      }))}
-                      sx={{
-                        '&.Mui-checked': {
-                          color: 'primary.main',
+                    <Button
+                      variant="outlined"
+                      onClick={() => {
+                        if (customInput.role.trim()) {
+                          setFilter(prev => ({
+                            ...prev,
+                            customRoles: [...prev.customRoles, customInput.role.trim()]
+                          }));
+                          setCustomInput(prev => ({ ...prev, role: '' }));
                         }
                       }}
-                    />
-                  }
-                  label={label}
-                  sx={{ 
-                    display: 'block', 
-                    mb: 1,
-                    '& .MuiTypography-root': {
-                      fontSize: '14px'
-                    }
-                  }}
-                />
-              ))}
-            </Box>
-
-            <Typography sx={{ fontSize: '16px', fontWeight: 500, mb: 2 }}>Team Size</Typography>
-            <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-              <TextField
-                type="number"
-                size="small"
-                label="Min"
-                value={filter.teamSizeMin}
-                onChange={(e) => setFilter(prev => ({ ...prev, teamSizeMin: e.target.value }))}
-                InputProps={{ inputProps: { min: 1 } }}
-                sx={{ 
-                  flex: 1,
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '8px'
-                  }
-                }}
-              />
-              <TextField
-                type="number"
-                size="small"
-                label="Max"
-                value={filter.teamSizeMax}
-                onChange={(e) => setFilter(prev => ({ ...prev, teamSizeMax: e.target.value }))}
-                InputProps={{ inputProps: { min: 1 } }}
-                sx={{ 
-                  flex: 1,
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '8px'
-                  }
-                }}
-              />
-            </Box>
-
-            <Typography sx={{ fontSize: '16px', fontWeight: 500, mb: 2 }}>Skills Required</Typography>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="Search skills..."
-              value={filterInputs.skillSearch}
-              onChange={(e) => setFilterInputs(prev => ({ ...prev, skillSearch: e.target.value }))}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' && filterInputs.skillSearch.trim()) {
-                  setFilter(prev => ({
-                    ...prev,
-                    skillsRequired: [...new Set([...prev.skillsRequired, filterInputs.skillSearch.trim()])]
-                  }));
-                  setFilterInputs(prev => ({ ...prev, skillSearch: '' }));
-                }
-              }}
-              sx={{ 
-                mb: 2,
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '8px'
-                }
-              }}
-            />
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
-              {filter.skillsRequired.map((skill) => (
-                <Chip
-                  key={skill}
-                  label={skill}
-                  onDelete={() => {
-                    setFilter(prev => ({
-                      ...prev,
-                      skillsRequired: prev.skillsRequired.filter(s => s !== skill)
-                    }));
-                  }}
-                  sx={{
-                    bgcolor: 'primary.50',
-                    color: 'primary.main',
-                    '& .MuiChip-deleteIcon': {
-                      color: 'primary.main'
-                    }
-                  }}
-                />
-              ))}
-            </Box>
-
-            <Typography sx={{ fontSize: '16px', fontWeight: 500, mb: 2 }}>Project Tags</Typography>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="Search tags..."
-              value={filterInputs.tagSearch}
-              onChange={(e) => setFilterInputs(prev => ({ ...prev, tagSearch: e.target.value }))}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' && filterInputs.tagSearch.trim()) {
-                  setFilter(prev => ({
-                    ...prev,
-                    customTags: [...new Set([...prev.customTags, filterInputs.tagSearch.trim()])]
-                  }));
-                  setFilterInputs(prev => ({ ...prev, tagSearch: '' }));
-                }
-              }}
-              sx={{ 
-                mb: 2,
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '8px'
-                }
-              }}
-            />
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
-              {filter.customTags.map((tag) => (
-                <Chip
-                  key={tag}
-                  label={tag}
-                  onDelete={() => {
-                    setFilter(prev => ({
-                      ...prev,
-                      customTags: prev.customTags.filter(t => t !== tag)
-                    }));
-                  }}
-                  sx={{
-                    bgcolor: 'primary.50',
-                    color: 'primary.main',
-                    '& .MuiChip-deleteIcon': {
-                      color: 'primary.main'
-                    }
-                  }}
-                />
-              ))}
-            </Box>
-
-            <Typography sx={{ fontSize: '16px', fontWeight: 500, mb: 2 }}>Roles</Typography>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="Search roles..."
-              value={filterInputs.roleSearch}
-              onChange={(e) => setFilterInputs(prev => ({ ...prev, roleSearch: e.target.value }))}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' && filterInputs.roleSearch.trim()) {
-                  setFilter(prev => ({
-                    ...prev,
-                    roles: [...new Set([...prev.roles, filterInputs.roleSearch.trim()])]
-                  }));
-                  setFilterInputs(prev => ({ ...prev, roleSearch: '' }));
-                }
-              }}
-              sx={{ 
-                mb: 2,
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '8px'
-                }
-              }}
-            />
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-              {filter.roles.map((role) => (
-                <Chip
-                  key={role}
-                  label={role}
-                  onDelete={() => {
-                    setFilter(prev => ({
-                      ...prev,
-                      roles: prev.roles.filter(r => r !== role)
-                    }));
-                  }}
-                  sx={{
-                    bgcolor: 'primary.50',
-                    color: 'primary.main',
-                    '& .MuiChip-deleteIcon': {
-                      color: 'primary.main'
-                    }
-                  }}
-                />
-              ))}
+                    >
+                      Add
+                    </Button>
+                  </Box>
+                  {filter.customRoles.length > 0 && (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                      {filter.customRoles.map((role) => (
+                        <Chip
+                          key={role}
+                          label={role}
+                          onDelete={() => setFilter(prev => ({
+                            ...prev,
+                            customRoles: prev.customRoles.filter(r => r !== role)
+                          }))}
+                          color="primary"
+                        />
+                      ))}
+                    </Box>
+                  )}
+                </Box>
+              </Box>
             </Box>
           </DialogContent>
-          <DialogActions sx={{ px: 3, pb: 2, gap: 2 }}>
-            <Button
-              onClick={() => {
-                setFilter({
-                  projectTypes: [],
-                  progressStatuses: [],
-                  skillsRequired: [],
-                  teamSizeMin: "",
-                  teamSizeMax: "",
-                  customTags: [],
-                  roles: [],
-                  timeCompletion: ""
-                });
-                setFilteredProjects(projects);
-                setOpenFilter(false);
-              }}
-              sx={{ 
-                flex: 1,
-                textTransform: 'none',
-                fontSize: '14px'
-              }}
-            >
-              Clear all
+          <DialogActions>
+            <Button onClick={() => {
+              setFilter({
+                projectTypes: [],
+                progressStatuses: [],
+                skillsRequired: [],
+                roleTypes: [],
+                duration: "",
+                teamSizeMin: "",
+                teamSizeMax: "",
+                customSkills: [],
+                customRoles: []
+              });
+              setCustomInput({ skill: "", role: "" });
+              setFilteredProjects(projects);
+            }}>
+              Clear All
             </Button>
-            <Button 
-              onClick={applyFilters} 
-              variant="contained" 
-              color="primary"
-              sx={{ 
-                flex: 1,
-                textTransform: 'none',
-                fontSize: '14px'
-              }}
-            >
+            <Button onClick={() => {
+              setOpenFilter(false);
+              applyFilters();
+            }} variant="contained">
               Apply Filters
             </Button>
           </DialogActions>

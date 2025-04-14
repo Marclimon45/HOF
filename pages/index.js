@@ -14,7 +14,7 @@ import {
   Box,
 } from "@mui/material";
 import { auth, db } from "../firebase/firebaseconfig";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import Link from "next/link";
 
@@ -25,6 +25,7 @@ const LandingPage = () => {
   const [loginDetails, setLoginDetails] = useState({ email: "", password: "" });
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [resetEmailSent, setResetEmailSent] = useState(false);
 
   const handleLoginInputChange = (e) => {
     const { name, value } = e.target;
@@ -71,6 +72,21 @@ const LandingPage = () => {
     } catch (error) {
       console.error("Signup failed:", error.code, error.message);
       setErrorMessage(`Signup failed: ${error.message}`);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!loginDetails.email) {
+      setErrorMessage("Please enter your email address");
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, loginDetails.email);
+      setResetEmailSent(true);
+      setSuccessMessage("Password reset email sent! Please check your inbox.");
+    } catch (error) {
+      console.error("Password reset failed:", error);
+      setErrorMessage(`Failed to send reset email: ${error.message}`);
     }
   };
 
@@ -187,8 +203,8 @@ const LandingPage = () => {
             }}
           >
             By signing in, you agree to our{" "}
-            <a href="/terms">Terms of Service</a> and{" "}
-            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms-of-service">Terms of Service</a> and{" "}
+            <a href="/privacy-policy">Privacy Policy</a>
           </Typography>
 
           <Typography
@@ -227,6 +243,24 @@ const LandingPage = () => {
             onChange={handleLoginInputChange}
             variant="outlined"
           />
+          <Box sx={{ mt: 1, textAlign: 'right', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Button
+              onClick={() => window.location.href = 'mailto:cpxlab.csulb@gmail.com?subject=Forgot%20Email%20-%20Account%20Recovery'}
+              sx={{ 
+                textTransform: 'none',
+                color: 'text.secondary',
+                fontSize: '0.875rem'
+              }}
+            >
+              Forgot Email?
+            </Button>
+            <Button
+              onClick={handleForgotPassword}
+              sx={{ textTransform: 'none' }}
+            >
+              Forgot Password?
+            </Button>
+          </Box>
           {errorMessage && (
             <Alert severity="error" onClose={() => setErrorMessage("")} sx={{ mt: 2 }}>
               {errorMessage}

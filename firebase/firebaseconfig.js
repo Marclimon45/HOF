@@ -32,20 +32,23 @@ if (typeof window !== 'undefined') {
 
 const storage = getStorage(app);
 
-// Initialize Analytics only in browser environment
+// Initialize Analytics only in browser environment and when not blocked
 let analytics = null;
-if (typeof window !== "undefined") {
-  isSupported().then((supported) => {
-    if (supported) {
-      analytics = getAnalytics(app);
-    } else {
-      console.log("Firebase Analytics is not supported in this environment.");
+const initializeAnalytics = async () => {
+  if (typeof window !== "undefined") {
+    try {
+      const supported = await isSupported();
+      if (supported) {
+        analytics = getAnalytics(app);
+      }
+    } catch (error) {
+      // Silently handle analytics initialization errors
+      console.debug("Analytics initialization skipped");
     }
-  }).catch((error) => {
-    console.error("Error checking Analytics support:", error);
-  });
-} else {
-  console.log("Firebase Analytics skipped: Not running in a browser environment.");
-}
+  }
+};
+
+// Initialize analytics without blocking
+initializeAnalytics();
 
 export { db, auth, analytics, storage };

@@ -1,7 +1,7 @@
 .navbar {
     background-color: #ffffff;
-    padding: 10px 20px;
-    border-bottom: 1px solid #ddd;
+    padding: 8px 16px;
+    border-bottom: 1px solid #e0e0e0;
   }
   
   .toolbar {
@@ -9,42 +9,69 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
   }
   
   .logoContainer {
     display: flex;
     align-items: center;
+    text-decoration: none;
+    color: inherit;
   }
   
   .logo {
-    width: 30px;
-    height: 30px;
-    margin-right: 8px;
+    width: 32px;
+    height: 32px;
+    margin-right: 12px;
   }
   
   .logoText {
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 1.2rem;
+    font-weight: 500;
     color: #333;
   }
   
   /* Better spacing for navigation links */
   .navLinks {
     display: flex;
-    gap: 40px; /* Increased spacing between links */
-    margin-left: auto;
-    margin-right: auto;
+    gap: 32px;
+    margin: 0 auto;
   }
   
   .navLink {
-    font-size: 14px;
     color: #666;
+    text-decoration: none;
+    padding: 8px 16px;
+    transition: color 0.3s ease;
     cursor: pointer;
-    transition: color 0.3s ease-in-out;
   }
   
   .navLink:hover {
     color: #1976d2;
+  }
+  
+  .activeNavLink {
+    color: #1976d2;
+    font-weight: 600;
+    position: relative;
+  }
+  
+  .activeNavLink::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 16px;
+    right: 16px;
+    height: 2px;
+    background-color: #1976d2;
+    border-radius: 2px;
+  }
+  
+  /* Active link */
+  .navLink[aria-current="page"] {
+    color: #1976d2;
+    font-weight: 500;
   }
   
   .active {
@@ -55,20 +82,33 @@
   .profileSection {
     display: flex;
     align-items: center;
+    padding: 4px;
+    border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .profileSection:hover {
+    background-color: rgba(0, 0, 0, 0.04);
   }
   
   .avatar {
-    width: 32px;
-    height: 32px;
-    margin-right: 8px;
+    width: 32px !important;
+    height: 32px !important;
   }
   
   .username {
-    font-size: 14px;
-    margin-right: 4px;
+    margin: 0 8px !important;
+    font-size: 0.9rem !important;
+    color: #333;
   }
-
+  
+  .rankIcon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+  
   .navbar a {
     text-decoration: none;
     color: white;
@@ -82,7 +122,6 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-left: auto;
   }
 
   .authButtons a {
