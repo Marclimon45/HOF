@@ -9,6 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import Navbar from '../components/navbar';
 
 export default function Profile() {
   const [userData, setUserData] = useState(null);
@@ -16,6 +17,20 @@ export default function Profile() {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const router = useRouter();
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Recently';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch (error) {
+      return 'Recently';
+    }
+  };
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -149,37 +164,46 @@ export default function Profile() {
 
   if (error) {
     return (
-      <div className={styles.container}>
-        <div className={styles.error}>
-          <h2>Error</h2>
-          <p>{error}</p>
-          <button onClick={() => router.push('/')} className={styles.editButton}>
-            Go Home
-          </button>
+      <>
+        <Navbar />
+        <div className={styles.container}>
+          <div className={styles.error}>
+            <h2>Error</h2>
+            <p>{error}</p>
+            <button onClick={() => router.push('/')} className={styles.editButton}>
+              Go Home
+            </button>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (loading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.loading}>Loading profile data...</div>
-      </div>
+      <>
+        <Navbar />
+        <div className={styles.container}>
+          <div className={styles.loading}>Loading profile data...</div>
+        </div>
+      </>
     );
   }
 
   if (!userData) {
     return (
-      <div className={styles.container}>
-        <div className={styles.error}>
-          <h2>Profile Not Found</h2>
-          <p>Unable to load user profile</p>
-          <button onClick={() => router.push('/')} className={styles.editButton}>
-            Go Home
-          </button>
+      <>
+        <Navbar />
+        <div className={styles.container}>
+          <div className={styles.error}>
+            <h2>Profile Not Found</h2>
+            <p>Unable to load user profile</p>
+            <button onClick={() => router.push('/')} className={styles.editButton}>
+              Go Home
+            </button>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -190,263 +214,167 @@ export default function Profile() {
   });
 
   return (
-    <div className={styles.container}>
-      <div className={styles.profileHeader}>
-        <div className={styles.avatarSection}>
-          <div className={styles.rankAndAvatar}>
-          <div className={styles.avatar}>
-            <Image
-              src={userData.photoURL || "/jeff1.jpg"}
-              alt="Profile"
-              width={120}
-              height={120}
-              priority
-              />
-            </div>
-            <div className={styles.rankDisplay}>
-              <img 
-                src={getRankImage(userData.contributions, userData.isCPSMember)}
-                alt={getRankTitle(userData.contributions, userData.isCPSMember)}
-                className={styles.rankIcon}
-                data-rank={getRankTitle(userData.contributions, userData.isCPSMember)}
-              />
-              <Typography variant="body2" className={styles.rankTitle}>
-                {getRankTitle(userData.contributions, userData.isCPSMember)}
-              </Typography>
-            </div>
-            </div>
-          <h1 className={styles.userName}>
-            {`${userData.firstName || ''} ${userData.middleName ? userData.middleName + ' ' : ''}${userData.lastName || ''}`}
-          </h1>
-        </div>
-
-        <div className={styles.socialLinks}>
-          {userData.email && (
-            <Link href={`mailto:${userData.email}`} className={styles.socialLink}>
-              <FaEnvelope />
-            </Link>
-          )}
-          {userData.discordUsername && (
-            <Link href="#" className={styles.socialLink}>
-              <FaDiscord />
-            </Link>
-          )}
-          {userData.linkedinUrl && (
-            <Link href={userData.linkedinUrl} className={styles.socialLink}>
-              <FaLinkedin />
-            </Link>
-          )}
-          {userData.githubUrl && (
-            <Link
-              href={userData.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.socialLink}
-            >
-              <FaGithub className={styles.socialIcon} />
-            </Link>
-          )}
-          {userData.websiteUrl && (
-            <Link
-              href={userData.websiteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.socialLink}
-            >
-              <FaGlobe className={styles.socialIcon} />
-            </Link>
-          )}
-        </div>
-
-        <button 
-          onClick={() => router.push('/edit-profile')} 
+    <>
+      <Navbar />
+      <div className={styles.container}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => router.push('/edit-profile')}
           className={styles.editButton}
-          aria-label="Edit Profile"
         >
           Edit Profile
-        </button>
-      </div>
+        </Button>
+        <div className={styles.profileHeader}>
+          <div className={styles.avatarSection}>
+            <div className={styles.rankAndAvatar}>
+              <div className={styles.avatar}>
+                <Image
+                  src={userData.photoURL || "/jeff1.jpg"}
+                  alt="Profile"
+                  width={120}
+                  height={120}
+                  priority
+                />
+              </div>
+              <div className={styles.rankDisplay}>
+                <img 
+                  src={getRankImage(userData.contributions, userData.isCPSMember)}
+                  alt={getRankTitle(userData.contributions, userData.isCPSMember)}
+                  className={styles.rankIcon}
+                  data-rank={getRankTitle(userData.contributions, userData.isCPSMember)}
+                />
+                <Typography variant="body2" className={styles.rankTitle}>
+                  {getRankTitle(userData.contributions, userData.isCPSMember)}
+                </Typography>
+              </div>
+            </div>
+            <h1 className={styles.userName}>
+              {`${userData.firstName || ''} ${userData.middleName ? userData.middleName + ' ' : ''}${userData.lastName || ''}`}
+            </h1>
+          </div>
+
+          <div className={styles.socialLinks}>
+            {userData.email && (
+              <Link href={`mailto:${userData.email}`} className={styles.socialLink}>
+                <FaEnvelope />
+              </Link>
+            )}
+            {userData.discordUsername && (
+              <Link href="#" className={styles.socialLink}>
+                <FaDiscord />
+              </Link>
+            )}
+            {userData.linkedinUrl && (
+              <Link href={userData.linkedinUrl} className={styles.socialLink}>
+                <FaLinkedin />
+              </Link>
+            )}
+            {userData.githubUrl && (
+              <Link href={userData.githubUrl} target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                <FaGithub className={styles.socialIcon} />
+              </Link>
+            )}
+            {userData.websiteUrl && (
+              <Link href={userData.websiteUrl} target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                <FaGlobe className={styles.socialIcon} />
+              </Link>
+            )}
+          </div>
+        </div>
 
         <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>
-          <span className={styles.badgeIcon}>🏆</span> Current Projects
-        </h2>
-        <div className={styles.projectsGrid}>
-          {currentProjects.length > 0 ? (
-            currentProjects.map((project) => (
-              <div key={project.id} className={`${styles.projectCard} ${styles[project.status.toLowerCase()]}`}>
-                <div className={styles.projectHeader}>
+          <h2 className={styles.sectionTitle}>
+            <span className={styles.projectIcon}>📋</span> Current Projects
+          </h2>
+          <div className={styles.projectsGrid}>
+            {currentProjects.length > 0 ? (
+              currentProjects.map((project) => (
+                <div key={project.id} className={styles.projectCard} onClick={() => router.push(`/project/${project.id}`)}>
                   <h3>{project.title}</h3>
-                  <span className={`${styles.statusBadge} ${styles[project.status.toLowerCase()]}`}>
-                    {project.status}
-                  </span>
-                </div>
-                <div className={styles.projectContent}>
-                  <div className={styles.roleInfo}>
-                    <span className={styles.roleIcon}>👤</span>
-                    <p className={styles.roleText}>{project.role}</p>
-                  </div>
-                  <div className={styles.dateInfo}>
-                    <span className={styles.dateIcon}>📅</span>
-                    <span className={styles.joinDate}>
-                      Joined: {new Date(project.joinedAt).toLocaleDateString()}
-                      </span>
-                  </div>
-                </div>
-                <div className={styles.projectActions}>
-                  <Link href={`/project/${project.id}`} passHref>
-                    <Button 
-                      variant="contained" 
-                      color="primary" 
-                      size="small" 
-                      className={styles.viewButton}
-                    >
-                      View Project
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className={styles.noProjects}>
-              <p>No active projects</p>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => router.push('/projects')}
-              >
-                Browse Projects
-              </Button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>
-          <span className={styles.badgeIcon}>🎯</span> Completed Projects
-        </h2>
-        <div className={styles.projectsGrid}>
-          {userData?.currentProjects?.filter(p => p.status === 'Completed')?.length > 0 ? (
-            userData.currentProjects
-              .filter(p => p.status === 'Completed')
-              .map((project, index) => (
-                <div key={index} className={`${styles.projectCard} ${styles.completed}`}>
-                  <div className={styles.projectHeader}>
-                    <h3>{project.title}</h3>
-                    <span className={`${styles.statusBadge} ${styles.completed}`}>
-                      Completed
-                    </span>
-                  </div>
-                  <div className={styles.projectContent}>
-                    <div className={styles.roleInfo}>
-                      <span className={styles.roleIcon}>👤</span>
-                      <p className={styles.roleText}>{project.role}</p>
-                    </div>
-                    <div className={styles.dateInfo}>
-                      <span className={styles.dateIcon}>📅</span>
-                      <span className={styles.joinDate}>
-                        Completed: {new Date(project.joinedAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                  <div className={styles.projectActions}>
-                    <Link href={`/project/${project.id}`} passHref>
-                      <Button 
-                        variant="contained" 
-                        color="primary" 
-                        size="small" 
-                        className={styles.viewButton}
-                      >
-                        View Project
-                      </Button>
-                    </Link>
-                  </div>
+                  <p>Role: {project.role}</p>
+                  <p>Joined: {formatDate(project.joinedAt)}</p>
                 </div>
               ))
-          ) : (
-            <div className={styles.noProjectCard}>
-              <h3>No Completed Projects</h3>
-              <p>You haven't completed any projects yet</p>
-          </div>
-          )}
+            ) : (
+              <p className={styles.noProjects}>No active projects</p>
+            )}
           </div>
         </section>
 
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Skills & Expertise</h2>
-        <div className={styles.skillsGrid}>
-          <div className={styles.skillColumn}>
-            <h3>Technical Skills</h3>
-            <div className={styles.skillTags}>
-            {(userData.skills || []).map((skill, index) => (
-                <span key={index} className={styles.skillTag}>{skill}</span>
-            ))}
-          </div>
-          </div>
-          <div className={styles.skillColumn}>
-            <h3>Tools & Platforms</h3>
-            <div className={styles.skillTags}>
-              {(userData.tools || []).map((tool, index) => (
-                <span key={index} className={styles.skillTag}>
-                  {toolIcons[tool] || null} {tool}
-                </span>
-            ))}
-            </div>
-          </div>
-          <div className={styles.skillColumn}>
-            <h3>Interest</h3>
-            <div className={styles.skillTags}>
-            {(userData.areaOfInterest || []).map((interest, index) => (
-                <span key={index} className={styles.skillTag}>{interest}</span>
-            ))}
-            </div>
-          </div>
-          </div>
-        </section>
-
-        <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>
-          <span className={styles.timeIcon}>⏰</span> Time Availability
-        </h2>
-        <div className={styles.availabilityGrid}>
-          {daysOfWeek.map((day) => {
-            // Use the exact day name as it appears in Firebase (with first letter capitalized)
-            const dayData = userData.availability?.[day];
-            console.log(`Checking availability for ${day}:`, dayData);
-            
-            // Handle the array structure from Firebase
-            let timeSlots = [];
-            if (Array.isArray(dayData)) {
-              timeSlots = dayData.map(slot => ({
-                start: slot.start,
-                end: slot.end
-              }));
-            }
-            
-            return (
-              <div key={day} className={styles.dayColumn}>
-                <h3>{day}</h3>
-                {timeSlots.length > 0 ? (
-                  timeSlots.map((slot, index) => (
-                    <div key={index} className={styles.timeSlot}>
-                      <span className={styles.timeRange}>
-                        {slot.start} - {slot.end}
-                      </span>
-                </div>
-                  ))
-                ) : (
-                  <div className={styles.busySlot}>Not Available</div>
-                )}
+          <h2 className={styles.sectionTitle}>
+            <span className={styles.skillIcon}>🎯</span> Skills & Interests
+          </h2>
+          <div className={styles.skillsContainer}>
+            <div className={styles.skillColumn}>
+              <h3>Skills</h3>
+              <div className={styles.skillTags}>
+                {(userData.skills || []).map((skill, index) => (
+                  <span key={index} className={styles.skillTag}>{skill}</span>
+                ))}
               </div>
-            );
-          })}
-        </div>
-      </section>
+            </div>
+            <div className={styles.skillColumn}>
+              <h3>Tools & Platforms</h3>
+              <div className={styles.skillTags}>
+                {(userData.tools || []).map((tool, index) => (
+                  <span key={index} className={styles.skillTag}>
+                    {toolIcons[tool] || null} {tool}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className={styles.skillColumn}>
+              <h3>Interest</h3>
+              <div className={styles.skillTags}>
+                {(userData.areaOfInterest || []).map((interest, index) => (
+                  <span key={index} className={styles.skillTag}>{interest}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
 
-      <footer className={styles.footer}>
-        © 2025 Xin's Hall of Fame. All rights reserved.
-      </footer>
-    </div>
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>
+            <span className={styles.timeIcon}>⏰</span> Time Availability
+          </h2>
+          <div className={styles.availabilityGrid}>
+            {daysOfWeek.map((day) => {
+              const dayData = userData.availability?.[day];
+              let timeSlots = [];
+              if (Array.isArray(dayData)) {
+                timeSlots = dayData.map(slot => ({
+                  start: slot.start,
+                  end: slot.end
+                }));
+              }
+              
+              return (
+                <div key={day} className={styles.dayColumn}>
+                  <h3>{day}</h3>
+                  {timeSlots.length > 0 ? (
+                    timeSlots.map((slot, index) => (
+                      <div key={index} className={styles.timeSlot}>
+                        <span className={styles.timeRange}>
+                          {slot.start} - {slot.end}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className={styles.busySlot}>Not Available</div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <footer className={styles.footer}>
+          © 2025 Xin's Hall of Fame. All rights reserved.
+        </footer>
+      </div>
+    </>
   );
 }

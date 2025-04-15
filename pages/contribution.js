@@ -286,6 +286,7 @@ export default function Contribution() {
           <Card 
             className={`${styles.statCard} ${styles.activeStats} ${selectedView === 'active' ? styles.selectedCard : ''}`}
             onClick={() => handleViewChange('active')}
+            sx={{ backgroundColor: 'transparent' }}
           >
             <CardContent>
               <Typography variant="h3">{stats.active}</Typography>
@@ -295,6 +296,7 @@ export default function Contribution() {
           <Card 
             className={`${styles.statCard} ${styles.completedStats} ${selectedView === 'completed' ? styles.selectedCard : ''}`}
             onClick={() => handleViewChange('completed')}
+            sx={{ backgroundColor: 'transparent' }}
           >
             <CardContent>
               <Typography variant="h3">{stats.completed}</Typography>
@@ -304,6 +306,7 @@ export default function Contribution() {
           <Card 
             className={`${styles.statCard} ${styles.likedStats} ${selectedView === 'liked' ? styles.selectedCard : ''}`}
             onClick={() => handleViewChange('liked')}
+            sx={{ backgroundColor: 'transparent' }}
           >
             <CardContent>
               <Typography variant="h3">{stats.liked}</Typography>
@@ -313,6 +316,7 @@ export default function Contribution() {
           <Card 
             className={`${styles.statCard} ${styles.archivedStats} ${selectedView === 'archived' ? styles.selectedCard : ''}`}
             onClick={() => handleViewChange('archived')}
+            sx={{ backgroundColor: 'transparent' }}
           >
             <CardContent>
               <Typography variant="h3">{stats.archived}</Typography>

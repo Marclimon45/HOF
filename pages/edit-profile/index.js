@@ -14,6 +14,7 @@ import {
 import { SiGit, SiAdobexd, SiNotion } from "react-icons/si";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button } from '@mui/material';
 import { toast } from 'react-hot-toast';
+import Navbar from '../../components/navbar';
 
 // Time slot definitions
 const TIME_SLOTS = [
@@ -791,27 +792,15 @@ const EditProfileContent = () => {
   );
 };
 
-// Create a wrapper component that handles the client-side only logic
-const EditProfile = () => {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return (
+const EditProfilePage = () => {
+  return (
+    <>
+      <Navbar />
       <div className={styles.container}>
-        <div className={styles.formCard}>
-          <h2 className={styles.title}>Edit Your Profile</h2>
-          <div className={styles.loadingState}>Loading...</div>
-        </div>
+        <EditProfileContent />
       </div>
-    );
-  }
-
-  return <EditProfileContent />;
+    </>
+  );
 };
 
-// Export the component without dynamic import
-export default EditProfile; 
+export default EditProfilePage; 
