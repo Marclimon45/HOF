@@ -23,14 +23,14 @@ export default function UserProfile() {
   };
 
   const getRankImage = (contributions, isCPSMember) => {
-    if (isCPSMember) return '/CPS.webp';
-    if (contributions >= 15) return '/Master.webp';
-    if (contributions >= 10) return '/Diamond.webp';
-    if (contributions >= 5) return '/Platinum.webp';
-    if (contributions >= 3) return '/Gold.webp';
-    if (contributions >= 2) return '/Silver.webp';
-    if (contributions >= 1) return '/Bronze.webp';
-    return '/Unranked.webp';
+    if (isCPSMember) return '/CPS.png';
+    if (contributions >= 15) return '/Master.png';
+    if (contributions >= 10) return '/Diamond.png';
+    if (contributions >= 5) return '/Platinum.png';
+    if (contributions >= 3) return '/Gold.png';
+    if (contributions >= 2) return '/Silver.png';
+    if (contributions >= 1) return '/Bronze.png';
+    return '/Unranked.png';
   };
 
   const getRankTitle = (contributions, isCPSMember) => {
@@ -190,13 +190,6 @@ export default function UserProfile() {
             </Link>
           )}
         </div>
-
-        <button 
-          onClick={() => router.push('/team')} 
-          className={styles.editButton}
-        >
-          Back to Team
-        </button>
       </div>
 
       <section className={styles.section}>
