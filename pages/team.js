@@ -53,7 +53,7 @@ const TeamPage = () => {
   ]);
 
   const [founderInfo] = useState({
-    name: "Professor Xin Qin",
+    name: "Dr. Xin Qin",
     role: "Founder & Principal Investigator",
     image: "/xin.jpg",
     bio: "Previously, I completed my PhD in Computer Science at the University of Southern California, advised by Prof. Jyotirmoy Deshmukh. I received my Computer Science BS degree from ShanghaiTech Univeristy, where I was advised by Prof. Yi MA and Prof. Hao Chen. I spent my last year of undergraduate in UC Berkeley as a visiting student, working in BAIR Lab with Prof. Angjoo Kanazawa and Richard Zhang. During my visit, I also received invaluable support from Prof. Alexei Efros and Prof. Jitendra Malik.",
@@ -203,9 +203,9 @@ const TeamPage = () => {
               Members
             </Typography>
             <img 
-              src="/CPS.webp"
-              alt="Top 500" 
-                      className={styles.rankIcon}
+              src="/CPS.png"
+              alt="CPS Member" 
+              className={styles.rankIcon}
             />
           </Box>
           <Grid container spacing={4}>

@@ -22,14 +22,27 @@ const Navbar = () => {
   };
 
   const getRankImage = (contributions, isCPSMember) => {
-    if (isCPSMember) return '/CPS.webp';
-    if (contributions >= 15) return '/Master.webp';
-    if (contributions >= 10) return '/Diamond.webp';
-    if (contributions >= 5) return '/Platinum.webp';
-    if (contributions >= 3) return '/Gold.webp';
-    if (contributions >= 2) return '/Silver.webp';
-    if (contributions >= 1) return '/Bronze.webp';
-    return null;  // Don't show any rank image for unranked users
+    if (isCPSMember) return '/CPS.png';
+    if (contributions >= 15) return '/Master.png';
+    if (contributions >= 10) return '/Diamond.png';
+    if (contributions >= 5) return '/Platinum.png';
+    if (contributions >= 3) return '/Gold.png';
+    if (contributions >= 2) return '/Silver.png';
+    if (contributions >= 1) return '/Bronze.png';
+    return '/Unranked.png';
+  };
+
+  // Add rank color helper function
+  const getRankColor = (contributions, isCPSMember) => {
+    if (isCPSMember) return '#FFD700'; // CPS - Gold
+    if (contributions >= 20) return '#FF4081'; // Grandmaster - Pink
+    if (contributions >= 15) return '#9C27B0'; // Master - Purple
+    if (contributions >= 10) return '#2196F3'; // Diamond - Blue
+    if (contributions >= 5) return '#00BCD4';  // Platinum - Cyan
+    if (contributions >= 3) return '#FFC107';  // Gold - Yellow
+    if (contributions >= 2) return '#9E9E9E';  // Silver - Grey
+    if (contributions >= 1) return '#795548';  // Bronze - Brown
+    return '#757575';  // Unranked - Default grey
   };
 
   useEffect(() => {
@@ -176,14 +189,121 @@ const Navbar = () => {
             </div>
 
             {/* Dropdown Menu */}
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+            <Menu 
+              anchorEl={anchorEl} 
+              open={Boolean(anchorEl)} 
+              onClose={handleMenuClose}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: 'visible',
+                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.15))',
+                  mt: 1.5,
+                  borderRadius: 2,
+                  minWidth: 220,
+                  '& .MuiAvatar-root': {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  '& a': {
+                    textDecoration: 'none',
+                    color: 'inherit'
+                  },
+                  '&:before': {
+                    content: '""',
+                    display: 'block',
+                    position: 'absolute',
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: 'background.paper',
+                    transform: 'translateY(-50%) rotate(45deg)',
+                    zIndex: 0,
+                  },
+                },
+              }}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+              <Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid #eee' }}>
+                <Typography variant="subtitle1" sx={{ 
+                  fontWeight: 500,
+                  color: getRankColor(userData?.contributions, userData?.isCPSMember)
+                }}>
+                  {userData?.displayName || user?.email?.split('@')[0] || 'User'}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {user?.email}
+                </Typography>
+              </Box>
+
               <Link href="/profile" passHref>
-                <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+                <MenuItem onClick={handleMenuClose} sx={{
+                  py: 1.5,
+                  px: 2,
+                  '&:hover': {
+                    bgcolor: `${getRankColor(userData?.contributions, userData?.isCPSMember)}15`,
+                    '& .MuiTypography-root': {
+                      color: getRankColor(userData?.contributions, userData?.isCPSMember)
+                    }
+                  }
+                }}>
+                  <Avatar src={userData?.photoURL || user?.photoURL || '/jeff1.jpg'} sx={{ mr: 2 }} />
+                  <Box>
+                    <Typography variant="body1">Profile</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      View and edit your profile
+                    </Typography>
+                  </Box>
+                </MenuItem>
               </Link>
+
               <Link href="/settings" passHref>
-                <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+                <MenuItem onClick={handleMenuClose} sx={{
+                  py: 1.5,
+                  px: 2,
+                  '&:hover': {
+                    bgcolor: `${getRankColor(userData?.contributions, userData?.isCPSMember)}15`,
+                    '& .MuiTypography-root': {
+                      color: getRankColor(userData?.contributions, userData?.isCPSMember)
+                    }
+                  }
+                }}>
+                  <Avatar sx={{ bgcolor: 'primary.light', mr: 2 }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 24 24" fill="white">
+                      <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                    </svg>
+                  </Avatar>
+                  <Box>
+                    <Typography variant="body1">Settings</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Manage your preferences
+                    </Typography>
+                  </Box>
+                </MenuItem>
               </Link>
-              <MenuItem onClick={handleLogoutClick} sx={{ color: 'error.main' }}>Logout</MenuItem>
+
+              <Box sx={{ px: 2, py: 1.5, borderTop: '1px solid #eee' }}>
+                <Button 
+                  onClick={handleLogoutClick}
+                  fullWidth
+                  color="error"
+                  variant="outlined"
+                  sx={{
+                    borderRadius: 2,
+                    textTransform: 'none',
+                    '&:hover': {
+                      backgroundColor: 'error.light',
+                      color: 'white'
+                    }
+                  }}
+                >
+                  Sign Out
+                </Button>
+              </Box>
             </Menu>
 
             {/* Logout Confirmation Dialog */}
