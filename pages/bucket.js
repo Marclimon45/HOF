@@ -41,9 +41,10 @@ import {
   doc, 
   updateDoc,
   query as firestoreQuery,
-  where
+  where,
+  deleteDoc
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import Navbar from '../components/navbar';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ShareIcon from '@mui/icons-material/Share';
@@ -56,7 +57,10 @@ import LinkIcon from '@mui/icons-material/Link';
 import CloseIcon from '@mui/icons-material/Close';
 import SortIcon from '@mui/icons-material/Sort';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { formatDistanceToNow } from 'date-fns';
+import { toast } from 'react-hot-toast';
 
 const defaultSkillsOptions = ["Project", "Python", "UI/UX Design", "Data Analysis", "Marketing", "Project Management", "Research", "Content Writing"];
 const areasOfInterestOptions = ["Technology", "Education", "Health", "Business", "Environment"];
@@ -145,15 +149,25 @@ const Bucket = () => {
           const userDoc = await getDoc(userDocRef);
           const userData = userDoc.exists() ? userDoc.data() : null;
           
+          // Construct full name from first, middle, and last name
+          const fullName = userData ? 
+            [userData.firstName, userData.middleName, userData.lastName]
+              .filter(Boolean)
+              .join(' ') || 'User' : 
+            'User';
+          
           return {
             id: ideaDoc.id,
             ...data,
             likes: data.likes || [], // Ensure likes is always an array
             comments: data.comments || [], // Ensure comments is always an array
             creator: userData ? {
-              name: userData.name || userData.email,
+              name: fullName,
               photoURL: userData.photoURL
-            } : null
+            } : {
+              name: 'User',
+              photoURL: null
+            }
           };
         } catch (userError) {
           console.error('Error fetching user data:', userError);
@@ -162,7 +176,10 @@ const Bucket = () => {
             ...data,
             likes: data.likes || [], // Ensure likes is always an array
             comments: data.comments || [], // Ensure comments is always an array
-            creator: null
+            creator: {
+              name: 'User',
+              photoURL: null
+            }
           };
         }
       }));
@@ -176,45 +193,219 @@ const Bucket = () => {
     }
   };
 
+  const handleDeleteIdea = async (ideaId) => {
+    if (!auth.currentUser) return;
+
+    try {
+      const ideaRef = doc(db, 'ideas', ideaId);
+      const idea = ideas.find(i => i.id === ideaId);
+
+      if (idea.creatorUid !== auth.currentUser.uid) {
+        toast.error('You can only delete your own ideas');
+        return;
+      }
+
+      // Delete media files from storage
+      if (idea.media && idea.media.length > 0) {
+        await Promise.all(
+          idea.media.map(async (media) => {
+            if (media.url) {
+              const fileRef = ref(storage, media.url);
+              try {
+                await deleteObject(fileRef);
+              } catch (error) {
+                console.error('Error deleting media:', error);
+              }
+            }
+          })
+        );
+      }
+
+      await deleteDoc(ideaRef);
+      setIdeas(prevIdeas => prevIdeas.filter(i => i.id !== ideaId));
+      toast.success('Idea deleted successfully');
+    } catch (error) {
+      console.error('Error deleting idea:', error);
+      toast.error('Failed to delete idea');
+    }
+  };
+
+  const handleMediaUpload = async (event) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    for (const file of Array.from(files)) {
+      try {
+        // Validate file type
+        if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+          toast.error('Please upload only images or videos');
+          continue;
+        }
+
+        // Validate file size (10MB limit)
+        if (file.size > 10 * 1024 * 1024) {
+          toast.error('File size should be less than 10MB');
+          continue;
+        }
+
+        const type = file.type.startsWith('image/') ? 'image' : 'video';
+        
+        // Create a preview URL
+        const previewUrl = URL.createObjectURL(file);
+        
+        // Add to newIdea state
+        setNewIdea(prev => ({
+          ...prev,
+          media: [...prev.media, {
+            file,
+            type,
+            previewUrl
+          }]
+        }));
+      } catch (error) {
+        console.error('Error handling file:', error);
+        toast.error(`Failed to process ${file.name}`);
+      }
+    }
+  };
+
   const handleCreateIdea = async () => {
     if (!auth.currentUser) {
       router.push('/login');
       return;
     }
 
+    // Check daily post limit
+    const today = new Date().toISOString().split('T')[0];
+    const userIdeasToday = ideas.filter(idea => 
+      idea.creatorUid === auth.currentUser.uid && 
+      idea.createdAt?.toDate().toISOString().split('T')[0] === today
+    );
+
+    if (userIdeasToday.length >= 5) {
+      toast.error('You have reached your daily limit of 5 posts');
+      return;
+    }
+
+    if (!newIdea.title.trim() || !newIdea.summary.trim()) {
+      toast.error('Please fill in the title and summary');
+      return;
+    }
+
     try {
       setUploadingMedia(true);
+      
+      // Fetch user data
+      const userDocRef = doc(db, 'users', auth.currentUser.uid);
+      const userDoc = await getDoc(userDocRef);
+      
+      if (!userDoc.exists()) {
+        toast.error('User profile not found');
+        return;
+      }
+
+      const userData = userDoc.data();
+      const fullName = [userData.firstName, userData.middleName, userData.lastName]
+        .filter(Boolean)
+        .join(' ');
+
+      if (!fullName) {
+        toast.error('Please complete your profile before posting ideas');
+        return;
+      }
       
       // Upload all media files first
       const mediaUrls = await Promise.all(
         newIdea.media.map(async (mediaItem) => {
-          if (mediaItem.file) {
-            const fileRef = ref(storage, `ideas/${Date.now()}_${mediaItem.file.name}`);
-            await uploadBytes(fileRef, mediaItem.file);
-            const url = await getDownloadURL(fileRef);
-            return {
-              url,
-              type: mediaItem.type
-            };
+          try {
+            if (mediaItem.file) {
+              console.log('Starting upload for:', mediaItem.file.name);
+              
+              // Generate a unique filename with timestamp and random string
+              const timestamp = Date.now();
+              const randomString = Math.random().toString(36).substring(7);
+              const safeFileName = mediaItem.file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+              const fileName = `ideas/${timestamp}_${randomString}_${safeFileName}`;
+              
+              // Create storage reference
+              const fileRef = ref(storage, fileName);
+              
+              // Set metadata with CORS headers
+              const metadata = {
+                contentType: mediaItem.file.type,
+                customMetadata: {
+                  originalName: mediaItem.file.name
+                }
+              };
+              
+              // Upload with metadata
+              console.log('Uploading file with metadata...');
+              const uploadResult = await uploadBytes(fileRef, mediaItem.file, metadata);
+              console.log('Upload successful:', uploadResult);
+              
+              // Get the download URL
+              console.log('Getting download URL...');
+              const url = await getDownloadURL(uploadResult.ref);
+              console.log('Download URL obtained:', url);
+              
+              // Clean up preview URL
+              if (mediaItem.previewUrl) {
+                URL.revokeObjectURL(mediaItem.previewUrl);
+              }
+              
+              return {
+                url,
+                type: mediaItem.type,
+                fileName: fileName,
+                originalName: mediaItem.file.name
+              };
+            }
+            return null;
+          } catch (error) {
+            console.error('Error details:', error);
+            if (error.code === 'storage/unauthorized') {
+              toast.error('Permission denied. Please check if you are logged in.');
+            } else if (error.code === 'storage/canceled') {
+              toast.error('Upload was cancelled.');
+            } else if (error.code === 'storage/unknown') {
+              toast.error('An unknown error occurred. Please try again.');
+            } else {
+              toast.error(`Failed to upload ${mediaItem.file?.name || 'media'}: ${error.message}`);
+            }
+            return null;
           }
-          return mediaItem;
         })
       );
 
+      // Filter out any failed uploads
+      const validMediaUrls = mediaUrls.filter(Boolean);
+      console.log('Valid media URLs:', validMediaUrls);
+
+      if (newIdea.media.length > 0 && validMediaUrls.length === 0) {
+        toast.error('Failed to upload any media files. Please try again.');
+        return;
+      }
+
       // Create the idea document
       const ideaData = {
-        title: newIdea.title,
-        summary: newIdea.summary,
+        title: newIdea.title.trim(),
+        summary: newIdea.summary.trim(),
         tags: newIdea.tags,
-        media: mediaUrls,
+        media: validMediaUrls,
         links: newIdea.links,
         creatorUid: auth.currentUser.uid,
+        creator: {
+          name: fullName,
+          photoURL: userData.photoURL || null
+        },
         createdAt: serverTimestamp(),
-        likes: [], // Initialize likes as an empty array
-        comments: [] // Initialize comments as an empty array
+        lastEdited: null,
+        likes: [],
+        comments: []
       };
 
-      await addDoc(collection(db, 'ideas'), ideaData);
+      const docRef = await addDoc(collection(db, 'ideas'), ideaData);
+      console.log('Idea document created:', docRef.id);
       
       // Reset form and close dialog
       setNewIdea({
@@ -228,28 +419,110 @@ const Bucket = () => {
       
       // Refresh ideas list
       fetchIdeas();
+      toast.success('Idea posted successfully');
     } catch (error) {
       console.error('Error creating idea:', error);
+      toast.error(`Failed to post idea: ${error.message}`);
     } finally {
       setUploadingMedia(false);
+      // Clean up any remaining preview URLs
+      newIdea.media.forEach(media => {
+        if (media.previewUrl) {
+          URL.revokeObjectURL(media.previewUrl);
+        }
+      });
     }
   };
 
-  const handleMediaUpload = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+  const handleEditIdea = async (ideaId) => {
+    if (!auth.currentUser) return;
 
-    const type = file.type.startsWith('image/') ? 'image' : 'video';
-    const newMedia = {
-      file,
-      type,
-      previewUrl: URL.createObjectURL(file)
-    };
+    try {
+      const idea = ideas.find(i => i.id === ideaId);
+      if (!idea || idea.creatorUid !== auth.currentUser.uid) {
+        toast.error('You can only edit your own ideas');
+        return;
+      }
 
-    setNewIdea(prev => ({
-      ...prev,
-      media: [...prev.media, newMedia]
-    }));
+      // Set the current idea data in the edit form
+      setNewIdea({
+        title: idea.title,
+        summary: idea.summary,
+        tags: idea.tags || [],
+        media: idea.media || [],
+        links: idea.links || []
+      });
+
+      setSelectedIdea(idea);
+      setCreateDialogOpen(true);
+    } catch (error) {
+      console.error('Error preparing to edit idea:', error);
+      toast.error('Failed to prepare edit. Please try again.');
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!auth.currentUser || !selectedIdea) return;
+
+    try {
+      const ideaRef = doc(db, 'ideas', selectedIdea.id);
+      
+      // Upload any new media files
+      const newMedia = newIdea.media.filter(m => m.file);
+      const existingMedia = newIdea.media.filter(m => !m.file);
+      
+      const uploadedMedia = await Promise.all(
+        newMedia.map(async (mediaItem) => {
+          try {
+            const timestamp = Date.now();
+            const fileName = `${timestamp}_${mediaItem.file.name}`;
+            const fileRef = ref(storage, `ideas/${fileName}`);
+            await uploadBytes(fileRef, mediaItem.file);
+            const url = await getDownloadURL(fileRef);
+            return {
+              url,
+              type: mediaItem.type,
+              fileName
+            };
+          } catch (error) {
+            console.error('Error uploading media:', error);
+            toast.error(`Failed to upload ${mediaItem.file?.name || 'media'}`);
+            return null;
+          }
+        })
+      );
+
+      const validNewMedia = uploadedMedia.filter(Boolean);
+      const allMedia = [...existingMedia, ...validNewMedia];
+
+      // Update the idea document
+      await updateDoc(ideaRef, {
+        title: newIdea.title.trim(),
+        summary: newIdea.summary.trim(),
+        tags: newIdea.tags,
+        media: allMedia,
+        links: newIdea.links,
+        lastEdited: serverTimestamp()
+      });
+
+      // Reset form and close dialog
+      setNewIdea({
+        title: '',
+        summary: '',
+        tags: [],
+        media: [],
+        links: []
+      });
+      setSelectedIdea(null);
+      setCreateDialogOpen(false);
+      
+      // Refresh ideas list
+      fetchIdeas();
+      toast.success('Idea updated successfully');
+    } catch (error) {
+      console.error('Error updating idea:', error);
+      toast.error('Failed to update idea. Please try again.');
+    }
   };
 
   const handleAddLink = (link) => {
@@ -318,6 +591,27 @@ const Bucket = () => {
     if (!newComment.trim()) return;
 
     try {
+      // Fetch user data
+      const userDocRef = doc(db, 'users', auth.currentUser.uid);
+      const userDoc = await getDoc(userDocRef);
+      
+      if (!userDoc.exists()) {
+        toast.error('User profile not found');
+        return;
+      }
+
+      const userData = userDoc.data();
+      
+      // Construct full name from first, middle, and last name
+      const fullName = [userData.firstName, userData.middleName, userData.lastName]
+        .filter(Boolean)
+        .join(' ');
+
+      if (!fullName) {
+        toast.error('Please complete your profile before commenting');
+        return;
+      }
+
       const ideaRef = doc(db, 'ideas', ideaId);
       const idea = ideas.find(i => i.id === ideaId);
       const updatedComments = [
@@ -325,7 +619,7 @@ const Bucket = () => {
         {
           text: newComment.trim(),
           userId: auth.currentUser.uid,
-          userName: auth.currentUser.displayName || 'Anonymous',
+          userName: fullName,
           timestamp: new Date().toISOString()
         }
       ];
@@ -342,8 +636,10 @@ const Bucket = () => {
 
       setNewComment('');
       setCommentDialogOpen(false);
+      toast.success('Comment added successfully');
     } catch (error) {
       console.error('Error adding comment:', error);
+      toast.error('Failed to add comment. Please try again.');
     }
   };
 
@@ -534,6 +830,55 @@ const Bucket = () => {
 
   const today = new Date().toISOString().split('T')[0];
 
+  const handleDeleteComment = async (ideaId, commentTimestamp) => {
+    if (!auth.currentUser) return;
+
+    try {
+      const ideaRef = doc(db, 'ideas', ideaId);
+      const idea = ideas.find(i => i.id === ideaId);
+      
+      // Find the comment to check if user is the author
+      const comment = idea.comments.find(c => c.timestamp === commentTimestamp);
+      
+      if (!comment) {
+        toast.error('Comment not found');
+        return;
+      }
+
+      if (comment.userId !== auth.currentUser.uid) {
+        toast.error('You can only delete your own comments');
+        return;
+      }
+
+      // Update the comment to show as deleted instead of removing it
+      const updatedComments = idea.comments.map(c => {
+        if (c.timestamp === commentTimestamp) {
+          return {
+            ...c,
+            text: '[Comment deleted]',
+            deleted: true
+          };
+        }
+        return c;
+      });
+
+      await updateDoc(ideaRef, {
+        comments: updatedComments
+      });
+
+      setIdeas(prevIdeas => 
+        prevIdeas.map(idea => 
+          idea.id === ideaId ? { ...idea, comments: updatedComments } : idea
+        )
+      );
+
+      toast.success('Comment deleted successfully');
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      toast.error('Failed to delete comment');
+    }
+  };
+
   // Don't render anything until mounted to prevent hydration issues
   if (!mounted) {
     return (
@@ -649,8 +994,24 @@ const Bucket = () => {
                         {idea.creator?.name?.[0]}
                       </Avatar>
                       <Box>
-                        <Typography variant="subtitle1">
-                          {idea.creator?.name || 'Anonymous'}
+                        <Typography 
+                          variant="subtitle1" 
+                          component="a"
+                          href={`/profile/${idea.creatorUid}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            router.push(`/profile/${idea.creatorUid}`);
+                          }}
+                          sx={{
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            cursor: 'pointer',
+                            '&:hover': {
+                              color: '#87CEEB'
+                            }
+                          }}
+                        >
+                          {idea.creator?.name || 'User'}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                           {new Date(idea.createdAt?.toDate()).toLocaleDateString()}
@@ -751,27 +1112,61 @@ const Bucket = () => {
                                 <Avatar sx={{ width: 24, height: 24, mr: 1 }}>
                                   {comment.userName[0]}
                                 </Avatar>
-                                <Typography variant="subtitle2">
+                                <Typography 
+                                  variant="subtitle2"
+                                  component="a"
+                                  href={`/profile/${comment.userId}`}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    router.push(`/profile/${comment.userId}`);
+                                  }}
+                                  sx={{
+                                    textDecoration: 'none',
+                                    color: 'inherit',
+                                    cursor: 'pointer',
+                                    '&:hover': {
+                                      color: '#87CEEB'
+                                    }
+                                  }}
+                                >
                                   {comment.userName}
                                 </Typography>
                                 <Typography variant="caption" sx={{ ml: 1, color: 'text.secondary' }}>
                                   {formatDistanceToNow(new Date(comment.timestamp), { addSuffix: true })}
                                 </Typography>
+                                {auth.currentUser?.uid === comment.userId && !comment.deleted && (
+                                  <IconButton 
+                                    size="small" 
+                                    onClick={() => handleDeleteComment(idea.id, comment.timestamp)}
+                                    sx={{ ml: 'auto' }}
+                                  >
+                                    <DeleteIcon fontSize="small" />
+                                  </IconButton>
+                                )}
                               </Box>
-                              <Typography variant="body2" sx={{ ml: 4 }}>
-                                {comment.text}
-                              </Typography>
-                              <Button
-                                size="small"
-                                sx={{ ml: 4, mt: 1 }}
-                                onClick={() => {
-                                  setReplyTo(comment);
-                                  setSelectedIdea(idea);
-                                  setCommentDialogOpen(true);
+                              <Typography 
+                                variant="body2" 
+                                sx={{ 
+                                  ml: 4,
+                                  color: comment.deleted ? 'text.secondary' : 'text.primary',
+                                  fontStyle: comment.deleted ? 'italic' : 'normal'
                                 }}
                               >
-                                Reply
-                              </Button>
+                                {comment.text}
+                              </Typography>
+                              {!comment.deleted && (
+                                <Button
+                                  size="small"
+                                  sx={{ ml: 4, mt: 1 }}
+                                  onClick={() => {
+                                    setReplyTo(comment);
+                                    setSelectedIdea(idea);
+                                    setCommentDialogOpen(true);
+                                  }}
+                                >
+                                  Reply
+                                </Button>
+                              )}
                               {comment.replies && comment.replies.map((reply, replyIndex) => (
                                 <Box key={replyIndex} sx={{ ml: 6, mt: 1 }}>
                                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -794,6 +1189,13 @@ const Bucket = () => {
                           ))}
                         </Box>
                       </Box>
+                    )}
+
+                    {/* Edit Status */}
+                    {idea.lastEdited && (
+                      <Typography variant="caption" color="text.secondary" sx={{ ml: 2 }}>
+                        (edited {formatDistanceToNow(new Date(idea.lastEdited.toDate()), { addSuffix: true })})
+                      </Typography>
                     )}
                   </CardContent>
 
@@ -822,13 +1224,27 @@ const Bucket = () => {
                       <ShareIcon />
                     </IconButton>
                     {auth.currentUser?.uid === idea.creatorUid && (
-                      <Button
-                        variant="contained"
-                        sx={{ ml: 'auto' }}
-                        onClick={() => handleOpenCreateProject(idea)}
-                      >
-                        Create Project
-                      </Button>
+                      <>
+                        <Button
+                          variant="contained"
+                          sx={{ ml: 'auto' }}
+                          onClick={() => handleOpenCreateProject(idea)}
+                        >
+                          Create Project
+                        </Button>
+                        <IconButton 
+                          onClick={() => handleEditIdea(idea.id)}
+                          color="primary"
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton 
+                          onClick={() => handleDeleteIdea(idea.id)}
+                          color="error"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
                     )}
                   </CardActions>
                 </Card>
@@ -841,14 +1257,34 @@ const Bucket = () => {
       {/* Create Idea Dialog */}
       <Dialog
         open={createDialogOpen}
-        onClose={() => setCreateDialogOpen(false)}
+        onClose={() => {
+          setCreateDialogOpen(false);
+          setSelectedIdea(null);
+          setNewIdea({
+            title: '',
+            summary: '',
+            tags: [],
+            media: [],
+            links: []
+          });
+        }}
         maxWidth="md"
         fullWidth
       >
         <DialogTitle>
-          Post New Idea
+          {selectedIdea ? 'Edit Idea' : 'Post New Idea'}
           <IconButton
-            onClick={() => setCreateDialogOpen(false)}
+            onClick={() => {
+              setCreateDialogOpen(false);
+              setSelectedIdea(null);
+              setNewIdea({
+                title: '',
+                summary: '',
+                tags: [],
+                media: [],
+                links: []
+              });
+            }}
             sx={{ position: 'absolute', right: 8, top: 8 }}
           >
             <CloseIcon />
@@ -949,6 +1385,7 @@ const Bucket = () => {
                   style={{ display: 'none' }}
                   id="media-upload"
                   onChange={handleMediaUpload}
+                  multiple
                 />
                 <label htmlFor="media-upload">
                   <Button
@@ -956,16 +1393,7 @@ const Bucket = () => {
                     variant="outlined"
                     startIcon={<AddPhotoAlternateIcon />}
                   >
-                    Add Photo
-                  </Button>
-                </label>
-                <label htmlFor="media-upload">
-                  <Button
-                    component="span"
-                    variant="outlined"
-                    startIcon={<VideoLibraryIcon />}
-                  >
-                    Add Video
+                    Add Media
                   </Button>
                 </label>
               </Box>
@@ -979,7 +1407,10 @@ const Bucket = () => {
                       sx={{
                         width: 200,
                         height: media.type === 'image' ? 150 : 'auto',
-                        position: 'relative'
+                        position: 'relative',
+                        border: '1px solid #ddd',
+                        borderRadius: 1,
+                        overflow: 'hidden'
                       }}
                     >
                       {media.type === 'image' ? (
@@ -989,8 +1420,7 @@ const Bucket = () => {
                           style={{
                             width: '100%',
                             height: '100%',
-                            objectFit: 'cover',
-                            borderRadius: 4
+                            objectFit: 'cover'
                           }}
                         />
                       ) : (
@@ -999,7 +1429,7 @@ const Bucket = () => {
                           controls
                           style={{
                             width: '100%',
-                            borderRadius: 4
+                            height: '100%'
                           }}
                         />
                       )}
@@ -1061,13 +1491,25 @@ const Bucket = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setCreateDialogOpen(false)}>Cancel</Button>
+          <Button onClick={() => {
+            setCreateDialogOpen(false);
+            setSelectedIdea(null);
+            setNewIdea({
+              title: '',
+              summary: '',
+              tags: [],
+              media: [],
+              links: []
+            });
+          }}>
+            Cancel
+          </Button>
           <Button
-            onClick={handleCreateIdea}
+            onClick={selectedIdea ? handleSaveEdit : handleCreateIdea}
             variant="contained"
             disabled={!newIdea.title || !newIdea.summary || uploadingMedia}
           >
-            Post Idea
+            {selectedIdea ? 'Save Changes' : 'Post Idea'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -1210,34 +1652,60 @@ const Bucket = () => {
             onClick={async () => {
               if (replyTo) {
                 // Handle reply
-                const ideaRef = doc(db, 'ideas', selectedIdea.id);
-                const updatedComments = selectedIdea.comments.map(comment => {
-                  if (comment.timestamp === replyTo.timestamp) {
-                    return {
-                      ...comment,
-                      replies: [...(comment.replies || []), {
-                        text: newComment.trim(),
-                        userId: auth.currentUser.uid,
-                        userName: auth.currentUser.displayName || 'Anonymous',
-                        timestamp: new Date().toISOString()
-                      }]
-                    };
+                try {
+                  // Fetch user data for the reply
+                  const userDocRef = doc(db, 'users', auth.currentUser.uid);
+                  const userDoc = await getDoc(userDocRef);
+                  
+                  if (!userDoc.exists()) {
+                    toast.error('User profile not found');
+                    return;
                   }
-                  return comment;
-                });
-                
-                await updateDoc(ideaRef, { comments: updatedComments });
-                setIdeas(prevIdeas => 
-                  prevIdeas.map(idea => 
-                    idea.id === selectedIdea.id ? { ...idea, comments: updatedComments } : idea
-                  )
-                );
+
+                  const userData = userDoc.data();
+                  const fullName = [userData.firstName, userData.middleName, userData.lastName]
+                    .filter(Boolean)
+                    .join(' ');
+
+                  if (!fullName) {
+                    toast.error('Please complete your profile before replying');
+                    return;
+                  }
+
+                  const ideaRef = doc(db, 'ideas', selectedIdea.id);
+                  const updatedComments = selectedIdea.comments.map(comment => {
+                    if (comment.timestamp === replyTo.timestamp) {
+                      return {
+                        ...comment,
+                        replies: [...(comment.replies || []), {
+                          text: newComment.trim(),
+                          userId: auth.currentUser.uid,
+                          userName: fullName,
+                          timestamp: new Date().toISOString()
+                        }]
+                      };
+                    }
+                    return comment;
+                  });
+                  
+                  await updateDoc(ideaRef, { comments: updatedComments });
+                  setIdeas(prevIdeas => 
+                    prevIdeas.map(idea => 
+                      idea.id === selectedIdea.id ? { ...idea, comments: updatedComments } : idea
+                    )
+                  );
+                  toast.success('Reply added successfully');
+                } catch (error) {
+                  console.error('Error adding reply:', error);
+                  toast.error('Failed to add reply. Please try again.');
+                }
               } else {
                 // Handle new comment
                 handleComment(selectedIdea.id);
               }
               setReplyTo(null);
               setNewComment('');
+              setCommentDialogOpen(false);
             }}
             variant="contained"
             disabled={!newComment.trim()}

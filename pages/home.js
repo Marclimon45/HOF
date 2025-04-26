@@ -66,7 +66,7 @@ import {
 const PROJECTS_PER_PAGE = 12;
 
 const defaultSkillsOptions = ["Project", "Python", "UI/UX Design", "Data Analysis", "Marketing", "Project Management", "Research", "Content Writing"];
-const areasOfInterestOptions = ["Technology", "Education", "Health", "Business", "Environment"];
+const areasOfInterestOptions = ["Technology", "Education", "Health", "Business", "Environment", "Others"];
 const defaultProjectTypes = ["Development", "Research", "Marketing", "Design", "Business", "Engineering"];
 const defaultProgressStatuses = ["Active", "Completed", "Looking for Members"];
 

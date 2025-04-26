@@ -286,11 +286,21 @@
   cursor: not-allowed;
 }
 
-.loadingState,
-.error {
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
   text-align: center;
   padding: 2rem;
-  color: #6b7280;
+  background-color: rgba(255, 255, 255, 0.9);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
 }
 
 .error {
@@ -347,12 +357,11 @@
   flex: 1;
   display: flex;
   align-items: center;
-  height: 40px;
 }
 
 .redeemInput {
   width: 100%;
-  padding: 0 12px;
+  padding: 12px;
   padding-left: 40px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -510,4 +519,88 @@
 
 .removeButton:hover {
   background-color: #dc2626;
+}
+
+.toolsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.toolItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toolItem:hover {
+  background-color: #f3f4f6;
+  transform: translateY(-2px);
+}
+
+.toolItem.selected {
+  background-color: #e3f2fd;
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+.toolItem .toolIcon {
+  width: 24px;
+  height: 24px;
+  color: inherit;
+}
+
+.customToolInput {
+  margin: 20px 0;
+}
+
+.customToolInput input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.customToolInput input:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.selectedTools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.selectedTool {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background-color: #e3f2fd;
+  border-radius: 16px;
+  font-size: 14px;
+  color: #1976d2;
+}
+
+.selectedTool .removeIcon {
+  cursor: pointer;
+  color: #1976d2;
+  width: 16px;
+  height: 16px;
+  transition: color 0.2s ease;
+}
+
+.selectedTool .removeIcon:hover {
+  color: #d32f2f;
 } 

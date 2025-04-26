@@ -17,11 +17,7 @@ import styles from "../styles/homepage.module.css";
 import { db, auth } from "../firebase/firebaseconfig";
 import { collection, addDoc, getDocs, query, where, doc, updateDoc, setDoc, onSnapshot, deleteDoc } from "firebase/firestore";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
-
-const defaultSkillsOptions = ["Project", "Python", "UI/UX Design", "Data Analysis", "Marketing", "Project Management", "Research", "Content Writing"];
-const areasOfInterestOptions = ["Technology", "Education", "Health", "Business", "Environment"];
-const defaultProjectTypes = ["Development", "Research", "Marketing", "Design", "Business", "Engineering"];
-const defaultProgressStatuses = ["Active", "Completed", "Looking for Members"];
+import { AREAS_OF_INTEREST, PROJECT_TYPES, PROGRESS_STATUSES, DEFAULT_SKILLS } from '../constants/projectConstants';
 
 // Map project types to icons
 const projectTypeIcons = {
@@ -54,6 +50,7 @@ const HomePage = () => {
     skillsRequired: [],
     projectTags: [],
     areaOfInterest: "",
+    customAreaOfInterest: "",
     projectSummary: "",
     userRole: "",
   });
@@ -61,7 +58,7 @@ const HomePage = () => {
   const [customSkill, setCustomSkill] = useState("");
   const [customTag, setCustomTag] = useState("");
   const [customFilterSkill, setCustomFilterSkill] = useState("");
-  const [filterSkills, setFilterSkills] = useState(defaultSkillsOptions);
+  const [filterSkills, setFilterSkills] = useState(DEFAULT_SKILLS);
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [user, setUser] = useState(null);
@@ -155,6 +152,7 @@ const HomePage = () => {
       skillsRequired: [],
       projectTags: [],
       areaOfInterest: "",
+      customAreaOfInterest: "",
       projectSummary: "",
       userRole: "",
     });
@@ -268,53 +266,50 @@ const HomePage = () => {
       setOpenLogin(true);
       return;
     }
-    if (!projectDetails.title || !projectDetails.teamSize || !projectDetails.expectedCompletionDate || !projectDetails.skillsRequired.length || !projectDetails.areaOfInterest || !projectDetails.projectSummary || !projectDetails.userRole) {
+
+    if (!projectDetails.title || !projectDetails.teamSize || !projectDetails.expectedCompletionDate || 
+        !projectDetails.skillsRequired.length || !projectDetails.areaOfInterest || 
+        !projectDetails.projectSummary || !projectDetails.userRole) {
       alert("Please fill all required fields, including your role.");
       return;
     }
+
+    // Add validation for custom area of interest
+    if (projectDetails.areaOfInterest === 'Others' && !projectDetails.customAreaOfInterest.trim()) {
+      alert("Please specify your area of interest");
+      return;
+    }
+
     const teamSize = parseInt(projectDetails.teamSize);
     if (teamSize > 50) {
       alert("Team size cannot exceed 50.");
       return;
     }
-    const hasEmptyRole = teamSize > 0 && roles.some(role => !role.trim());
-    if (hasEmptyRole) {
-      alert("Please provide a role for each team member.");
-      return;
-    }
-    if (teamSize > 0 && !roles[0]?.trim()) {
-      alert("Please assign a role for yourself as the first role.");
-      return;
-    }
-
-    const selectedDate = new Date(projectDetails.expectedCompletionDate);
-    if (selectedDate < today) {
-      alert("Expected completion date cannot be earlier than today.");
-      return;
-    }
-
-    const projectsQuery = query(collection(db, "projects"), where("title", "==", projectDetails.title));
-    const querySnapshot = await getDocs(projectsQuery);
-    if (!querySnapshot.empty) {
-      alert("A project with this title already exists. Please choose a unique title.");
-      return;
-    }
-
-    const newProject = {
-      title: projectDetails.title,
-      category: projectDetails.areaOfInterest,
-      description: projectDetails.projectSummary,
-      tags: projectDetails.projectTags,
-      members: teamSize,
-      date: "Mar 18, 2025",
-      createdAt: new Date().toISOString(),
-      expectedCompletionDate: projectDetails.expectedCompletionDate,
-      liked: false,
-      creatorUid: user.uid,
-      userRole: projectDetails.userRole,
-    };
 
     try {
+      const newProject = {
+        title: projectDetails.title,
+        category: projectDetails.areaOfInterest === 'Others' 
+          ? projectDetails.customAreaOfInterest.trim() 
+          : projectDetails.areaOfInterest,
+        description: projectDetails.projectSummary,
+        tags: projectDetails.projectTags,
+        members: teamSize,
+        date: "Mar 18, 2025",
+        createdAt: new Date().toISOString(),
+        expectedCompletionDate: projectDetails.expectedCompletionDate,
+        liked: false,
+        creatorUid: user.uid,
+        userRole: projectDetails.userRole,
+      };
+
+      const projectsQuery = query(collection(db, "projects"), where("title", "==", projectDetails.title));
+      const querySnapshot = await getDocs(projectsQuery);
+      if (!querySnapshot.empty) {
+        alert("A project with this title already exists. Please choose a unique title.");
+        return;
+      }
+
       const docRef = await addDoc(collection(db, "projects"), newProject);
       const userRef = doc(db, "users", user.uid);
       const userDoc = await getDocs(query(collection(db, "users"), where("uid", "==", user.uid)));
@@ -650,7 +645,7 @@ const HomePage = () => {
                 </div>
               )}
             >
-              {defaultSkillsOptions.map((skill) => (
+              {DEFAULT_SKILLS.map((skill) => (
                 <MenuItem key={skill} value={skill}>
                   <Checkbox checked={projectDetails.skillsRequired.indexOf(skill) > -1} />
                   <ListItemText primary={skill} />
@@ -687,7 +682,7 @@ const HomePage = () => {
                 </div>
               )}
             >
-              {defaultSkillsOptions.map((tag) => (
+              {DEFAULT_SKILLS.map((tag) => (
                 <MenuItem key={tag} value={tag}>
                   <Checkbox checked={projectDetails.projectTags.indexOf(tag) > -1} />
                   <ListItemText primary={tag} />
@@ -709,23 +704,46 @@ const HomePage = () => {
               </IconButton>
             </div>
           </FormControl>
-          <FormControl margin="dense" fullWidth variant="outlined">
-            <InputLabel id="area-of-interest-label">Area of Interest *</InputLabel>
+          <FormControl margin="dense" fullWidth>
+            <InputLabel>Area of Interest *</InputLabel>
             <Select
-              labelId="area-of-interest-label"
-              name="areaOfInterest"
               value={projectDetails.areaOfInterest}
-              onChange={handleInputChange}
-              fullWidth
+              onChange={(e) => {
+                const value = e.target.value;
+                setProjectDetails(prev => ({
+                  ...prev,
+                  areaOfInterest: value,
+                  customAreaOfInterest: value === 'Others' ? '' : prev.customAreaOfInterest
+                }));
+              }}
+              label="Area of Interest *"
             >
               <MenuItem value="">Select area of interest</MenuItem>
-              {areasOfInterestOptions.map((area) => (
+              {AREAS_OF_INTEREST.map((area) => (
                 <MenuItem key={area} value={area}>
                   {area}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+          {projectDetails.areaOfInterest === 'Others' && (
+            <TextField
+              fullWidth
+              margin="dense"
+              label="Specify Area of Interest *"
+              value={projectDetails.customAreaOfInterest}
+              onChange={(e) => setProjectDetails(prev => ({
+                ...prev,
+                customAreaOfInterest: e.target.value
+              }))}
+              placeholder="Enter your specific area of interest"
+              required
+              error={projectDetails.areaOfInterest === 'Others' && !projectDetails.customAreaOfInterest.trim()}
+              helperText={projectDetails.areaOfInterest === 'Others' && !projectDetails.customAreaOfInterest.trim() ? "Please specify your area of interest" : ""}
+              variant="outlined"
+              sx={{ mt: 1 }}
+            />
+          )}
           <TextField
             margin="dense"
             name="projectSummary"
@@ -840,7 +858,7 @@ const HomePage = () => {
         <DialogContent>
           <h3 style={{ marginBottom: "10px" }}>Project Type</h3>
           <Box display="flex" flexWrap="wrap" gap={1}>
-            {defaultProjectTypes.map((type) => (
+            {PROJECT_TYPES.map((type) => (
               <Chip
                 key={type}
                 icon={projectTypeIcons[type]}
@@ -852,7 +870,7 @@ const HomePage = () => {
             ))}
           </Box>
           <h3 style={{ marginBottom: "10px", marginTop: "20px" }}>Progress Status</h3>
-          {defaultProgressStatuses.map((status) => (
+          {PROGRESS_STATUSES.map((status) => (
             <FormControlLabel
               key={status}
               control={<Checkbox checked={filter.progressStatuses.includes(status)} onChange={() => handleFilterChange("progressStatuses", status)} />}

@@ -11,8 +11,8 @@ import {
   FaChartLine, FaServer, FaRobot, FaLaptopCode, FaDocker,
   FaFigma, FaAws, FaJira, FaSlack, FaGlobe
 } from "react-icons/fa";
-import { SiGit, SiAdobexd, SiNotion } from "react-icons/si";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button } from '@mui/material';
+import { SiGit, SiAdobexd, SiNotion, SiJenkins } from "react-icons/si";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button, CircularProgress } from '@mui/material';
 import { toast } from 'react-hot-toast';
 import Navbar from '../../components/navbar';
 
@@ -53,6 +53,8 @@ const EditProfileContent = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [tempProfilePicture, setTempProfilePicture] = useState(null); // For preview
+  const [newProfilePicFile, setNewProfilePicFile] = useState(null); // Store the file
   const [formData, setFormData] = useState({
     firstName: '',
     middleName: '',
@@ -82,6 +84,24 @@ const EditProfileContent = () => {
   });
   const [redeemCode, setRedeemCode] = useState('');
   const [showCongrats, setShowCongrats] = useState(false);
+
+  const toolsAndPlatforms = [
+    { name: "VS Code", icon: <FaLaptopCode className={styles.toolIcon} /> },
+    { name: "Git", icon: <SiGit className={styles.toolIcon} /> },
+    { name: "Docker", icon: <FaDocker className={styles.toolIcon} /> },
+    { name: "Figma", icon: <FaFigma className={styles.toolIcon} /> },
+    { name: "AWS", icon: <FaAws className={styles.toolIcon} /> },
+    { name: "Jira", icon: <FaJira className={styles.toolIcon} /> },
+    { name: "Adobe XD", icon: <SiAdobexd className={styles.toolIcon} /> },
+    { name: "Slack", icon: <FaSlack className={styles.toolIcon} /> },
+    { name: "Notion", icon: <SiNotion className={styles.toolIcon} /> },
+    { name: "GitHub", icon: <FaGithub className={styles.toolIcon} /> },
+    { name: "Visual Studio", icon: <FaCode className={styles.toolIcon} /> },
+    { name: "IntelliJ IDEA", icon: <FaLaptopCode className={styles.toolIcon} /> }
+  ];
+
+  const [customTool, setCustomTool] = useState('');
+  const [customInterest, setCustomInterest] = useState('');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -248,38 +268,206 @@ const EditProfileContent = () => {
     }
   };
 
+  const compressImage = async (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob((blob) => {
+            resolve(new File([blob], file.name, {
+              type: 'image/jpeg',
+              lastModified: Date.now(),
+            }));
+          }, 'image/jpeg', 0.8); // 80% quality
+        };
+      };
+    });
+  };
+
+  const handleProfilePictureChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      // Validate file type first
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please upload an image file');
+        return;
+      }
+
+      // Compress the image
+      const compressedFile = await compressImage(file);
+
+      // Check size after compression
+      if (compressedFile.size > 2 * 1024 * 1024) {
+        toast.error('Compressed image is still larger than 2MB. Please choose a smaller image.');
+        return;
+      }
+
+      // Create a temporary preview URL
+      const previewUrl = URL.createObjectURL(compressedFile);
+      setTempProfilePicture(previewUrl);
+      setNewProfilePicFile(compressedFile);
+
+      console.log('Prepared profile picture for upload:', {
+        fileName: compressedFile.name,
+        fileSize: compressedFile.size,
+        fileType: compressedFile.type
+      });
+
+    } catch (error) {
+      console.error('Error processing profile picture:', error);
+      toast.error('Something went wrong while processing the image.');
+    }
+  };
+
+  const uploadWithRetry = async (storageRef, file, maxRetries = 3) => {
+    let lastError;
+    
+    console.log('Starting profile picture upload to Firebase Storage:', {
+      bucket: 'gs://xin-s-hall-of-fame.firebasestorage.app',
+      path: storageRef.fullPath,
+      fileSize: file.size,
+      fileType: file.type
+    });
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        console.log(`Upload attempt ${attempt + 1} of ${maxRetries}`);
+
+        // Upload to Firebase Storage with metadata
+        const snapshot = await uploadBytes(storageRef, file, {
+          contentType: file.type,
+          cacheControl: 'public,max-age=7200',
+          customMetadata: {
+            bucket: 'xin-s-hall-of-fame'
+          }
+        });
+
+        console.log('Upload successful, getting Firebase Storage URL...');
+        const downloadUrl = await getDownloadURL(snapshot.ref);
+        console.log('Firebase Storage URL obtained:', downloadUrl);
+        return downloadUrl;
+
+      } catch (error) {
+        console.error(`Upload attempt ${attempt + 1} failed:`, error);
+        lastError = error;
+
+        if (error.code === 'storage/unauthorized') {
+          throw new Error('Unauthorized to upload. Please check permissions.');
+        }
+        if (error.code === 'storage/canceled') {
+          throw new Error('Upload was canceled. Please try again.');
+        }
+
+        // If this isn't the last attempt, wait before retrying
+        if (attempt < maxRetries - 1) {
+          const delay = Math.min(2000 * Math.pow(2, attempt), 10000);
+          console.log(`Waiting ${delay}ms before retry...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    }
+
+    throw new Error(`Upload failed after ${maxRetries} attempts. Please try again.`);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       const user = auth.currentUser;
-      if (!user) throw new Error('No user logged in');
+      if (!user) {
+        toast.error('No user logged in');
+        setLoading(false);
+        return;
+      }
 
+      let profilePictureUrl = formData.profilePicture;
+
+      // Upload new profile picture to Firebase Storage if one was selected
+      if (newProfilePicFile) {
+        try {
+          console.log('Starting profile picture upload to Firebase Storage...');
+          
+          // Create storage reference with correct bucket path
+          const storageRef = ref(storage, `profile-pictures/${user.uid}`);
+          console.log('Firebase Storage reference created:', {
+            bucket: 'gs://xin-s-hall-of-fame.firebasestorage.app',
+            path: storageRef.fullPath
+          });
+
+          // Delete existing profile picture from Firebase Storage if it exists
+          if (formData.profilePicture) {
+            try {
+              await deleteObject(ref(storage, `profile-pictures/${user.uid}`));
+              console.log('Existing profile picture deleted from Firebase Storage');
+            } catch (deleteError) {
+              console.log('No existing profile picture in Firebase Storage');
+            }
+          }
+
+          // Upload to Firebase Storage
+          profilePictureUrl = await uploadWithRetry(storageRef, newProfilePicFile);
+          console.log('Profile picture uploaded to Firebase Storage:', profilePictureUrl);
+
+        } catch (uploadError) {
+          console.error('Firebase Storage upload error:', uploadError);
+          toast.error(uploadError.message || 'Failed to upload profile picture. Please try again.');
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Update user document with Firebase Storage URL
       const dataToUpdate = {
-        firstName: formData.firstName,
-        middleName: formData.middleName,
-        lastName: formData.lastName,
-        email: formData.email,
-        discordUsername: formData.discordUsername,
-        linkedinUrl: formData.linkedinUrl,
-        githubUrl: formData.githubUrl,
-        websiteUrl: formData.websiteUrl,
-        bio: formData.bio,
-        skills: formData.skills,
-        tools: formData.tools,
-        areaOfInterest: formData.areaOfInterest,
-        availability: formData.availability,
-        isCPSMember: formData.isCPSMember,
+        ...formData,
+        profilePicture: profilePictureUrl,
         updatedAt: serverTimestamp()
       };
 
       await updateDoc(doc(db, 'users', user.uid), dataToUpdate);
+      
+      // Clean up temporary preview
+      if (tempProfilePicture) {
+        URL.revokeObjectURL(tempProfilePicture);
+        setTempProfilePicture(null);
+      }
+      setNewProfilePicFile(null);
+
       toast.success('Profile updated successfully');
-      router.push('/profile');
+      setLoading(false);
+      router.replace('/profile');
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast.error('Failed to update profile');
+      toast.error('Failed to update profile. Please try again.');
       setLoading(false);
     }
   };
@@ -297,17 +485,31 @@ const EditProfileContent = () => {
       }
 
       const userRef = doc(db, 'users', auth.currentUser.uid);
+      const userDoc = await getDoc(userRef);
       
-      if (redeemCode.toLowerCase() === 'CPS') {
+      if (!userDoc.exists()) {
+        toast.error('User profile not found');
+        return;
+      }
+
+      const userData = userDoc.data();
+      if (userData.isCPSMember) {
+        toast.error('You are already a CPS member');
+        return;
+      }
+      
+      if (redeemCode.trim().toUpperCase() === 'CPS') {
+        // Update only the CPS-related fields while preserving all other data
         await updateDoc(userRef, {
           rank: 'CPS',
           isCPSMember: true,
           updatedAt: serverTimestamp()
         });
 
-        // Update local state
+        // Update local state while preserving all existing data
         setFormData(prev => ({
           ...prev,
+          rank: 'CPS',
           isCPSMember: true
         }));
 
@@ -316,6 +518,8 @@ const EditProfileContent = () => {
         
         // Clear the redeem code input
         setRedeemCode('');
+
+        toast.success('Successfully redeemed CPS membership!');
 
         // Scroll to bio section after a short delay
         setTimeout(() => {
@@ -326,7 +530,7 @@ const EditProfileContent = () => {
       }
     } catch (error) {
       console.error('Error redeeming code:', error);
-      toast.error('Failed to redeem code');
+      toast.error('Failed to redeem code. Please try again.');
     }
   };
 
@@ -334,84 +538,102 @@ const EditProfileContent = () => {
     setShowCongrats(false);
   };
 
-  const handleProfilePictureChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Validate file size (2MB limit)
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('File size must be less than 2MB');
-      return;
-    }
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please upload an image file');
-      return;
-    }
-
-    try {
-      const user = auth.currentUser;
-      if (!user) throw new Error('No user logged in');
-
-      // Create a reference to the storage location
-      const storageRef = ref(storage, `profile-pictures/${user.uid}`);
-
-      // Upload the file
-      await uploadBytes(storageRef, file);
-
-      // Get the download URL
-      const downloadURL = await getDownloadURL(storageRef);
-
-      // Update formData with the new profile picture URL
-      setFormData(prev => ({
-        ...prev,
-        profilePicture: downloadURL
-      }));
-
-      toast.success('Profile picture updated successfully');
-    } catch (error) {
-      console.error('Error uploading profile picture:', error);
-      toast.error('Failed to upload profile picture');
-    }
-  };
-
   const handleRemoveProfilePicture = async () => {
     try {
       const user = auth.currentUser;
-      if (!user) throw new Error('No user logged in');
+      if (!user) {
+        toast.error('No user logged in');
+        return;
+      }
 
-      // Create a reference to the storage location
-      const storageRef = ref(storage, `profile-pictures/${user.uid}`);
+      // Clean up temporary preview
+      if (tempProfilePicture) {
+        URL.revokeObjectURL(tempProfilePicture);
+        setTempProfilePicture(null);
+      }
+      setNewProfilePicFile(null);
 
-      // Delete the file from storage
-      await deleteObject(storageRef);
+      // If there was an existing profile picture in Firebase Storage, delete it
+      if (formData.profilePicture) {
+        try {
+          const storageRef = ref(storage, `profile-pictures/${user.uid}`);
+          await deleteObject(storageRef);
+          console.log('Profile picture deleted from storage');
+        } catch (error) {
+          console.error('Error deleting profile picture:', error);
+        }
+      }
 
-      // Update formData to remove the profile picture URL
+      // Update the form data
       setFormData(prev => ({
         ...prev,
         profilePicture: ''
       }));
 
-      toast.success('Profile picture removed successfully');
+      // Update the user document
+      await updateDoc(doc(db, 'users', user.uid), {
+        profilePicture: '',
+        updatedAt: serverTimestamp()
+      });
+
+      toast.success('Profile picture removed');
     } catch (error) {
       console.error('Error removing profile picture:', error);
       toast.error('Failed to remove profile picture');
     }
   };
 
-  if (typeof window === 'undefined') {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loadingState}>Loading...</div>
-      </div>
-    );
-  }
+  const handleToolInput = (e) => {
+    if (e.key === "Enter" && e.target.value.trim() !== "") {
+      e.preventDefault();
+      const newTool = e.target.value.trim();
+      if (!formData.tools.includes(newTool)) {
+        setFormData((prev) => ({
+          ...prev,
+          tools: [...prev.tools, newTool],
+        }));
+      }
+      setCustomTool('');
+    }
+  };
+
+  const removeTool = (tool) => {
+    setFormData((prev) => ({
+      ...prev,
+      tools: prev.tools.filter((t) => t !== tool),
+    }));
+  };
+
+  const handleInterestInput = (e) => {
+    if (e.key === "Enter" && e.target.value.trim() !== "") {
+      e.preventDefault();
+      const newInterest = e.target.value.trim();
+      if (!formData.areaOfInterest.includes(newInterest)) {
+        setFormData((prev) => ({
+          ...prev,
+          areaOfInterest: [...prev.areaOfInterest, newInterest],
+        }));
+      }
+      setCustomInterest('');
+    }
+  };
+
+  const removeInterest = (interest) => {
+    setFormData((prev) => ({
+      ...prev,
+      areaOfInterest: prev.areaOfInterest.filter((i) => i !== interest),
+    }));
+  };
 
   if (loading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loadingState}>Loading...</div>
+        <div className={styles.loadingState}>
+          <CircularProgress size={40} />
+          <Typography variant="body1" sx={{ mt: 2 }}>
+            {newProfilePicFile ? 'Uploading profile picture...' : 'Updating profile...'}
+          </Typography>
+        </div>
       </div>
     );
   }
@@ -427,27 +649,19 @@ const EditProfileContent = () => {
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const areasOfInterest = [
     { name: "Cybersecurity", icon: <FaLock className={styles.areaIcon} /> },
-    { name: "Data Science", icon: <FaDatabase className={styles.areaIcon} /> },
-    { name: "Frontend Development", icon: <FaCode className={styles.areaIcon} /> },
+    { name: "Data Science", icon: <FaChartLine className={styles.areaIcon} /> },
+    { name: "Frontend Development", icon: <FaPalette className={styles.areaIcon} /> },
     { name: "Backend Development", icon: <FaServer className={styles.areaIcon} /> },
-    { name: "UI/UX Design", icon: <FaPalette className={styles.areaIcon} /> },
+    { name: "UI/UX Design", icon: <SiAdobexd className={styles.areaIcon} /> },
     { name: "Machine Learning", icon: <FaBrain className={styles.areaIcon} /> },
     { name: "AI Specialist", icon: <FaRobot className={styles.areaIcon} /> },
-    { name: "Data Analysis", icon: <FaChartLine className={styles.areaIcon} /> }
+    { name: "Data Analysis", icon: <FaDatabase className={styles.areaIcon} /> },
+    { name: "DevOps", icon: <SiJenkins className={styles.areaIcon} /> },
+    { name: "Cloud Computing", icon: <FaGlobe className={styles.areaIcon} /> },
+    { name: "Mobile Development", icon: <FaUserAlt className={styles.areaIcon} /> },
+    { name: "Game Development", icon: <FaCode className={styles.areaIcon} /> }
   ];
   
-  const toolsAndPlatforms = [
-    { name: "VS Code", icon: <FaLaptopCode className={styles.toolIcon} /> },
-    { name: "Git", icon: <SiGit className={styles.toolIcon} /> },
-    { name: "Docker", icon: <FaDocker className={styles.toolIcon} /> },
-    { name: "Figma", icon: <FaFigma className={styles.toolIcon} /> },
-    { name: "AWS", icon: <FaAws className={styles.toolIcon} /> },
-    { name: "Jira", icon: <FaJira className={styles.toolIcon} /> },
-    { name: "Adobe XD", icon: <SiAdobexd className={styles.toolIcon} /> },
-    { name: "Slack", icon: <FaSlack className={styles.toolIcon} /> },
-    { name: "Notion", icon: <SiNotion className={styles.toolIcon} /> }
-  ];
-
   return (
     <div className={styles.container}>
       <div className={styles.formCard}>
@@ -463,7 +677,13 @@ const EditProfileContent = () => {
               <h3 className={styles.sectionTitle}>Profile Picture</h3>
               <div className={styles.profilePictureContainer}>
                 <div className={styles.picturePreview}>
-                  {formData.profilePicture ? (
+                  {tempProfilePicture ? (
+                    <img
+                      src={tempProfilePicture}
+                      alt="Profile Preview"
+                      className={styles.previewImage}
+                    />
+                  ) : formData.profilePicture ? (
                     <img
                       src={formData.profilePicture}
                       alt="Profile"
@@ -484,7 +704,7 @@ const EditProfileContent = () => {
                   <label htmlFor="profilePicture" className={styles.uploadButton}>
                     Choose Image
                   </label>
-                  {formData.profilePicture && (
+                  {(tempProfilePicture || formData.profilePicture) && (
                     <button
                       type="button"
                       onClick={handleRemoveProfilePicture}
@@ -663,23 +883,51 @@ const EditProfileContent = () => {
           />
 
           <h3 className={styles.sectionTitle}>Tools & Platforms</h3>
-          <div className={styles.toolsPlatformsGrid}>
+          <div className={styles.toolsGrid}>
             {toolsAndPlatforms.map((tool) => (
-              <label key={tool.name} className={styles.toolCheckboxLabel}>
-                    <input
-                      type="checkbox"
-                  checked={formData.tools.includes(tool.name)}
-                  onChange={() => {
-                    const newTools = formData.tools.includes(tool.name)
-                      ? formData.tools.filter(t => t !== tool.name)
-                      : [...formData.tools, tool.name];
-                        setFormData(prev => ({ ...prev, tools: newTools }));
-                      }}
-                    />
+              <div
+                key={tool.name}
+                className={`${styles.toolItem} ${
+                  formData.tools.includes(tool.name) ? styles.selected : ""
+                }`}
+                onClick={() => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    tools: prev.tools.includes(tool.name)
+                      ? prev.tools.filter((t) => t !== tool.name)
+                      : [...prev.tools, tool.name],
+                  }));
+                }}
+              >
                 {tool.icon}
                 <span>{tool.name}</span>
-                  </label>
-                ))}
+              </div>
+            ))}
+          </div>
+
+          {/* Custom Tool Input */}
+          <div className={styles.customToolInput}>
+            <input
+              type="text"
+              value={customTool}
+              onChange={(e) => setCustomTool(e.target.value)}
+              onKeyPress={handleToolInput}
+              placeholder="Add your own tool..."
+              className={styles.input}
+            />
+          </div>
+
+          {/* Selected Tools Display */}
+          <div className={styles.selectedTools}>
+            {formData.tools.map((tool) => (
+              <div key={tool} className={styles.selectedTool}>
+                <span>{tool}</span>
+                <FaTimes
+                  className={styles.removeIcon}
+                  onClick={() => removeTool(tool)}
+                />
+              </div>
+            ))}
           </div>
 
           <h3 className={styles.sectionTitle}>Availability</h3>
@@ -734,23 +982,51 @@ const EditProfileContent = () => {
           </div>
 
           <h3 className={styles.sectionTitle}>Areas of Interest</h3>
-          <div className={styles.areasOfInterestGrid}>
+          <div className={styles.toolsGrid}>
             {areasOfInterest.map((interest) => (
-              <label key={interest.name} className={styles.areaCheckboxLabel}>
-                  <input
-                    type="checkbox"
-                  checked={formData.areaOfInterest.includes(interest.name)}
-                  onChange={() => {
-                    const newInterests = formData.areaOfInterest.includes(interest.name)
-                      ? formData.areaOfInterest.filter(i => i !== interest.name)
-                      : [...formData.areaOfInterest, interest.name];
-                    setFormData(prev => ({ ...prev, areaOfInterest: newInterests }));
-                  }}
-                />
+              <div
+                key={interest.name}
+                className={`${styles.toolItem} ${
+                  formData.areaOfInterest.includes(interest.name) ? styles.selected : ""
+                }`}
+                onClick={() => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    areaOfInterest: prev.areaOfInterest.includes(interest.name)
+                      ? prev.areaOfInterest.filter((i) => i !== interest.name)
+                      : [...prev.areaOfInterest, interest.name],
+                  }));
+                }}
+              >
                 {interest.icon}
                 <span>{interest.name}</span>
-                </label>
-              ))}
+              </div>
+            ))}
+          </div>
+
+          {/* Custom Interest Input */}
+          <div className={styles.customToolInput}>
+            <input
+              type="text"
+              value={customInterest}
+              onChange={(e) => setCustomInterest(e.target.value)}
+              onKeyPress={handleInterestInput}
+              placeholder="Add your own area of interest..."
+              className={styles.input}
+            />
+          </div>
+
+          {/* Selected Interests Display */}
+          <div className={styles.selectedTools}>
+            {formData.areaOfInterest.map((interest) => (
+              <div key={interest} className={styles.selectedTool}>
+                <span>{interest}</span>
+                <FaTimes
+                  className={styles.removeIcon}
+                  onClick={() => removeInterest(interest)}
+                />
+              </div>
+            ))}
           </div>
 
         <div className={styles.buttonGroup}>

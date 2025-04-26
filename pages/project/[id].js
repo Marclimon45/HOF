@@ -174,24 +174,46 @@ const ProjectDetails = () => {
         .filter(subRole => subRole !== null && subRole !== undefined)
     : [];
 
-    const fetchProject = async () => {
-      if (!id) return;
+  // Add this helper function to sort timeline entries
+  const sortTimelineEntries = (timeline) => {
+    if (!Array.isArray(timeline)) return [];
+    return [...timeline].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateB - dateA; // Sort in descending order (newest first)
+    });
+  };
 
-              try {
-                const projectRef = doc(db, "projects", id);
-                const projectSnap = await getDoc(projectRef);
+  // Add this helper function to handle date conversions
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return '';
+    // Create date in local timezone
+    const date = new Date(dateString);
+    // Adjust for timezone offset
+    const offset = date.getTimezoneOffset();
+    const adjustedDate = new Date(date.getTime() + (offset * 60 * 1000));
+    // Format as YYYY-MM-DD
+    return adjustedDate.toISOString().split('T')[0];
+  };
 
-                if (projectSnap.exists()) {
-                  const projectData = { 
-                    id: projectSnap.id, 
-                    ...projectSnap.data(),
-                    keyAchievements: projectSnap.data().keyAchievements || [],
-                    technologies: projectSnap.data().technologies || [],
-                    timeline: projectSnap.data().timeline || [],
-                    media: projectSnap.data().media || []
-                  };
+  const fetchProject = async () => {
+    if (!id) return;
+
+    try {
+      const projectRef = doc(db, "projects", id);
+      const projectSnap = await getDoc(projectRef);
+
+      if (projectSnap.exists()) {
+        const projectData = { 
+          id: projectSnap.id, 
+          ...projectSnap.data(),
+          keyAchievements: projectSnap.data().keyAchievements || [],
+          technologies: projectSnap.data().technologies || [],
+          timeline: sortTimelineEntries(projectSnap.data().timeline || []),
+          media: projectSnap.data().media || []
+        };
         console.log("Project data:", projectData);
-                  setProject(projectData);
+        setProject(projectData);
         setEditedProject(projectData);
         
         // Check if user is creator or has a role in the project
@@ -237,14 +259,14 @@ const ProjectDetails = () => {
         } else {
           setTeamMembers([]);
         }
-                } else {
-                  console.log("No project found with ID:", id);
-                  setError("Project not found");
-                }
-              } catch (err) {
+      } else {
+        console.log("No project found with ID:", id);
+        setError("Project not found");
+      }
+    } catch (err) {
       console.error("Error fetching project:", err);
-                setError(`Failed to load project: ${err.message}`);
-              }
+      setError(`Failed to load project: ${err.message}`);
+    }
     setLoading(false);
   };
 
@@ -306,52 +328,11 @@ const ProjectDetails = () => {
 
   const handleSaveChanges = async () => {
     try {
-      if (!editedProject || !id) return;
-
-      // Check if project is being marked as completed
-      if (editedProject.status === 'Completed') {
-        // Validate requirements for completed projects
-        const errors = [];
-        
-        if (!editedProject.projectLink) {
-          errors.push('Project link is required for completed projects');
-        }
-        
-        if (!editedProject.category) {
-          errors.push('Project category is required for completed projects');
-        }
-        
-        const teamMembers = editedProject.roles?.filter(role => role.userId) || [];
-        if (teamMembers.length < 1) {
-          errors.push('At least one team member is required for completed projects');
-        }
-        
-        if (!Array.isArray(editedProject.keyAchievements) || editedProject.keyAchievements.length < 3) {
-          errors.push('At least 3 key achievements are required for completed projects');
-        }
-        
-        if (!Array.isArray(editedProject.timeline) || editedProject.timeline.length < 3) {
-          errors.push('At least 3 timeline entries are required for completed projects');
-        }
-        
-        if (errors.length > 0) {
-          setSnackbar({
-            open: true,
-            message: errors.join('\n'),
-            severity: 'error'
-          });
-          return;
-        }
-
-        // Update duration to include completion date
-        const completionDate = new Date().toISOString().split('T')[0];
-        editedProject.duration = `${project.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0]} - ${completionDate}`;
-      }
-
-      // Ensure roles is an array
+      // Ensure roles is an array and timeline is sorted
       const updatedProject = {
         ...editedProject,
-        roles: Array.isArray(editedProject.roles) ? editedProject.roles : []
+        roles: Array.isArray(editedProject.roles) ? editedProject.roles : [],
+        timeline: sortTimelineEntries(editedProject.timeline)
       };
 
       await updateDoc(doc(db, "projects", id), updatedProject);
@@ -392,27 +373,31 @@ const ProjectDetails = () => {
   };
 
   const handleAddTimelineEntry = () => {
-    setEditedProject(prev => ({
-      ...prev,
-      timeline: Array.isArray(prev.timeline) ? [
+    setEditedProject(prev => {
+      const newTimeline = Array.isArray(prev.timeline) ? [
         ...prev.timeline,
         {
-        date: new Date().toISOString().split('T')[0],
-        title: '',
-        description: '',
+          date: formatDateForInput(new Date()),
+          title: '',
+          description: '',
           media: [],
-        mediaType: null,
-        mediaUrl: ''
+          mediaType: null,
+          mediaUrl: ''
         }
       ] : [{
-        date: new Date().toISOString().split('T')[0],
+        date: formatDateForInput(new Date()),
         title: '',
         description: '',
         media: [],
         mediaType: null,
         mediaUrl: ''
-      }]
-    }));
+      }];
+      
+      return {
+        ...prev,
+        timeline: sortTimelineEntries(newTimeline)
+      };
+    });
   };
 
   const handleRemoveTimelineEntry = (index) => {
@@ -459,7 +444,7 @@ const ProjectDetails = () => {
         };
         setEditedProject({
           ...editedProject,
-          timeline: newTimeline
+          timeline: sortTimelineEntries(newTimeline)
         });
       } else {
         // Update new entry
@@ -490,15 +475,31 @@ const ProjectDetails = () => {
     }
   };
 
-  const handleEditTimelineEntry = (index, field, value) => {
-    const newTimeline = [...editedProject.timeline];
-    newTimeline[index] = {
-      ...newTimeline[index],
-      [field]: value
-    };
-    setEditedProject({
-      ...editedProject,
-      timeline: newTimeline
+  const handleTimelineChange = (index, field, value) => {
+    setEditedProject(prev => {
+      const newTimeline = Array.isArray(prev.timeline) ? [...prev.timeline] : [];
+      if (!newTimeline[index]) {
+        newTimeline[index] = {
+          date: formatDateForInput(new Date()),
+          title: '',
+          description: '',
+          media: [],
+          mediaType: null,
+          mediaUrl: ''
+        };
+      }
+      
+      // If the field is 'date', ensure proper formatting
+      const fieldValue = field === 'date' ? formatDateForInput(new Date(value)) : value;
+      
+      newTimeline[index] = {
+        ...newTimeline[index],
+        [field]: fieldValue
+      };
+      return {
+        ...prev,
+        timeline: sortTimelineEntries(newTimeline)
+      };
     });
   };
 
@@ -661,6 +662,17 @@ const ProjectDetails = () => {
       }
 
       const projectData = projectDoc.data();
+
+      // Check if project is archived
+      if (projectData.status === 'Archived') {
+        setSnackbar({
+          open: true,
+          message: 'Cannot join an archived project',
+          severity: 'error'
+        });
+        return;
+      }
+
       const selectedRoles = Array.isArray(selectedJoinRole) ? selectedJoinRole : [selectedJoinRole];
       
       // Check if any selected roles are already taken
@@ -706,8 +718,8 @@ const ProjectDetails = () => {
 
       setIsCurrentUserMember(true);
       setJoinDialogOpen(false);
-        setSnackbar({
-          open: true,
+      setSnackbar({
+        open: true,
         message: 'Successfully joined the project!',
         severity: 'success'
       });
@@ -719,8 +731,8 @@ const ProjectDetails = () => {
       setSnackbar({
         open: true,
         message: error.message || 'Failed to join project',
-          severity: 'error'
-        });
+        severity: 'error'
+      });
     }
   };
 
@@ -863,30 +875,6 @@ const ProjectDetails = () => {
     }));
   };
 
-  const handleTimelineChange = (index, field, value) => {
-    setEditedProject(prev => {
-      const newTimeline = Array.isArray(prev.timeline) ? [...prev.timeline] : [];
-      if (!newTimeline[index]) {
-        newTimeline[index] = {
-          date: new Date().toISOString().split('T')[0],
-          title: '',
-          description: '',
-          media: [],
-          mediaType: null,
-          mediaUrl: ''
-        };
-      }
-      newTimeline[index] = {
-        ...newTimeline[index],
-        [field]: value
-      };
-      return {
-        ...prev,
-        timeline: newTimeline
-      };
-    });
-  };
-
   const handleMediaUpload = async (e, timelineIndex) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -916,7 +904,7 @@ const ProjectDetails = () => {
 
       setEditedProject(prev => ({
         ...prev,
-        timeline: newTimeline
+        timeline: sortTimelineEntries(newTimeline)
       }));
 
       setSnackbar({
@@ -951,7 +939,7 @@ const ProjectDetails = () => {
 
       setEditedProject(prev => ({
         ...prev,
-        timeline: newTimeline
+        timeline: sortTimelineEntries(newTimeline)
       }));
 
       setSnackbar({
@@ -967,6 +955,13 @@ const ProjectDetails = () => {
         severity: 'error'
       });
     }
+  };
+
+  // Add this helper function to check if project is full
+  const isProjectFull = (project) => {
+    if (!project || !Array.isArray(project.roles)) return false;
+    // Check if all roles have a userId assigned
+    return project.roles.every(role => role.userId);
   };
 
   if (loading) {
@@ -1061,6 +1056,7 @@ const ProjectDetails = () => {
                 color="primary"
                 onClick={() => setJoinDialogOpen(true)}
                 startIcon={<GroupAddIcon />}
+                disabled={project?.status === 'Archived' || isProjectFull(project)}
                 sx={{ 
                   minWidth: 100,
                   backgroundColor: '#1976D2',
@@ -1069,7 +1065,11 @@ const ProjectDetails = () => {
                   }
                 }}
               >
-                Join Project
+                {project?.status === 'Archived' 
+                  ? 'Project Archived' 
+                  : isProjectFull(project)
+                    ? 'Project Full'
+                    : 'Join Project'}
               </Button>
             )}
             {isCurrentUserMember && !isCreator && (
@@ -1537,17 +1537,19 @@ const ProjectDetails = () => {
                 <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
                     <TextField
                       type="date"
-                      value={entry.date}
-                    onChange={(e) => handleTimelineChange(index, 'date', e.target.value)}
-                    sx={{ flex: 1 }}
-                  />
-                  <Button
-                    size="small"
-                    color="error"
-                    onClick={() => handleRemoveTimelineEntry(index)}
-                  >
-                    Remove Entry
-                  </Button>
+                      label="Date"
+                      value={formatDateForInput(entry.date)}
+                      onChange={(e) => handleTimelineChange(index, 'date', e.target.value)}
+                      InputLabelProps={{ shrink: true }}
+                      sx={{ flex: 1 }}
+                    />
+                    <Button
+                      size="small"
+                      color="error"
+                      onClick={() => handleRemoveTimelineEntry(index)}
+                    >
+                      Remove Entry
+                    </Button>
                   </Box>
                   <TextField
                     fullWidth

@@ -64,7 +64,7 @@ const Login = () => {
         </form>
 
         <p className={styles.registerLink}>
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <Link href="/register" className={styles.link}>
             Create one
           </Link>

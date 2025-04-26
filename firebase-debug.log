@@ -1,13 +1,25 @@
-[debug] [2025-04-03T23:23:39.745Z] ----------------------------------------------------------------------
-[debug] [2025-04-03T23:23:39.749Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Marc Lim\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js login
-[debug] [2025-04-03T23:23:39.749Z] CLI Version:   14.1.0
-[debug] [2025-04-03T23:23:39.750Z] Platform:      win32
-[debug] [2025-04-03T23:23:39.750Z] Node Version:  v22.11.0
-[debug] [2025-04-03T23:23:39.750Z] Time:          Thu Apr 03 2025 16:23:39 GMT-0700 (Pacific Daylight Time)
-[debug] [2025-04-03T23:23:39.750Z] ----------------------------------------------------------------------
+[debug] [2025-04-17T23:34:37.636Z] ----------------------------------------------------------------------
+[debug] [2025-04-17T23:34:37.640Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\marcl\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2025-04-17T23:34:37.641Z] CLI Version:   13.32.0
+[debug] [2025-04-17T23:34:37.641Z] Platform:      win32
+[debug] [2025-04-17T23:34:37.642Z] Node Version:  v22.12.0
+[debug] [2025-04-17T23:34:37.642Z] Time:          Thu Apr 17 2025 16:34:37 GMT-0700 (Pacific Daylight Time)
+[debug] [2025-04-17T23:34:37.642Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2025-04-03T23:23:39.756Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
-[info] i  Firebase optionally collects CLI and Emulator Suite usage and error reporting information to help improve our products. Data is collected in accordance with Google's privacy policy (https://policies.google.com/privacy) and is not used to identify you.
- 
-[debug] [2025-04-03T23:23:40.026Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
-[debug] [2025-04-03T23:23:40.026Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2025-04-17T23:34:37.992Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-04-17T23:34:37.993Z] > authorizing via signed-in user (marclim142@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\marcl\Downloads\HOF\HOF
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+

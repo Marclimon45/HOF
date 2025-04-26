@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "../styles/register.module.css";
 import { 
   FaDiscord, FaTimes, FaGithub, FaLinkedin, FaUser, FaUserAlt, 
@@ -6,7 +6,7 @@ import {
   FaChartLine, FaServer, FaRobot, FaLaptopCode, FaDocker,
   FaFigma, FaAws, FaJira, FaSlack, FaStickyNote, FaGlobe
 } from "react-icons/fa";
-import { SiGit, SiAdobexd, SiNotion } from "react-icons/si";
+import { SiGit, SiAdobexd, SiNotion, SiJenkins } from "react-icons/si";
 import { db, auth } from "../firebase/firebaseconfig";
 import { collection, setDoc, getDocs, query, where, doc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -32,6 +32,7 @@ const Register = () => {
     availability: {},
     areaOfInterest: [],
     customAreaOfInterest: "",
+    customTool: "",
     rank: "Unranked",
     contributions: 0,
     github: "",
@@ -41,6 +42,30 @@ const Register = () => {
   const [isTosAccepted, setIsTosAccepted] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const router = useRouter();
+  const [customTool, setCustomTool] = useState('');
+
+  // Load saved form data when component mounts
+  useEffect(() => {
+    const savedFormData = localStorage.getItem('registerFormData');
+    const savedTosAccepted = localStorage.getItem('registerTosAccepted');
+    
+    if (savedFormData) {
+      setFormData(JSON.parse(savedFormData));
+    }
+    if (savedTosAccepted) {
+      setIsTosAccepted(JSON.parse(savedTosAccepted));
+    }
+  }, []);
+
+  // Save form data whenever it changes
+  useEffect(() => {
+    localStorage.setItem('registerFormData', JSON.stringify(formData));
+  }, [formData]);
+
+  // Save TOS acceptance state
+  useEffect(() => {
+    localStorage.setItem('registerTosAccepted', JSON.stringify(isTosAccepted));
+  }, [isTosAccepted]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -91,6 +116,10 @@ const Register = () => {
         github: formData.github,
         website: formData.website,
       });
+
+      // Clear saved form data after successful registration
+      localStorage.removeItem('registerFormData');
+      localStorage.removeItem('registerTosAccepted');
 
       console.log("User profile created successfully");
       setTimeout(() => {
@@ -183,17 +212,92 @@ const Register = () => {
     }));
   };
 
+  const handleToolInput = (e) => {
+    if (e.key === "Enter" && e.target.value.trim() !== "") {
+      e.preventDefault();
+      const newTool = e.target.value.trim();
+      if (!formData.tools.includes(newTool)) {
+        setFormData((prev) => ({
+          ...prev,
+          tools: [...prev.tools, newTool],
+        }));
+      }
+      setCustomTool('');
+    }
+  };
+
+  const removeTool = (tool) => {
+    setFormData((prev) => ({
+      ...prev,
+      tools: prev.tools.filter((t) => t !== tool),
+    }));
+  };
+
+  const handleInterestInput = (e) => {
+    if (e.key === "Enter" && e.target.value.trim() !== "") {
+      e.preventDefault();
+      const newInterest = e.target.value.trim();
+      if (!formData.areaOfInterest.includes(newInterest)) {
+        setFormData((prev) => ({
+          ...prev,
+          areaOfInterest: [...prev.areaOfInterest, newInterest],
+        }));
+      }
+      e.target.value = "";
+    }
+  };
+
+  const removeInterest = (interest) => {
+    setFormData((prev) => ({
+      ...prev,
+      areaOfInterest: prev.areaOfInterest.filter((i) => i !== interest),
+    }));
+  };
+
+  const toggleTool = (tool) => {
+    setFormData((prev) => {
+      const updatedTools = prev.tools.includes(tool)
+        ? prev.tools.filter((t) => t !== tool)
+        : [...prev.tools, tool];
+      return { ...prev, tools: updatedTools };
+    });
+  };
+
+  const toggleInterest = (interest) => {
+    if (interest === 'Others') {
+      setFormData(prev => ({
+        ...prev,
+        customAreaOfInterest: '',
+        areaOfInterest: prev.areaOfInterest.includes(interest)
+          ? prev.areaOfInterest.filter(i => i !== interest)
+          : [...prev.areaOfInterest, interest]
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        areaOfInterest: prev.areaOfInterest.includes(interest)
+          ? prev.areaOfInterest.filter(i => i !== interest)
+          : [...prev.areaOfInterest, interest]
+      }));
+    }
+  };
+
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const areasOfInterest = [
     { name: "Cybersecurity", icon: <FaLock className={styles.areaIcon} /> },
-    { name: "Data Science", icon: <FaDatabase className={styles.areaIcon} /> },
-    { name: "Frontend Development", icon: <FaCode className={styles.areaIcon} /> },
+    { name: "Data Science", icon: <FaChartLine className={styles.areaIcon} /> },
+    { name: "Frontend Development", icon: <FaPalette className={styles.areaIcon} /> },
     { name: "Backend Development", icon: <FaServer className={styles.areaIcon} /> },
-    { name: "UI/UX Design", icon: <FaPalette className={styles.areaIcon} /> },
+    { name: "UI/UX Design", icon: <SiAdobexd className={styles.areaIcon} /> },
     { name: "Machine Learning", icon: <FaBrain className={styles.areaIcon} /> },
     { name: "AI Specialist", icon: <FaRobot className={styles.areaIcon} /> },
-    { name: "Data Analysis", icon: <FaChartLine className={styles.areaIcon} /> }
+    { name: "Data Analysis", icon: <FaDatabase className={styles.areaIcon} /> },
+    { name: "DevOps", icon: <SiJenkins className={styles.areaIcon} /> },
+    { name: "Cloud Computing", icon: <FaGlobe className={styles.areaIcon} /> },
+    { name: "Mobile Development", icon: <FaCode className={styles.areaIcon} /> },
+    { name: "Game Development", icon: <FaCode className={styles.areaIcon} /> }
   ];
+
   const toolsAndPlatforms = [
     { name: "VS Code", icon: <FaLaptopCode className={styles.toolIcon} /> },
     { name: "Git", icon: <SiGit className={styles.toolIcon} /> },
@@ -203,7 +307,10 @@ const Register = () => {
     { name: "Jira", icon: <FaJira className={styles.toolIcon} /> },
     { name: "Adobe XD", icon: <SiAdobexd className={styles.toolIcon} /> },
     { name: "Slack", icon: <FaSlack className={styles.toolIcon} /> },
-    { name: "Notion", icon: <SiNotion className={styles.toolIcon} /> }
+    { name: "Notion", icon: <SiNotion className={styles.toolIcon} /> },
+    { name: "GitHub", icon: <FaGithub className={styles.toolIcon} /> },
+    { name: "Visual Studio", icon: <FaCode className={styles.toolIcon} /> },
+    { name: "IntelliJ IDEA", icon: <FaLaptopCode className={styles.toolIcon} /> }
   ];
 
   return (
@@ -356,18 +463,50 @@ const Register = () => {
           </div>
 
           <h3 className={styles.sectionTitle}>Tools & Platforms</h3>
-          <div className={styles.toolsPlatformsGrid}>
+          <div className={styles.toolsGrid}>
             {toolsAndPlatforms.map((tool) => (
-              <label key={tool.name} className={styles.toolCheckboxLabel}>
-                <input
-                  type="checkbox"
-                  value={tool.name}
-                  checked={formData.tools.includes(tool.name)}
-                  onChange={() => toggleCheckbox("tools", tool.name)}
-                />
+              <div
+                key={tool.name}
+                className={`${styles.toolItem} ${
+                  formData.tools.includes(tool.name) ? styles.selected : ""
+                }`}
+                onClick={() => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    tools: prev.tools.includes(tool.name)
+                      ? prev.tools.filter((t) => t !== tool.name)
+                      : [...prev.tools, tool.name],
+                  }));
+                }}
+              >
                 {tool.icon}
                 <span>{tool.name}</span>
-              </label>
+              </div>
+            ))}
+          </div>
+
+          {/* Custom Tool Input */}
+          <div className={styles.customToolInput}>
+            <input
+              type="text"
+              value={customTool}
+              onChange={(e) => setCustomTool(e.target.value)}
+              onKeyPress={handleToolInput}
+              placeholder="Add your own tool..."
+              className={styles.input}
+            />
+          </div>
+
+          {/* Selected Tools Display */}
+          <div className={styles.selectedTools}>
+            {formData.tools.map((tool) => (
+              <div key={tool} className={styles.selectedTool}>
+                <span>{tool}</span>
+                <FaTimes
+                  className={styles.removeIcon}
+                  onClick={() => removeTool(tool)}
+                />
+              </div>
             ))}
           </div>
 
@@ -425,26 +564,53 @@ const Register = () => {
           <h3 className={styles.sectionTitle}>Areas of Interest</h3>
           <div className={styles.areasOfInterestGrid}>
             {areasOfInterest.map((interest) => (
-              <label key={interest.name} className={styles.areaCheckboxLabel}>
-                <input
-                  type="checkbox"
-                  value={interest.name}
-                  checked={formData.areaOfInterest.includes(interest.name)}
-                  onChange={() => toggleCheckbox("areaOfInterest", interest.name)}
-                />
-                {interest.icon}
+              <div
+                key={interest.name}
+                className={`${styles.interestCard} ${
+                  formData.areaOfInterest.includes(interest.name) ? styles.selected : ''
+                }`}
+                onClick={() => toggleInterest(interest.name)}
+              >
+                <div className={styles.areaIcon}>{interest.icon}</div>
                 <span>{interest.name}</span>
-              </label>
+              </div>
             ))}
-            <input
-              type="text"
-              name="customAreaOfInterest"
-              placeholder="Enter custom area..."
-              value={formData.customAreaOfInterest}
-              onChange={handleInputChange}
-              className={styles.customAreaInput}
-            />
           </div>
+          <div className={styles.selectedInterests}>
+            {formData.areaOfInterest.map((interest) => (
+              <div key={interest} className={styles.selectedInterest}>
+                {interest}
+                <FaTimes
+                  className={styles.removeIcon}
+                  onClick={() => removeInterest(interest)}
+                />
+              </div>
+            ))}
+          </div>
+          <TextField
+            fullWidth
+            margin="dense"
+            label="Add your own area of interest..."
+            value={formData.customAreaOfInterest}
+            onChange={(e) => setFormData(prev => ({
+              ...prev,
+              customAreaOfInterest: e.target.value
+            }))}
+            onKeyPress={(e) => {
+              if (e.key === "Enter" && formData.customAreaOfInterest.trim()) {
+                e.preventDefault();
+                if (!formData.areaOfInterest.includes(formData.customAreaOfInterest.trim())) {
+                  setFormData(prev => ({
+                    ...prev,
+                    areaOfInterest: [...prev.areaOfInterest, formData.customAreaOfInterest.trim()],
+                    customAreaOfInterest: ''
+                  }));
+                }
+              }
+            }}
+            variant="outlined"
+            sx={{ mt: 2 }}
+          />
 
           <div className={styles.tosContainer}>
             <label className={styles.tosLabel}>

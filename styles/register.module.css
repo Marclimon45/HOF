@@ -9,18 +9,6 @@
   display: block;
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow-y: auto !important;
-}
-
-html {
-  height: 100%;
-  overflow-y: auto;
-}
-
 .formCard {
   background: white;
   padding: 30px;
@@ -134,51 +122,213 @@ html {
   font-size: 16px;
 }
 
-.toolsPlatformsGrid,
-.areasOfInterestGrid {
+.toolsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
   margin-bottom: 20px;
 }
 
-.toolCheckboxLabel,
-.areaCheckboxLabel {
+.toolItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: white;
+}
+
+.toolItem:hover {
+  background-color: #f3f4f6;
+  transform: translateY(-2px);
+}
+
+.toolItem.selected {
+  background-color: #e3f2fd;
+  border-color: #1976d2;
+  border-width: 2px;
+  box-shadow: 0 2px 4px rgba(25, 118, 210, 0.1);
+  position: relative;
+}
+
+.toolItem.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  color: #1976d2;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.toolItem.selected .toolIcon {
+  color: #1976d2;
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+.toolIcon {
+  width: 24px;
+  height: 24px;
+  color: #6b7280;
+}
+
+.toolItem span {
+  font-size: 14px;
+  color: #374151;
+  text-align: center;
+}
+
+.toolItem.selected span {
+  color: #1976d2;
+}
+
+.customToolInput {
+  margin: 20px 0;
+}
+
+.customToolInput input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.customToolInput input:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.selectedTools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.selectedTool {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 6px 12px;
+  background-color: #e3f2fd;
+  border-radius: 16px;
+  font-size: 14px;
+  color: #1976d2;
+}
+
+.selectedTool .removeIcon {
+  cursor: pointer;
+  color: #1976d2;
+  width: 16px;
+  height: 16px;
+  transition: color 0.2s ease;
+}
+
+.selectedTool .removeIcon:hover {
+  color: #d32f2f;
+}
+
+.areasOfInterestGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.interestCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: white;
+  transition: all 0.2s ease;
+  min-height: 100px;
+}
+
+.interestCard:hover {
+  background-color: #f3f4f6;
+  transform: translateY(-2px);
+}
+
+.interestCard.selected {
+  background-color: #e3f2fd;
+  border-color: #1976d2;
+  border-width: 2px;
+  box-shadow: 0 2px 4px rgba(25, 118, 210, 0.1);
+  position: relative;
+}
+
+.interestCard.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  color: #1976d2;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.interestCard.selected .areaIcon {
+  color: #1976d2;
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+.areaIcon {
+  width: 24px;
+  height: 24px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.interestCard span {
   font-size: 14px;
   color: #374151;
-  padding: 8px;
-  border: 1px solid #e5e7eb;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  text-align: center;
 }
 
-.toolCheckboxLabel:hover,
-.areaCheckboxLabel:hover {
-  background-color: #f3f4f6;
+.interestCard.selected span {
+  color: #1976d2;
 }
 
-.toolIcon,
-.areaIcon {
-  width: 20px;
-  height: 20px;
-  color: #6b7280;
+.selectedInterests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
 }
 
-.customAreaInput {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
+.selectedInterest {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background-color: #e3f2fd;
+  border-radius: 16px;
+  font-size: 14px;
+  color: #1976d2;
+}
+
+.removeIcon {
+  cursor: pointer;
+  color: #1976d2;
   font-size: 16px;
-  box-sizing: border-box;
+  transition: color 0.2s ease;
 }
 
-.customAreaInput::placeholder {
-  color: #6b7280;
-  font-size: 16px;
+.removeIcon:hover {
+  color: #d32f2f;
 }
 
 .availabilityGrid {

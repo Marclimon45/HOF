@@ -145,7 +145,7 @@ const TeamPage = () => {
               Founder
             </Typography>
             <img 
-              src="/Grandmaster.webp"
+              src="/Grandmaster.png"
               alt="Grandmaster" 
               className={styles.rankIcon}
             />

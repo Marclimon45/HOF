@@ -12,7 +12,7 @@ const firebaseConfig = {
   storageBucket: "xin-s-hall-of-fame.appspot.com",
   messagingSenderId: "692691719687",
   appId: "1:692691719687:web:7bd1656dec1613e2a87ca2",
-  measurementId: "G-5Q7JKXX6Q2",
+  measurementId: "G-5Q7JKXX6Q2"
 };
 
 // Initialize Firebase
@@ -21,6 +21,7 @@ const app = initializeApp(firebaseConfig);
 // Initialize services
 const db = getFirestore(app);
 const auth = getAuth(app);
+const storage = getStorage(app);
 
 // Set auth persistence to LOCAL
 if (typeof window !== 'undefined') {
@@ -29,8 +30,6 @@ if (typeof window !== 'undefined') {
       console.error("Error setting auth persistence:", error);
     });
 }
-
-const storage = getStorage(app);
 
 // Initialize Analytics only in browser environment and when not blocked
 let analytics = null;

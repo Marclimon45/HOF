@@ -363,15 +363,45 @@ const SettingsPage = () => {
             Help & Support
           </Typography>
           <Stack spacing={2}>
-            <Link href="/privacy-policy" passHref>
-              <MuiLink>Privacy Policy</MuiLink>
-            </Link>
-            <Link href="/terms-of-service" passHref>
-              <MuiLink>Terms of Service</MuiLink>
-            </Link>
-            <Link href="/contact" passHref>
-              <MuiLink>Contact Us</MuiLink>
-            </Link>
+            <MuiLink 
+              href="/privacy-policy" 
+              sx={{ 
+                textDecoration: 'none', 
+                color: '#0000FF',
+                cursor: 'pointer',
+                '&:hover': {
+                  color: '#5BB3E0'
+                }
+              }}
+            >
+              Privacy Policy
+            </MuiLink>
+            <MuiLink 
+              href="/terms-of-service" 
+              sx={{ 
+                textDecoration: 'none', 
+                color: '#0000FF',
+                cursor: 'pointer',
+                '&:hover': {
+                  color: '#5BB3E0'
+                }
+              }}
+            >
+              Terms of Service
+            </MuiLink>
+            <MuiLink 
+              href="/contact" 
+              sx={{ 
+                textDecoration: 'none', 
+                color: '#0000FF',
+                cursor: 'pointer',
+                '&:hover': {
+                  color: '#5BB3E0'
+                }
+              }}
+            >
+              Contact Us
+            </MuiLink>
           </Stack>
         </Card>
       </Container>
