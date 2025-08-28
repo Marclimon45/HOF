@@ -140,7 +140,8 @@ const LandingPage = () => {
           </Typography>
 
           <Box sx={{ width: "100%", display: "flex", flexDirection: "column", gap: 2, mb: 4 }}>
-            <Button
+            {/* SSO Button - Commented out due to misleading functionality */}
+            {/* <Button
               variant="contained"
               size="large"
               fullWidth
@@ -163,6 +164,32 @@ const LandingPage = () => {
               }}
             >
               Sign in with Single Sign-On
+            </Button> */}
+
+            {/* Regular Sign In Button */}
+            <Button
+              variant="contained"
+              size="large"
+              fullWidth
+              onClick={() => {
+                setIsSignUp(false);
+                setOpenLogin(true);
+              }}
+              sx={{
+                backgroundColor: "#ffc107",
+                color: "#000",
+                padding: "12px 24px",
+                fontWeight: 600,
+                textTransform: "none",
+                borderRadius: 2,
+                boxShadow: "none",
+                "&:hover": {
+                  backgroundColor: "#ffb300",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                },
+              }}
+            >
+              Sign In
             </Button>
 
             <Link href="/register" passHref>
