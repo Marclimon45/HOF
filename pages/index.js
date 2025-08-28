@@ -166,7 +166,7 @@ const LandingPage = () => {
               Sign in with Single Sign-On
             </Button> */}
 
-            {/* Regular Sign In Button */}
+            {/* Regular Log In Button */}
             <Button
               variant="contained"
               size="large"
@@ -189,7 +189,7 @@ const LandingPage = () => {
                 },
               }}
             >
-              Sign In
+              Log In
             </Button>
 
             <Link href="/register" passHref>
@@ -229,7 +229,7 @@ const LandingPage = () => {
               },
             }}
           >
-            By signing in, you agree to our{" "}
+            By logging in, you agree to our{" "}
             <a href="/terms-of-service">Terms of Service</a> and{" "}
             <a href="/privacy-policy">Privacy Policy</a>
           </Typography>
@@ -247,7 +247,7 @@ const LandingPage = () => {
       </Container>
 
       <Dialog open={openLogin} onClose={handleCloseLogin} maxWidth="sm" fullWidth>
-        <DialogTitle>{isSignUp ? "Create Account" : "Sign In"}</DialogTitle>
+        <DialogTitle>{isSignUp ? "Create Account" : "Log In"}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -302,7 +302,7 @@ const LandingPage = () => {
         <DialogActions>
           <Button onClick={handleCloseLogin}>Cancel</Button>
           <Button onClick={isSignUp ? handleSignup : handleLogin} variant="contained">
-            {isSignUp ? "Sign Up" : "Sign In"}
+            {isSignUp ? "Sign Up" : "Log In"}
           </Button>
         </DialogActions>
       </Dialog>
