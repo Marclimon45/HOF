@@ -127,7 +127,17 @@ const Register = () => {
       }, 500);
     } catch (error) {
       console.error("Error: ", error);
-      alert("Error submitting profile: " + error.message);
+      
+      // Handle specific Firebase auth errors
+      if (error.code === 'auth/email-already-in-use') {
+        alert("This email address is already registered. Please use a different email or try logging in instead.");
+      } else if (error.code === 'auth/weak-password') {
+        alert("Password is too weak. Please choose a stronger password.");
+      } else if (error.code === 'auth/invalid-email') {
+        alert("Please enter a valid email address.");
+      } else {
+        alert("Error creating account: " + error.message);
+      }
     }
   };
 

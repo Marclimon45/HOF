@@ -19,8 +19,24 @@ const Login = () => {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/homepage"); // Redirect to homepage on successful login
     } catch (err) {
-      setError("Incorrect email or password. Please try again.");
-      setTimeout(() => setError(""), 3000); // Clear error after 3 seconds
+      console.error("Login error:", err);
+      
+      // Handle specific Firebase auth errors
+      if (err.code === 'auth/user-not-found') {
+        setError("No account found with this email address. Please check your email or create a new account.");
+      } else if (err.code === 'auth/wrong-password') {
+        setError("Incorrect password. Please try again.");
+      } else if (err.code === 'auth/invalid-email') {
+        setError("Please enter a valid email address.");
+      } else if (err.code === 'auth/user-disabled') {
+        setError("This account has been disabled. Please contact support.");
+      } else if (err.code === 'auth/too-many-requests') {
+        setError("Too many failed login attempts. Please try again later.");
+      } else {
+        setError("Login failed: " + err.message);
+      }
+      
+      setTimeout(() => setError(""), 5000); // Clear error after 5 seconds
     }
   };
 

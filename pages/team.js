@@ -19,9 +19,10 @@ import EmailIcon from '@mui/icons-material/Email';
 import Navbar from '../components/navbar';
 import styles from '../styles/team.module.css';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, auth } from '../firebase/firebaseconfig';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
+import { onAuthStateChanged } from 'firebase/auth';
 
 // Use styled components for consistent styling
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -66,10 +67,27 @@ const TeamPage = () => {
   const [teamMembers, setTeamMembers] = useState([]);
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const router = useRouter();
+
+  // Check authentication state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setAuthLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const usersRef = collection(db, "users");
         const q = query(usersRef, where("isCPSMember", "==", true));
@@ -100,15 +118,39 @@ const TeamPage = () => {
       }
     };
 
-    fetchTeamMembers();
-  }, []);
+    if (user) {
+      fetchTeamMembers();
+    }
+  }, [user]);
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <StyledBox>
         <Navbar />
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
           <Typography>Loading...</Typography>
+        </Box>
+      </StyledBox>
+    );
+  }
+
+  if (!user) {
+    return (
+      <StyledBox>
+        <Navbar />
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h5" gutterBottom>
+              Please sign in to view team members
+            </Typography>
+            <Button 
+              variant="contained" 
+              onClick={() => router.push('/login')}
+              sx={{ mt: 2 }}
+            >
+              Sign In
+            </Button>
+          </Box>
         </Box>
       </StyledBox>
     );

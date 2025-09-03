@@ -140,7 +140,7 @@ const LandingPage = () => {
           </Typography>
 
           <Box sx={{ width: "100%", display: "flex", flexDirection: "column", gap: 2, mb: 4 }}>
-            {/* SSO Button - Commented out due to misleading functionality */}
+            {/* SSO Button - Replaced with regular login functionality */}
             {/* <Button
               variant="contained"
               size="large"
@@ -163,7 +163,7 @@ const LandingPage = () => {
                 },
               }}
             >
-              Sign in with Single Sign-On
+              Log In (Regular Login)
             </Button> */}
 
             {/* Regular Log In Button */}
