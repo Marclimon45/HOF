@@ -9,7 +9,7 @@ import {
 import { SiGit, SiAdobexd, SiNotion, SiJenkins } from "react-icons/si";
 import { db, auth } from "../firebase/firebaseconfig";
 import { collection, setDoc, getDocs, query, where, doc } from "firebase/firestore";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { TextField } from "@mui/material";
@@ -41,8 +41,24 @@ const Register = () => {
 
   const [isTosAccepted, setIsTosAccepted] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const [customTool, setCustomTool] = useState('');
+
+  // Check if user is already authenticated
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is already signed in, redirect to home
+        router.push("/home");
+      } else {
+        setLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [router]);
 
   // Load saved form data when component mounts
   useEffect(() => {
@@ -322,6 +338,17 @@ const Register = () => {
     { name: "Visual Studio", icon: <FaCode className={styles.toolIcon} /> },
     { name: "IntelliJ IDEA", icon: <FaLaptopCode className={styles.toolIcon} /> }
   ];
+
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.formCard}>
+          <h2 className={styles.title}>Loading...</h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>

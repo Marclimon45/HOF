@@ -1,8 +1,8 @@
 // pages/login.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "../styles/login.module.css";
 import { FaArrowRight, FaEnvelope, FaLock } from "react-icons/fa";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/firebaseconfig";
 import { useRouter } from "next/router";
 import Link from "next/link"; // ✅ Added missing import for Link
@@ -11,13 +11,29 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  // Check if user is already authenticated
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is already signed in, redirect to home
+        router.push("/home");
+      } else {
+        setLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [router]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push("/homepage"); // Redirect to homepage on successful login
+      router.push("/home"); // Redirect to home on successful login
     } catch (err) {
       console.error("Login error:", err);
       
@@ -39,6 +55,17 @@ const Login = () => {
       setTimeout(() => setError(""), 5000); // Clear error after 5 seconds
     }
   };
+
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.formCard}>
+          <h2 className={styles.title}>Loading...</h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
