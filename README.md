@@ -1,6 +1,6 @@
-# HOF - Home of Innovation
+# Xin's Hall of Fame
 
-A clean, responsive website built with HTML, Tailwind CSS, and Firebase integration.
+A clean, responsive website built with HTML, Tailwind CSS, and Firebase integration for showcasing achievements and innovations.
 
 ## Features
 
@@ -24,23 +24,18 @@ HOF/
 
 ### 1. Firebase Setup
 
+The Firebase configuration is already set up for "Xin's Hall of Fame" project:
+
+- **Project ID**: xin-s-hall-of-fame
+- **Authentication**: Ready to be enabled
+- **Firestore Database**: Ready to be enabled
+
+To complete the setup:
 1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Create a new project or select an existing one
+2. Select the "xin-s-hall-of-fame" project
 3. Enable Authentication (Email/Password)
 4. Enable Firestore Database
-5. Copy your Firebase configuration
-6. Update the `firebaseConfig` object in `index.html` with your actual values:
-
-```javascript
-const firebaseConfig = {
-    apiKey: "your-actual-api-key",
-    authDomain: "your-project.firebaseapp.com",
-    projectId: "your-actual-project-id",
-    storageBucket: "your-project.appspot.com",
-    messagingSenderId: "your-actual-sender-id",
-    appId: "your-actual-app-id"
-};
-```
+5. The configuration is already integrated in the code
 
 ### 2. Firestore Database Rules
 
