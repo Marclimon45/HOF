@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOF - Home of Innovation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hamburger-line {
+            transition: all 0.3s ease;
+        }
+        .hamburger.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <h1 class="text-2xl font-bold text-blue-600">HOF</h1>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                        <a href="#about" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
+                        <a href="#services" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Services</a>
+                        <a href="#contact" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
+                        <div id="auth-buttons" class="flex items-center space-x-2">
+                            <!-- Auth buttons will be dynamically inserted here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="hamburger" class="hamburger inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                        <span class="sr-only">Open main menu</span>
+                        <div class="hamburger-line w-6 h-0.5 bg-gray-600 mb-1"></div>
+                        <div class="hamburger-line w-6 h-0.5 bg-gray-600 mb-1"></div>
+                        <div class="hamburger-line w-6 h-0.5 bg-gray-600"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+                <a href="#home" class="text-gray-900 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="#about" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">About</a>
+                <a href="#services" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Services</a>
+                <a href="#contact" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Contact</a>
+                <div id="mobile-auth-buttons" class="px-3 py-2">
+                    <!-- Mobile auth buttons will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6" id="hero-title">
+                    Welcome to HOF
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto" id="hero-description">
+                    Your gateway to innovation and excellence
+                </p>
+                <div id="hero-actions" class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <!-- Dynamic action buttons will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Site Map Section -->
+    <section id="sitemap" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Explore Our Platform</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-gray-50 p-6 rounded-lg hover:shadow-lg transition-shadow">
+                    <div class="text-blue-600 text-3xl mb-4">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Dashboard</h3>
+                    <p class="text-gray-600">Access your personalized dashboard and manage your projects.</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-lg hover:shadow-lg transition-shadow">
+                    <div class="text-blue-600 text-3xl mb-4">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Projects</h3>
+                    <p class="text-gray-600">Browse and manage your innovative projects and collaborations.</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-lg hover:shadow-lg transition-shadow">
+                    <div class="text-blue-600 text-3xl mb-4">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Community</h3>
+                    <p class="text-gray-600">Connect with like-minded innovators and build your network.</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-lg hover:shadow-lg transition-shadow">
+                    <div class="text-blue-600 text-3xl mb-4">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Achievements</h3>
+                    <p class="text-gray-600">Track your progress and celebrate your accomplishments.</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-lg hover:shadow-lg transition-shadow">
+                    <div class="text-blue-600 text-3xl mb-4">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Settings</h3>
+                    <p class="text-gray-600">Customize your experience and manage your preferences.</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-lg hover:shadow-lg transition-shadow">
+                    <div class="text-blue-600 text-3xl mb-4">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Help & Support</h3>
+                    <p class="text-gray-600">Get assistance and learn how to make the most of our platform.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-2xl font-bold mb-4">HOF</h3>
+                    <p class="text-gray-400 mb-4">
+                        Empowering innovation and connecting brilliant minds across the globe. 
+                        Join our community of creators, innovators, and visionaries.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white transition-colors">About</a></li>
+                        <li><a href="#services" class="text-gray-400 hover:text-white transition-colors">Services</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2024 HOF. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase Configuration and App Logic -->
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            // Add your Firebase config here
+            apiKey: "your-api-key",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "your-app-id"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // User state management
+        let currentUser = null;
+        let userType = 'guest'; // 'guest', 'user', 'admin', 'premium'
+
+        // DOM elements
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const authButtons = document.getElementById('auth-buttons');
+        const mobileAuthButtons = document.getElementById('mobile-auth-buttons');
+        const heroTitle = document.getElementById('hero-title');
+        const heroDescription = document.getElementById('hero-description');
+        const heroActions = document.getElementById('hero-actions');
+
+        // Mobile menu toggle
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking on links
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Auth state listener
+        auth.onAuthStateChanged((user) => {
+            currentUser = user;
+            if (user) {
+                // Get user type from Firestore
+                db.collection('users').doc(user.uid).get().then((doc) => {
+                    if (doc.exists) {
+                        userType = doc.data().userType || 'user';
+                    } else {
+                        userType = 'user';
+                    }
+                    updateUI();
+                });
+            } else {
+                userType = 'guest';
+                updateUI();
+            }
+        });
+
+        // Update UI based on user state
+        function updateUI() {
+            updateAuthButtons();
+            updateHeroContent();
+        }
+
+        // Update authentication buttons
+        function updateAuthButtons() {
+            const desktopButtons = authButtons;
+            const mobileButtons = mobileAuthButtons;
+
+            if (currentUser) {
+                // User is logged in
+                desktopButtons.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-700">Welcome, ${currentUser.displayName || currentUser.email}</span>
+                        <button onclick="signOut()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign Out
+                        </button>
+                    </div>
+                `;
+                
+                mobileButtons.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="text-sm text-gray-700">Welcome, ${currentUser.displayName || currentUser.email}</div>
+                        <button onclick="signOut()" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign Out
+                        </button>
+                    </div>
+                `;
+            } else {
+                // User is not logged in
+                desktopButtons.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <button onclick="showLoginModal()" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign In
+                        </button>
+                        <button onclick="showRegisterModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign Up
+                        </button>
+                    </div>
+                `;
+                
+                mobileButtons.innerHTML = `
+                    <div class="space-y-2">
+                        <button onclick="showLoginModal()" class="w-full text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign In
+                        </button>
+                        <button onclick="showRegisterModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign Up
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Update hero content based on user type
+        function updateHeroContent() {
+            switch (userType) {
+                case 'guest':
+                    heroTitle.textContent = 'Welcome to HOF';
+                    heroDescription.textContent = 'Join our community of innovators and start your journey today';
+                    heroActions.innerHTML = `
+                        <button onclick="showRegisterModal()" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                            Get Started
+                        </button>
+                        <button onclick="showLoginModal()" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                            Sign In
+                        </button>
+                    `;
+                    break;
+                case 'user':
+                    heroTitle.textContent = 'Welcome back!';
+                    heroDescription.textContent = 'Continue your innovation journey and explore new opportunities';
+                    heroActions.innerHTML = `
+                        <button onclick="goToDashboard()" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                            Go to Dashboard
+                        </button>
+                        <button onclick="exploreProjects()" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                            Explore Projects
+                        </button>
+                    `;
+                    break;
+                case 'admin':
+                    heroTitle.textContent = 'Admin Dashboard';
+                    heroDescription.textContent = 'Manage the platform and support our community of innovators';
+                    heroActions.innerHTML = `
+                        <button onclick="goToAdminPanel()" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                            Admin Panel
+                        </button>
+                        <button onclick="viewAnalytics()" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                            View Analytics
+                        </button>
+                    `;
+                    break;
+                case 'premium':
+                    heroTitle.textContent = 'Premium Member';
+                    heroDescription.textContent = 'Unlock exclusive features and advanced tools for your projects';
+                    heroActions.innerHTML = `
+                        <button onclick="goToDashboard()" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                            Premium Dashboard
+                        </button>
+                        <button onclick="explorePremiumFeatures()" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                            Premium Features
+                        </button>
+                    `;
+                    break;
+            }
+        }
+
+        // Auth functions
+        function signOut() {
+            auth.signOut().then(() => {
+                console.log('User signed out');
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+            });
+        }
+
+        function showLoginModal() {
+            // Placeholder for login modal
+            alert('Login modal would open here');
+        }
+
+        function showRegisterModal() {
+            // Placeholder for register modal
+            alert('Register modal would open here');
+        }
+
+        // Navigation functions
+        function goToDashboard() {
+            alert('Redirecting to dashboard...');
+        }
+
+        function exploreProjects() {
+            alert('Redirecting to projects...');
+        }
+
+        function goToAdminPanel() {
+            alert('Redirecting to admin panel...');
+        }
+
+        function viewAnalytics() {
+            alert('Redirecting to analytics...');
+        }
+
+        function explorePremiumFeatures() {
+            alert('Redirecting to premium features...');
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+        });
+    </script>
+</body>
+</html>

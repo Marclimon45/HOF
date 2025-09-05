@@ -1,36 +1,136 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# HOF - Home of Innovation
 
-## Getting Started
+A clean, responsive website built with HTML, Tailwind CSS, and Firebase integration.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Responsive Design**: Mobile-first approach with hamburger menu for small screens
+- **Firebase Integration**: Authentication and Firestore database support
+- **Dynamic Content**: Homepage content changes based on user authentication state and user type
+- **Modern UI**: Clean design using Tailwind CSS
+- **User Types**: Support for guest, user, admin, and premium user types
+
+## Project Structure
+
+```
+HOF/
+├── index.html              # Main HTML file
+├── firebase-config.js      # Firebase configuration
+├── package.json            # Project dependencies and scripts
+└── README.md              # This file
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup Instructions
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 1. Firebase Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Create a new project or select an existing one
+3. Enable Authentication (Email/Password)
+4. Enable Firestore Database
+5. Copy your Firebase configuration
+6. Update the `firebaseConfig` object in `index.html` with your actual values:
 
-## Learn More
+```javascript
+const firebaseConfig = {
+    apiKey: "your-actual-api-key",
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-actual-project-id",
+    storageBucket: "your-project.appspot.com",
+    messagingSenderId: "your-actual-sender-id",
+    appId: "your-actual-app-id"
+};
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 2. Firestore Database Rules
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Set up your Firestore security rules in the Firebase Console:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read and write their own user document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
 
-## Deploy on Vercel
+### 3. Running the Website
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### Option 1: Python HTTP Server (Recommended)
+```bash
+python -m http.server 8000
+```
+Then open http://localhost:8000 in your browser.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+#### Option 2: Node.js HTTP Server
+```bash
+npx http-server -p 8000
+```
+
+#### Option 3: Live Server (VS Code Extension)
+Install the "Live Server" extension in VS Code and right-click on `index.html` → "Open with Live Server"
+
+## User Types
+
+The website supports different user types with customized content:
+
+- **Guest**: Default state for non-authenticated users
+- **User**: Basic authenticated users
+- **Admin**: Platform administrators
+- **Premium**: Users with premium subscriptions
+
+## Features Overview
+
+### Navigation
+- Responsive navigation bar
+- Hamburger menu for mobile devices
+- Dynamic authentication buttons
+
+### Hero Section
+- Dynamic content based on user state
+- Call-to-action buttons that change per user type
+- Responsive design
+
+### Site Map
+- Grid layout showcasing platform features
+- Hover effects and smooth transitions
+- Font Awesome icons
+
+### Footer
+- Social media links
+- Quick navigation
+- Support links
+- Responsive grid layout
+
+## Customization
+
+### Styling
+The website uses Tailwind CSS for styling. You can customize:
+- Colors in the `bg-gradient-to-r from-blue-600 to-purple-600` classes
+- Spacing and layout using Tailwind utility classes
+- Typography with Tailwind text classes
+
+### Content
+- Update the hero section content in the `updateHeroContent()` function
+- Modify the site map items in the HTML
+- Customize footer links and information
+
+### Firebase Integration
+- Add more user fields in Firestore
+- Implement additional authentication methods
+- Add real-time data updates
+
+## Browser Support
+
+- Chrome (recommended)
+- Firefox
+- Safari
+- Edge
+
+## License
+
+MIT License - feel free to use this project as a starting point for your own website.
