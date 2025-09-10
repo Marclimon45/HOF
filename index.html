@@ -1946,7 +1946,55 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateUI();
             initScrollReveal();
+            initFormKeyHandlers();
+            initModalClickOutside();
         });
+
+        // Add Enter key support for forms
+        function initFormKeyHandlers() {
+            // Login form Enter key support
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleLogin();
+                    }
+                });
+            }
+
+            // Register form Enter key support
+            const registerForm = document.getElementById('registerForm');
+            if (registerForm) {
+                registerForm.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleRegister();
+                    }
+                });
+            }
+        }
+
+        // Add click outside to close functionality for modals
+        function initModalClickOutside() {
+            // Add click outside listener to all modals
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal')) {
+                    // Get the modal ID from the clicked element
+                    const modalId = e.target.id;
+                    if (modalId) {
+                        closeModal(modalId);
+                    }
+                }
+            });
+
+            // Prevent modal content clicks from closing the modal
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.modal-content')) {
+                    e.stopPropagation();
+                }
+            });
+        }
 
         // Initialize scroll reveal animations
         function initScrollReveal() {
@@ -1967,6 +2015,29 @@
             document.querySelectorAll('.reveal-on-scroll').forEach(el => {
                 observer.observe(el);
             });
+        }
+
+        // Access control for protected pages
+        function requireAuth() {
+            if (!currentUser) {
+                showMessage('Access Restricted', 'You need to be logged in to access this page. Please sign in to continue.', true);
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                return false;
+            }
+            return true;
+        }
+
+        // Check if current page requires authentication
+        function checkPageAccess() {
+            const currentPage = window.location.pathname.split('/').pop();
+            const protectedPages = ['projects.html', 'ideas.html', 'users.html'];
+            
+            if (protectedPages.includes(currentPage)) {
+                return requireAuth();
+            }
+            return true;
         }
     </script>
 </body>

@@ -337,8 +337,36 @@
         const modalContent = document.getElementById('modal-content');
         const closeModal = document.getElementById('close-modal');
 
+        // Access control for protected pages
+        function requireAuth() {
+            if (!currentUser) {
+                showMessage('Access Restricted', 'You need to be logged in to access this page. Please sign in to continue.', true);
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                return false;
+            }
+            return true;
+        }
+
+        // Check if current page requires authentication
+        function checkPageAccess() {
+            const currentPage = window.location.pathname.split('/').pop();
+            const protectedPages = ['projects.html', 'ideas.html', 'users.html'];
+            
+            if (protectedPages.includes(currentPage)) {
+                return requireAuth();
+            }
+            return true;
+        }
+
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
+            // Check access first
+            if (!checkPageAccess()) {
+                return;
+            }
+            
             initializeApp();
         });
 
