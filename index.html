@@ -241,11 +241,16 @@
         .btn-danger:hover {
             background-color: #dc2626;
         }
+        
+        /* Hide navigation by default for guests */
+        #main-nav {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
     <!-- Navigation Bar -->
-    <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <nav id="main-nav" class="bg-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
@@ -294,7 +299,7 @@
 
     <!-- Hero Section -->
     <section id="home" class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div id="hero-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
             <div class="text-center">
                 <div class="inline-flex items-center px-4 py-2 rounded-full bg-slate-800 border border-slate-700 mb-8">
                     <i class="fas fa-flask text-blue-400 mr-2"></i>
@@ -752,8 +757,27 @@
             }
         });
 
+        // Update navigation visibility based on user state
+        function updateNavigationVisibility() {
+            const nav = document.getElementById('main-nav');
+            const heroContent = document.getElementById('hero-content');
+            
+            if (currentUser) {
+                // User is logged in - show navigation
+                nav.style.display = 'block';
+                // Normal padding for hero section
+                heroContent.className = 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24';
+            } else {
+                // User is not logged in - hide navigation
+                nav.style.display = 'none';
+                // Extra padding at top since no navigation bar
+                heroContent.className = 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 pt-40';
+            }
+        }
+
         // Update UI based on user state
         function updateUI() {
+            updateNavigationVisibility();
             updateAuthButtons();
             updateHeroContent();
             loadProjects();
