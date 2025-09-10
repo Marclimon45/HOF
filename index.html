@@ -596,6 +596,85 @@
                 margin-left: 0;
             }
         }
+
+        /* Image Styles */
+        .hero-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+            z-index: 1;
+        }
+
+        .section-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .section-image:hover {
+            transform: scale(1.02);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .lab-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .lab-image:hover {
+            opacity: 1;
+        }
+
+        .image-placeholder {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: center;
+            border: 2px dashed #d1d5db;
+        }
+
+        .hero-image-placeholder {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -704,8 +783,20 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="bg-white text-gray-900">
-        <div id="hero-content" class="max-w-6xl mx-auto px-6 py-32">
+    <section id="home" class="bg-white text-gray-900 relative overflow-hidden">
+        <!-- Hero Background Image (for logged-out users) -->
+        <div id="hero-background" class="absolute inset-0">
+            <div class="hero-image-placeholder w-full h-full">
+                <div>
+                    <i class="fas fa-flask text-4xl mb-4"></i>
+                    <div>Lab Research Environment</div>
+                    <div class="text-sm mt-2">Students working on robotics and AI projects</div>
+                </div>
+            </div>
+            <div class="hero-overlay"></div>
+        </div>
+        
+        <div id="hero-content" class="max-w-6xl mx-auto px-6 py-32 relative z-10">
             <div class="text-center">
                 <div class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 border border-gray-200 mb-12">
                     <i class="fas fa-flask text-gray-600 mr-2" style="font-size: var(--text-sm);"></i>
@@ -757,7 +848,18 @@
                             CPX Lab leverages cutting-edge project management technology to streamline research workflows, 
                             track student progress, and accelerate academic discovery across multiple disciplines.
                         </p>
-                </div>
+                    </div>
+                    
+                    <!-- Lab Environment Image -->
+                    <div class="mb-16">
+                        <div class="section-image image-placeholder">
+                            <div>
+                                <i class="fas fa-users text-4xl mb-4"></i>
+                                <div>Lab Research Environment</div>
+                                <div class="text-sm mt-2">Graduate students collaborating on research projects</div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                         <div class="bg-white p-12 rounded-lg border border-gray-200 hover-lift hover-glow micro-bounce reveal-on-scroll">
@@ -793,7 +895,18 @@
                         <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light" style="font-size: var(--text-xl);">
                             We're looking for passionate graduate students, postdocs, and researchers to join our cutting-edge research projects.
                         </p>
-            </div>
+                    </div>
+                    
+                    <!-- Team Collaboration Image -->
+                    <div class="mb-16">
+                        <div class="section-image image-placeholder">
+                            <div>
+                                <i class="fas fa-handshake text-4xl mb-4"></i>
+                                <div>Team Collaboration</div>
+                                <div class="text-sm mt-2">Researchers working together on innovative projects</div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                         <div class="bg-gray-50 p-12 rounded-lg border border-gray-200 hover-lift slide-in-left">
@@ -902,10 +1015,16 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <div class="bg-white p-8 rounded-lg border border-gray-200 project-card-animated hover-glow micro-bounce reveal-on-scroll">
+                            <div class="project-image image-placeholder">
+                                <div>
+                                    <i class="fas fa-robot text-3xl mb-2"></i>
+                                    <div>AI Research</div>
+                                </div>
+                            </div>
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-xl font-medium text-gray-900">AI Research Project</h3>
                                 <span class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full micro-bounce">Active</span>
-            </div>
+                            </div>
                             <p class="text-gray-600 mb-4">Machine learning algorithms for data analysis</p>
                             <div class="mb-4">
                                 <div class="flex justify-between text-sm text-gray-500 mb-2">
@@ -923,6 +1042,12 @@
                         </div>
                         
                         <div class="bg-white p-8 rounded-lg border border-gray-200 project-card-animated hover-glow micro-bounce reveal-on-scroll" style="animation-delay: 0.1s;">
+                            <div class="project-image image-placeholder">
+                                <div>
+                                    <i class="fas fa-atom text-3xl mb-2"></i>
+                                    <div>Quantum Computing</div>
+                                </div>
+                            </div>
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-xl font-medium text-gray-900">Quantum Computing</h3>
                                 <span class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full micro-bounce">Planning</span>
@@ -944,6 +1069,12 @@
                         </div>
                         
                         <div class="bg-white p-8 rounded-lg border border-gray-200 project-card-animated hover-glow micro-bounce reveal-on-scroll" style="animation-delay: 0.2s;">
+                            <div class="project-image image-placeholder">
+                                <div>
+                                    <i class="fas fa-chart-bar text-3xl mb-2"></i>
+                                    <div>Data Visualization</div>
+                                </div>
+                            </div>
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-xl font-medium text-gray-900">Data Visualization</h3>
                                 <span class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full micro-bounce">Review</span>
@@ -975,6 +1106,17 @@
                         <a href="users.html" class="text-gray-600 hover:text-gray-900 transition-colors">
                             <i class="fas fa-arrow-right mr-2"></i>View All Members
                         </a>
+                    </div>
+                    
+                    <!-- Lab Collaboration Image -->
+                    <div class="mb-12">
+                        <div class="lab-image image-placeholder">
+                            <div>
+                                <i class="fas fa-users-cog text-4xl mb-4"></i>
+                                <div>Active Lab Collaboration</div>
+                                <div class="text-sm mt-2">Team members working together on research projects</div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -1501,13 +1643,15 @@
             const loggedInContent = document.getElementById('logged-in-content');
             const ctaSection = document.getElementById('cta-section');
             const labStats = document.getElementById('lab-stats');
+            const heroBackground = document.getElementById('hero-background');
             
             if (currentUser) {
-                // User is logged in - show logged-in content, hide CTA section and stats
+                // User is logged in - show logged-in content, hide CTA section, stats, and hero background
                 guestContent.style.display = 'none';
                 loggedInContent.style.display = 'block';
                 ctaSection.style.display = 'none';
                 labStats.style.display = 'none';
+                if (heroBackground) heroBackground.style.display = 'none';
                 
                 // Add animations to logged-in content
                 setTimeout(() => {
@@ -1523,11 +1667,12 @@
                     });
                 }, 100);
             } else {
-                // User is not logged in - show guest content, CTA section and stats
+                // User is not logged in - show guest content, CTA section, stats, and hero background
                 guestContent.style.display = 'block';
                 loggedInContent.style.display = 'none';
                 ctaSection.style.display = 'block';
                 labStats.style.display = 'grid';
+                if (heroBackground) heroBackground.style.display = 'block';
                 
                 // Add animations to guest content
                 setTimeout(() => {
