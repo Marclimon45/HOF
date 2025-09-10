@@ -19,5 +19,7 @@
   "author": "CPX Lab Team",
   "license": "MIT",
   "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
 }
