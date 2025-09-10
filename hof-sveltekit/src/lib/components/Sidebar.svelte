@@ -4,6 +4,7 @@
   import { signOut } from 'firebase/auth';
   import { auth } from '../firebase';
   import { createEventDispatcher } from 'svelte';
+  import { showToast } from '../stores/toast';
   
   export let sidebarOpen = false;
   
@@ -23,8 +24,10 @@
     try {
       await signOut(auth);
       dispatch('userSignedOut');
+      showToast('Signed Out', 'You have been successfully signed out.', 'info', 3000);
     } catch (error) {
       console.error('Error signing out:', error);
+      showToast('Error', 'Failed to sign out. Please try again.', 'error');
     }
   }
   

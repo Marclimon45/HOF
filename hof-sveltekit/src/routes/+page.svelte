@@ -21,7 +21,7 @@
     };
   });
   
-  function openModal(event) {
+  function openModal(event: CustomEvent) {
     // Dispatch the modal event to the parent layout
     const modalEvent = new CustomEvent('openModal', { detail: event.detail });
     document.dispatchEvent(modalEvent);

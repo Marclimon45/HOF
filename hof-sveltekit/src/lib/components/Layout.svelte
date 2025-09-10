@@ -3,6 +3,7 @@
   import Sidebar from './Sidebar.svelte';
   import LoginModal from './LoginModal.svelte';
   import RegisterModal from './RegisterModal.svelte';
+  import Toast from './Toast.svelte';
   import { user } from '../stores/auth';
   import { onMount } from 'svelte';
   
@@ -71,4 +72,7 @@
   <!-- Modals -->
   <LoginModal bind:isOpen={loginModalOpen} on:close={closeModal} />
   <RegisterModal bind:isOpen={registerModalOpen} on:close={closeModal} />
+  
+  <!-- Toast Notifications -->
+  <Toast />
 </div>

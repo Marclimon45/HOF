@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { createUserWithEmailAndPassword, GoogleAuthProvider, GithubAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
   import { auth } from '../firebase';
+  import { showToast } from '../stores/toast';
   
   const dispatch = createEventDispatcher();
   
@@ -20,6 +21,17 @@
   
   function closeModal() {
     isOpen = false;
+    // Clear form when closing
+    name = '';
+    email = '';
+    password = '';
+    university = '';
+    major = '';
+    year = '';
+    experience = '';
+    interests = '';
+    error = '';
+    loading = false;
     dispatch('close');
   }
   
@@ -43,8 +55,23 @@
         displayName: name
       });
       closeModal();
+      showToast('Welcome to CPX Lab!', `Account created successfully! Welcome to CPX Lab, ${name}! Your application is now under review.`, 'success', 6000);
     } catch (err: any) {
-      error = err.message || 'Failed to create account';
+      let errorMessage = 'An error occurred during registration';
+      switch (err.code) {
+        case 'auth/email-already-in-use':
+          errorMessage = 'An account with this email already exists. Please sign in instead.';
+          break;
+        case 'auth/weak-password':
+          errorMessage = 'Password is too weak. Please choose a stronger password.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Please enter a valid email address.';
+          break;
+        default:
+          errorMessage = err.message || 'Failed to create account';
+      }
+      error = errorMessage;
     } finally {
       loading = false;
     }
@@ -56,10 +83,22 @@
     
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      provider.addScope('email');
+      provider.addScope('profile');
+      const result = await signInWithPopup(auth, provider);
       closeModal();
+      showToast('Welcome to CPX Lab!', `Welcome back, ${result.user.displayName || 'Researcher'}!`, 'success', 4000);
     } catch (err: any) {
-      error = err.message || 'Failed to sign in with Google';
+      let errorMessage = 'Failed to sign in with Google. Please try again.';
+      
+      if (err.code === 'auth/popup-closed-by-user') {
+        errorMessage = 'Sign-in was cancelled. Please try again.';
+      } else if (err.code === 'auth/popup-blocked') {
+        errorMessage = 'Popup was blocked. Please allow popups and try again.';
+      }
+      
+      showToast('Sign-in Error', errorMessage, 'error');
+      error = errorMessage;
     } finally {
       loading = false;
     }
@@ -71,10 +110,21 @@
     
     try {
       const provider = new GithubAuthProvider();
-      await signInWithPopup(auth, provider);
+      provider.addScope('user:email');
+      const result = await signInWithPopup(auth, provider);
       closeModal();
+      showToast('Welcome to CPX Lab!', `Welcome back, ${result.user.displayName || 'Researcher'}!`, 'success', 4000);
     } catch (err: any) {
-      error = err.message || 'Failed to sign in with GitHub';
+      let errorMessage = 'Failed to sign in with GitHub. Please try again.';
+      
+      if (err.code === 'auth/popup-closed-by-user') {
+        errorMessage = 'Sign-in was cancelled. Please try again.';
+      } else if (err.code === 'auth/popup-blocked') {
+        errorMessage = 'Popup was blocked. Please allow popups and try again.';
+      }
+      
+      showToast('Sign-in Error', errorMessage, 'error');
+      error = errorMessage;
     } finally {
       loading = false;
     }
