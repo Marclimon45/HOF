@@ -480,16 +480,27 @@
         }
 
         .sidebar-nav {
-            padding: 1rem 0;
+            padding: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 0.5rem;
         }
 
         .sidebar-nav-item {
-            display: block;
-            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
             color: #6b7280;
             text-decoration: none;
             transition: all 0.2s ease;
             border-left: 3px solid transparent;
+            text-align: left;
+            margin: 0.25rem 0;
+        }
+
+        .sidebar-nav-item span {
+            margin-left: 0.75rem;
         }
 
         .sidebar-nav-item:hover {
@@ -545,6 +556,12 @@
             margin-left: 280px;
         }
 
+        /* Ensure navigation bar stays in main content */
+        #main-nav {
+            position: relative;
+            z-index: 50;
+        }
+
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -575,6 +592,10 @@
             cursor: pointer;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: all 0.2s ease;
+        }
+
+        .main-content.with-sidebar .sidebar-toggle {
+            left: 1rem;
         }
 
         .sidebar-toggle:hover {
@@ -700,36 +721,36 @@
         </div>
         
         <!-- Sidebar Navigation -->
-        <nav class="sidebar-nav">
+        <div class="sidebar-nav">
             <a href="index.html" class="sidebar-nav-item active" data-page="home">
                 <i class="fas fa-home"></i>
-                Dashboard
+                <span>Dashboard</span>
             </a>
             <a href="projects.html" class="sidebar-nav-item" data-page="projects">
                 <i class="fas fa-project-diagram"></i>
-                My Projects
+                <span>My Projects</span>
             </a>
             <a href="ideas.html" class="sidebar-nav-item" data-page="ideas">
                 <i class="fas fa-lightbulb"></i>
-                Research Ideas
+                <span>Research Ideas</span>
             </a>
             <a href="users.html" class="sidebar-nav-item" data-page="users">
                 <i class="fas fa-users"></i>
-                Lab Members
+                <span>Lab Members</span>
             </a>
             <a href="#" class="sidebar-nav-item" data-page="calendar">
                 <i class="fas fa-calendar-alt"></i>
-                Lab Calendar
+                <span>Lab Calendar</span>
             </a>
             <a href="#" class="sidebar-nav-item" data-page="reports">
                 <i class="fas fa-chart-line"></i>
-                Progress Reports
+                <span>Progress Reports</span>
             </a>
             <a href="#" class="sidebar-nav-item" data-page="settings">
                 <i class="fas fa-cog"></i>
-                Settings
+                <span>Settings</span>
             </a>
-        </nav>
+        </div>
     </div>
 
     <!-- Main Content Wrapper -->
@@ -2512,8 +2533,9 @@
                     // Add active class to clicked item
                     this.classList.add('active');
                     
-                    // Update breadcrumb
-                    updateBreadcrumb(this.textContent.trim(), this.getAttribute('data-page'));
+                    // Update breadcrumb using the span text
+                    const spanText = this.querySelector('span').textContent.trim();
+                    updateBreadcrumb(spanText, this.getAttribute('data-page'));
                 });
             });
 
@@ -2522,7 +2544,8 @@
                 if (currentUser) {
                     sidebarToggle.classList.remove('hidden');
                     mainContent.classList.add('with-sidebar');
-                    sidebar.classList.add('open');
+                    // Don't auto-open sidebar, let user control it
+                    sidebar.classList.remove('open');
                 } else {
                     sidebarToggle.classList.add('hidden');
                     mainContent.classList.remove('with-sidebar');
