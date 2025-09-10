@@ -9,18 +9,46 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <style>
-        .status-success { color: #10b981; }
-        .status-error { color: #ef4444; }
-        .status-warning { color: #f59e0b; }
+        /* Fibonacci Typography Scale */
+        :root {
+            --text-xs: 0.75rem;    /* 12px */
+            --text-sm: 0.875rem;   /* 14px */
+            --text-base: 1rem;     /* 16px */
+            --text-lg: 1.125rem;   /* 18px */
+            --text-xl: 1.25rem;    /* 20px */
+            --text-2xl: 1.5rem;    /* 24px */
+            --text-3xl: 1.875rem;  /* 30px */
+            --text-4xl: 2.25rem;   /* 36px */
+            --text-5xl: 3rem;      /* 48px */
+            --text-6xl: 3.75rem;   /* 60px */
+            --text-7xl: 4.5rem;    /* 72px */
+            --text-8xl: 6rem;      /* 96px */
+            
+            /* Monotone Color Palette */
+            --gray-50: #fafafa;
+            --gray-100: #f5f5f5;
+            --gray-200: #e5e5e5;
+            --gray-300: #d4d4d4;
+            --gray-400: #a3a3a3;
+            --gray-500: #737373;
+            --gray-600: #525252;
+            --gray-700: #404040;
+            --gray-800: #262626;
+            --gray-900: #171717;
+        }
+
+        .status-success { color: var(--gray-800); font-weight: bold; }
+        .status-error { color: var(--gray-900); font-weight: bold; }
+        .status-warning { color: var(--gray-700); font-weight: bold; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <div class="max-w-4xl mx-auto">
-            <h1 class="text-3xl font-bold text-gray-900 mb-8">Firestore Data Migration Tool</h1>
+            <h1 class="text-3xl font-bold text-gray-900 mb-8" style="font-size: var(--text-3xl);">Firestore Data Migration Tool</h1>
             
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">Migration Status</h2>
+                <h2 class="text-xl font-semibold text-gray-900 mb-4" style="font-size: var(--text-xl);">Migration Status</h2>
                 <div id="migration-status" class="space-y-2">
                     <p class="text-gray-600">Ready to start migration...</p>
                 </div>
@@ -28,32 +56,32 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Projects Migration</h3>
-                    <button id="migrate-projects" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4" style="font-size: var(--text-lg);">Projects Migration</h3>
+                    <button id="migrate-projects" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800" style="font-size: var(--text-base); font-weight: 600;">
                         Migrate Projects
                     </button>
                     <div id="projects-status" class="mt-4 text-sm"></div>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Users Migration</h3>
-                    <button id="migrate-users" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4" style="font-size: var(--text-lg);">Users Migration</h3>
+                    <button id="migrate-users" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700" style="font-size: var(--text-base); font-weight: 600;">
                         Migrate Users
                     </button>
                     <div id="users-status" class="mt-4 text-sm"></div>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Ideas Migration</h3>
-                    <button id="migrate-ideas" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4" style="font-size: var(--text-lg);">Ideas Migration</h3>
+                    <button id="migrate-ideas" class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600" style="font-size: var(--text-base); font-weight: 600;">
                         Migrate Ideas
                     </button>
                     <div id="ideas-status" class="mt-4 text-sm"></div>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Lab Data Migration</h3>
-                    <button id="migrate-lab-data" class="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4" style="font-size: var(--text-lg);">Lab Data Migration</h3>
+                    <button id="migrate-lab-data" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500" style="font-size: var(--text-base); font-weight: 600;">
                         Migrate Lab Data
                     </button>
                     <div id="lab-data-status" class="mt-4 text-sm"></div>

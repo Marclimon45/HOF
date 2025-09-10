@@ -1,33 +1,124 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Page Not Found</title>
+    <title>404 - Page Not Found | CPX Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Fibonacci Typography Scale */
+        :root {
+            --text-xs: 0.75rem;    /* 12px */
+            --text-sm: 0.875rem;   /* 14px */
+            --text-base: 1rem;     /* 16px */
+            --text-lg: 1.125rem;   /* 18px */
+            --text-xl: 1.25rem;    /* 20px */
+            --text-2xl: 1.5rem;    /* 24px */
+            --text-3xl: 1.875rem;  /* 30px */
+            --text-4xl: 2.25rem;   /* 36px */
+            --text-5xl: 3rem;      /* 48px */
+            --text-6xl: 3.75rem;   /* 60px */
+            --text-7xl: 4.5rem;    /* 72px */
+            --text-8xl: 6rem;      /* 96px */
+            
+            /* Monotone Color Palette */
+            --gray-50: #fafafa;
+            --gray-100: #f5f5f5;
+            --gray-200: #e5e5e5;
+            --gray-300: #d4d4d4;
+            --gray-400: #a3a3a3;
+            --gray-500: #737373;
+            --gray-600: #525252;
+            --gray-700: #404040;
+            --gray-800: #262626;
+            --gray-900: #171717;
+        }
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px 16px; border-radius: 3px; }
-      #message h3 { color: #888; font-weight: normal; font-size: 16px; margin: 16px 0 12px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
+        body { 
+            background: var(--gray-50); 
+            color: var(--gray-900); 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        #message { 
+            background: white; 
+            max-width: 600px; 
+            margin: 100px auto 16px; 
+            padding: 48px 32px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        #message h2 { 
+            color: var(--gray-900); 
+            font-weight: bold; 
+            font-size: var(--text-6xl); 
+            margin: 0 0 16px; 
+        }
+        
+        #message h1 { 
+            font-size: var(--text-3xl); 
+            font-weight: 300; 
+            color: var(--gray-700); 
+            margin: 0 0 24px;
+        }
+        
+        #message p { 
+            line-height: 1.6; 
+            margin: 24px 0 32px; 
+            font-size: var(--text-lg); 
+            color: var(--gray-600);
+        }
+        
+        #message a { 
+            display: inline-block; 
+            text-align: center; 
+            background: var(--gray-900); 
+            text-transform: uppercase; 
+            text-decoration: none; 
+            color: white; 
+            padding: 16px 32px; 
+            border-radius: 8px; 
+            font-weight: 600;
+            font-size: var(--text-base);
+            transition: background-color 0.2s;
+            margin: 8px;
+        }
+        
+        #message a:hover {
+            background: var(--gray-800);
+        }
+        
+        .icon {
+            font-size: var(--text-8xl);
+            color: var(--gray-300);
+            margin-bottom: 24px;
+        }
+        
+        @media (max-width: 600px) {
+            body, #message { margin-top: 0; background: white; box-shadow: none; }
+            #message { margin: 20px; padding: 32px 24px; }
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div id="message">
-      <h2>404</h2>
-      <h1>Page Not Found</h1>
-      <p>The specified file was not found on this website. Please check the URL for mistakes and try again.</p>
-      <h3>Why am I seeing this?</h3>
-      <p>This page was generated by the Firebase Command-Line Interface. To modify it, edit the <code>404.html</code> file in your project's configured <code>public</code> directory.</p>
+        <div class="icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h2>404</h2>
+        <h1>Page Not Found</h1>
+        <p>The page you're looking for doesn't exist. It might have been moved, deleted, or you entered the wrong URL.</p>
+        <a href="../index.html">
+            <i class="fas fa-home mr-2"></i>Go to Homepage
+        </a>
+        <a href="javascript:history.back()">
+            <i class="fas fa-arrow-left mr-2"></i>Go Back
+        </a>
     </div>
-  </body>
+</body>
 </html>
