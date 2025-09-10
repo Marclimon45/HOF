@@ -462,14 +462,10 @@
             transition: transform 0.3s ease;
         }
 
-        /* Desktop: Always visible by default */
+        /* Desktop: Always visible by default (only when logged in) */
         @media (min-width: 1024px) {
             .sidebar {
                 transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 280px;
             }
             
             .sidebar-toggle {
@@ -581,6 +577,17 @@
 
         .main-content {
             transition: margin-left 0.3s ease;
+            margin-left: 0;
+        }
+
+        /* Only apply sidebar margin when sidebar is visible and user is logged in */
+        .main-content.with-sidebar {
+            margin-left: 280px;
+        }
+
+        /* Ensure logged-out users get full width */
+        .main-content:not(.with-sidebar) {
+            margin-left: 0;
         }
 
         /* Ensure navigation bar stays in main content */
@@ -719,6 +726,7 @@
             font-size: 1rem;
             font-weight: 500;
             text-align: center;
+            min-height: 100vh;
         }
     </style>
 </head>
@@ -843,14 +851,14 @@
         
         <div id="hero-content" class="max-w-6xl mx-auto px-6 py-32 relative z-10">
             <div class="text-center">
-                <div class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 border border-gray-200 mb-12">
+                <div class="inline-flex items-center px-3 py-1 rounded-full bg-white border border-gray-200 mb-12 shadow-sm">
                     <i class="fas fa-flask text-gray-600 mr-2" style="font-size: var(--text-sm);"></i>
                     <span class="text-sm font-medium text-gray-600">Research Lab Management Platform</span>
                 </div>
-                <h1 class="text-6xl md:text-8xl font-light mb-8 tracking-tight" id="hero-title" style="font-size: var(--text-8xl);">
+                <h1 class="text-6xl md:text-8xl font-light mb-8 tracking-tight text-gray-900" id="hero-title" style="font-size: var(--text-8xl);">
                     CPX Lab
                 </h1>
-                <p class="text-xl md:text-2xl mb-16 max-w-4xl mx-auto text-gray-600 font-light leading-relaxed" id="hero-description" style="font-size: var(--text-2xl);">
+                <p class="text-xl md:text-2xl mb-16 max-w-4xl mx-auto text-gray-700 font-light leading-relaxed" id="hero-description" style="font-size: var(--text-2xl);">
                     Advanced research project management and student progress tracking for academic excellence
                 </p>
                 <div id="hero-actions" class="flex flex-col sm:flex-row gap-6 justify-center mb-24">
@@ -2648,11 +2656,13 @@
                         sidebar.classList.remove('open');
                     }
                 } else {
-                    // Hide sidebar for logged-out users
+                    // Hide sidebar completely for logged-out users
                     sidebar.style.display = 'none';
                     sidebarToggle.classList.add('hidden');
                     mainContent.classList.remove('with-sidebar');
                     sidebar.classList.remove('open');
+                    // Ensure main content takes full width
+                    mainContent.style.marginLeft = '0';
                 }
             }
 
