@@ -8,6 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Fibonacci Typography Scale */
@@ -1776,14 +1777,20 @@
             projectId: "xin-s-hall-of-fame",
             storageBucket: "xin-s-hall-of-fame.firebasestorage.app",
             messagingSenderId: "692691719687",
-            appId: "1:692691719687:web:7bd1656dec1613e2a87ca2",
-            measurementId: "G-5Q7JKXX6Q2"
+            appId: "1:692691719687:web:6b9f13cf1d3f9328a87ca2",
+            measurementId: "G-4F4QM0QENJ"
+        };
+
+        // Site identifier
+        const siteConfig = {
+            site: "csulbcpxlab"
         };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const analytics = firebase.analytics();
 
         // User state management
         let currentUser = null;
