@@ -2417,7 +2417,6 @@
 
         function handleLogout() {
             auth.signOut().then(() => {
-                showMessage('Success', 'You have been signed out successfully.');
                 updateUI();
             }).catch((error) => {
                 console.error('Sign out error:', error);
@@ -2493,7 +2492,6 @@
                     updateUserType(userCredential.user);
                     
                     closeModal('loginModal');
-                    showMessage('Welcome Back!', `Welcome back to CPX Lab, ${userCredential.user.displayName || email.split('@')[0]}!`, false);
                     
                     // Clear form
                     document.getElementById('loginForm').reset();
@@ -2656,7 +2654,6 @@
                 .then((result) => {
                     updateUserType(result.user);
                     closeModal('loginModal');
-                    showMessage('Welcome to CPX Lab!', `Welcome back, ${result.user.displayName || 'Researcher'}!`, false);
                 })
                 .catch((error) => {
                     console.error('Google sign-in error:', error);
@@ -2680,7 +2677,6 @@
                 .then((result) => {
                     updateUserType(result.user);
                     closeModal('loginModal');
-                    showMessage('Welcome to CPX Lab!', `Welcome back, ${result.user.displayName || 'Researcher'}!`, false);
                 })
                 .catch((error) => {
                     console.error('GitHub sign-in error:', error);
