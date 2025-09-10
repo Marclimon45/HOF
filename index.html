@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CPX Lab - Home of Innovation</title>
+    <title>CPX Lab - Research Lab Management Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -257,9 +257,9 @@
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
                         <a href="index.html" class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
-                        <a href="projects.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Projects</a>
-                        <a href="ideas.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Ideas</a>
-                        <a href="users.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Community</a>
+                        <a href="projects.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Research Projects</a>
+                        <a href="ideas.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Research Ideas</a>
+                        <a href="users.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Lab Members</a>
                         <div id="auth-buttons" class="flex items-center space-x-2">
                             <!-- Auth buttons will be dynamically inserted here -->
                         </div>
@@ -282,9 +282,9 @@
         <div id="mobile-menu" class="md:hidden hidden">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
                 <a href="index.html" class="text-gray-900 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Home</a>
-                <a href="projects.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Projects</a>
-                <a href="ideas.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Ideas</a>
-                <a href="users.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Community</a>
+                <a href="projects.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Research Projects</a>
+                <a href="ideas.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Research Ideas</a>
+                <a href="users.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Lab Members</a>
                 <div id="mobile-auth-buttons" class="px-3 py-2">
                     <!-- Mobile auth buttons will be dynamically inserted here -->
                 </div>
@@ -293,32 +293,40 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <section id="home" class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
             <div class="text-center">
-                <h1 class="text-5xl md:text-7xl font-bold mb-6" id="hero-title">
-                    Welcome to CPX Lab
+                <div class="inline-flex items-center px-4 py-2 rounded-full bg-slate-800 border border-slate-700 mb-8">
+                    <i class="fas fa-flask text-blue-400 mr-2"></i>
+                    <span class="text-sm font-medium text-slate-300">Research Lab Management Platform</span>
+                </div>
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 tracking-tight" id="hero-title">
+                    CPX Lab
                 </h1>
-                <p class="text-xl md:text-2xl mb-8 max-w-4xl mx-auto opacity-90" id="hero-description">
-                    The premier platform for innovators, creators, and visionaries to connect, collaborate, and build the future together
+                <p class="text-xl md:text-2xl mb-8 max-w-4xl mx-auto text-slate-300" id="hero-description">
+                    Advanced research project management and student progress tracking for academic excellence
                 </p>
-                <div id="hero-actions" class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                <div id="hero-actions" class="flex flex-col sm:flex-row gap-4 justify-center mb-16">
                     <!-- Dynamic action buttons will be inserted here -->
                 </div>
                 
-                <!-- Quick Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-blue-200">50+</div>
-                        <div class="text-blue-100">Active Projects</div>
+                <!-- Lab Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+                    <div class="text-center p-6 bg-slate-800/50 rounded-xl border border-slate-700">
+                        <div class="text-3xl font-bold text-blue-400 mb-2">15+</div>
+                        <div class="text-slate-300 text-sm">Active Research Projects</div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-blue-200">200+</div>
-                        <div class="text-blue-100">Community Members</div>
+                    <div class="text-center p-6 bg-slate-800/50 rounded-xl border border-slate-700">
+                        <div class="text-3xl font-bold text-green-400 mb-2">25+</div>
+                        <div class="text-slate-300 text-sm">Graduate Students</div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-blue-200">100+</div>
-                        <div class="text-blue-100">Innovative Ideas</div>
+                    <div class="text-center p-6 bg-slate-800/50 rounded-xl border border-slate-700">
+                        <div class="text-3xl font-bold text-purple-400 mb-2">8+</div>
+                        <div class="text-slate-300 text-sm">Publications</div>
+                    </div>
+                    <div class="text-center p-6 bg-slate-800/50 rounded-xl border border-slate-700">
+                        <div class="text-3xl font-bold text-orange-400 mb-2">3+</div>
+                        <div class="text-slate-300 text-sm">Years Active</div>
                     </div>
                 </div>
             </div>
@@ -326,152 +334,173 @@
     </section>
 
     <!-- About Section -->
-    <section class="py-20 bg-white">
+    <section class="py-24 bg-slate-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">What is CPX Lab?</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    CPX Lab is a collaborative innovation platform where brilliant minds come together to create, 
-                    share, and develop groundbreaking projects that shape the future.
+            <div class="text-center mb-20">
+                <h2 class="text-4xl font-bold text-slate-900 mb-6">Research Excellence Through Technology</h2>
+                <p class="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed">
+                    CPX Lab leverages cutting-edge project management technology to streamline research workflows, 
+                    track student progress, and accelerate academic discovery across multiple disciplines.
                 </p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="text-center p-6">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-lightbulb text-2xl text-blue-600"></i>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-blue-50 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-2xl text-blue-600"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Share Ideas</h3>
-                    <p class="text-gray-600">Bring your innovative ideas to life and get feedback from our creative community.</p>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-900">Progress Tracking</h3>
+                    <p class="text-slate-600 leading-relaxed">Monitor student research progress with automated GitHub integration, milestone tracking, and real-time project analytics.</p>
                 </div>
-                <div class="text-center p-6">
-                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-project-diagram text-2xl text-green-600"></i>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-green-50 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-users-cog text-2xl text-green-600"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Build Projects</h3>
-                    <p class="text-gray-600">Collaborate on exciting projects with talented individuals from around the world.</p>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-900">Lab Management</h3>
+                    <p class="text-slate-600 leading-relaxed">Professors can oversee multiple research projects, track student contributions, and manage lab resources efficiently.</p>
                 </div>
-                <div class="text-center p-6">
-                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-users text-2xl text-purple-600"></i>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-purple-50 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-graduation-cap text-2xl text-purple-600"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Connect & Learn</h3>
-                    <p class="text-gray-600">Join a vibrant community of innovators, developers, and entrepreneurs.</p>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-900">Student Development</h3>
+                    <p class="text-slate-600 leading-relaxed">Students manage their research portfolio, track learning milestones, and showcase their academic achievements.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- How to Join Section -->
-    <section class="py-20 bg-gray-50">
+    <!-- Lab Recruitment Section -->
+    <section class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">How to Join CPX Lab</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Getting started is easy! Follow these simple steps to become part of our innovation community.
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="text-center">
-                    <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">1</div>
-                    <h3 class="text-lg font-semibold mb-2">Create Account</h3>
-                    <p class="text-gray-600">Sign up with your email or social media account</p>
-                </div>
-                <div class="text-center">
-                    <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">2</div>
-                    <h3 class="text-lg font-semibold mb-2">Complete Profile</h3>
-                    <p class="text-gray-600">Add your skills, interests, and availability</p>
-                </div>
-                <div class="text-center">
-                    <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">3</div>
-                    <h3 class="text-lg font-semibold mb-2">Explore & Connect</h3>
-                    <p class="text-gray-600">Browse projects, ideas, and connect with members</p>
-                </div>
-                <div class="text-center">
-                    <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">4</div>
-                    <h3 class="text-lg font-semibold mb-2">Start Creating</h3>
-                    <p class="text-gray-600">Share ideas, join projects, and build the future</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">Why Choose CPX Lab?</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Join thousands of innovators who are already building the future together
+            <div class="text-center mb-20">
+                <h2 class="text-4xl font-bold text-slate-900 mb-6">Join Our Research Community</h2>
+                <p class="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed">
+                    We're looking for passionate graduate students, postdocs, and researchers to join our cutting-edge research projects.
                 </p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl">
-                    <div class="text-blue-600 text-4xl mb-4">
-                        <i class="fas fa-rocket"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3 text-gray-900">Launch Projects</h3>
-                    <p class="text-gray-600">Turn your ideas into reality with the help of our talented community members.</p>
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-2xl border border-blue-200">
+                    <div class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-6 text-xl font-bold">1</div>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-900">Apply to Lab</h3>
+                    <p class="text-slate-600 leading-relaxed mb-4">Submit your research interests, CV, and academic background through our application portal.</p>
+                    <ul class="text-sm text-slate-500 space-y-2">
+                        <li>• Research statement</li>
+                        <li>• Academic transcripts</li>
+                        <li>• Reference letters</li>
+                    </ul>
                 </div>
-                <div class="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-xl">
-                    <div class="text-green-600 text-4xl mb-4">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3 text-gray-900">Find Collaborators</h3>
-                    <p class="text-gray-600">Connect with developers, designers, and entrepreneurs who share your vision.</p>
+                <div class="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-2xl border border-green-200">
+                    <div class="w-12 h-12 bg-green-600 text-white rounded-xl flex items-center justify-center mb-6 text-xl font-bold">2</div>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-900">Interview Process</h3>
+                    <p class="text-slate-600 leading-relaxed mb-4">Meet with lab members and discuss potential research projects and collaboration opportunities.</p>
+                    <ul class="text-sm text-slate-500 space-y-2">
+                        <li>• Technical interview</li>
+                        <li>• Research discussion</li>
+                        <li>• Lab culture fit</li>
+                    </ul>
                 </div>
-                <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-xl">
-                    <div class="text-purple-600 text-4xl mb-4">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3 text-gray-900">Share Ideas</h3>
-                    <p class="text-gray-600">Get feedback and validation for your innovative concepts from experts.</p>
+                <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-2xl border border-purple-200">
+                    <div class="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center mb-6 text-xl font-bold">3</div>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-900">Onboard & Research</h3>
+                    <p class="text-slate-600 leading-relaxed mb-4">Get access to our platform, join research projects, and start your academic journey with us.</p>
+                    <ul class="text-sm text-slate-500 space-y-2">
+                        <li>• Platform training</li>
+                        <li>• Project assignment</li>
+                        <li>• Mentorship program</li>
+                    </ul>
                 </div>
-                <div class="bg-gradient-to-br from-orange-50 to-orange-100 p-8 rounded-xl">
-                    <div class="text-orange-600 text-4xl mb-4">
-                        <i class="fas fa-graduation-cap"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platform Features Section -->
+    <section class="py-24 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl font-bold text-slate-900 mb-6">Platform Capabilities</h2>
+                <p class="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed">
+                    Advanced research management tools designed specifically for academic environments
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-blue-50 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fab fa-github text-2xl text-blue-600"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3 text-gray-900">Learn & Grow</h3>
-                    <p class="text-gray-600">Develop new skills and knowledge through collaborative projects.</p>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-900">GitHub Integration</h3>
+                    <p class="text-slate-600 leading-relaxed">Automatic tracking of commits, branches, and repository activity for each research project.</p>
                 </div>
-                <div class="bg-gradient-to-br from-red-50 to-red-100 p-8 rounded-xl">
-                    <div class="text-red-600 text-4xl mb-4">
-                        <i class="fas fa-trophy"></i>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-green-50 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-bar text-2xl text-green-600"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3 text-gray-900">Build Portfolio</h3>
-                    <p class="text-gray-600">Showcase your contributions and achievements to potential employers.</p>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-900">Progress Analytics</h3>
+                    <p class="text-slate-600 leading-relaxed">Real-time dashboards showing project milestones, student contributions, and research outcomes.</p>
                 </div>
-                <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 p-8 rounded-xl">
-                    <div class="text-indigo-600 text-4xl mb-4">
-                        <i class="fas fa-globe"></i>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-purple-50 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-tasks text-2xl text-purple-600"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3 text-gray-900">Global Network</h3>
-                    <p class="text-gray-600">Connect with innovators from around the world and expand your reach.</p>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-900">Project Management</h3>
+                    <p class="text-slate-600 leading-relaxed">Organize research tasks, set deadlines, and track progress across multiple concurrent projects.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-orange-50 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-file-alt text-2xl text-orange-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-900">Publication Tracking</h3>
+                    <p class="text-slate-600 leading-relaxed">Monitor paper submissions, reviews, and publication status for all lab research outputs.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-red-50 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-calendar-alt text-2xl text-red-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-900">Meeting Scheduler</h3>
+                    <p class="text-slate-600 leading-relaxed">Coordinate lab meetings, one-on-ones, and research presentations with integrated calendar.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-indigo-50 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-database text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-900">Research Repository</h3>
+                    <p class="text-slate-600 leading-relaxed">Centralized storage for research data, papers, and project documentation.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="py-20 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
-        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-            <h2 class="text-4xl font-bold mb-6">Ready to Start Your Innovation Journey?</h2>
-            <p class="text-xl mb-8 opacity-90">
-                Join CPX Lab today and become part of a community that's shaping the future through collaboration and innovation.
+    <section class="py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+        <div class="max-w-6xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold mb-6">Ready to Advance Your Research?</h2>
+            <p class="text-xl mb-12 text-slate-300 max-w-4xl mx-auto leading-relaxed">
+                Join CPX Lab and leverage our advanced research management platform to accelerate your academic career and contribute to groundbreaking discoveries.
             </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onclick="showRegisterModal()" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors">
-                    <i class="fas fa-user-plus mr-2"></i>Create Free Account
+            <div class="flex flex-col sm:flex-row gap-6 justify-center mb-8">
+                <button onclick="showRegisterModal()" class="bg-white text-slate-900 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-slate-100 transition-colors shadow-lg">
+                    <i class="fas fa-graduation-cap mr-2"></i>Apply to Lab
                 </button>
-                <button onclick="showLoginModal()" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-blue-600 transition-colors">
-                    <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                <button onclick="showLoginModal()" class="border-2 border-slate-300 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-slate-300 hover:text-slate-900 transition-colors">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Lab Member Login
                 </button>
             </div>
-            <p class="text-blue-200 mt-4 text-sm">
-                Already have an account? <button onclick="showLoginModal()" class="underline hover:text-white">Sign in here</button>
-            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-blue-400 mb-2">Free Platform</div>
+                    <div class="text-slate-400 text-sm">No cost for lab members</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-green-400 mb-2">24/7 Access</div>
+                    <div class="text-slate-400 text-sm">Work on your research anytime</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-purple-400 mb-2">Full Support</div>
+                    <div class="text-slate-400 text-sm">Dedicated technical assistance</div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -501,9 +530,9 @@
                     <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
                     <ul class="space-y-2">
                         <li><a href="index.html" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
-                        <li><a href="projects.html" class="text-gray-400 hover:text-white transition-colors">Projects</a></li>
-                        <li><a href="ideas.html" class="text-gray-400 hover:text-white transition-colors">Ideas</a></li>
-                        <li><a href="users.html" class="text-gray-400 hover:text-white transition-colors">Community</a></li>
+                        <li><a href="projects.html" class="text-gray-400 hover:text-white transition-colors">Research Projects</a></li>
+                        <li><a href="ideas.html" class="text-gray-400 hover:text-white transition-colors">Research Ideas</a></li>
+                        <li><a href="users.html" class="text-gray-400 hover:text-white transition-colors">Lab Members</a></li>
                     </ul>
                 </div>
                 <div>
@@ -1005,51 +1034,51 @@
         function updateHeroContent() {
             switch (userType) {
                 case 'guest':
-                    heroTitle.textContent = 'Welcome to CPX Lab';
-                    heroDescription.textContent = 'The premier platform for innovators, creators, and visionaries to connect, collaborate, and build the future together';
+                    heroTitle.textContent = 'CPX Lab';
+                    heroDescription.textContent = 'Advanced research project management and student progress tracking for academic excellence';
                     heroActions.innerHTML = `
-                        <button onclick="showRegisterModal()" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors">
-                            <i class="fas fa-user-plus mr-2"></i>Get Started Free
+                        <button onclick="showRegisterModal()" class="bg-white text-slate-900 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-slate-100 transition-colors shadow-lg">
+                            <i class="fas fa-graduation-cap mr-2"></i>Apply to Lab
                         </button>
-                        <button onclick="showLoginModal()" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-blue-600 transition-colors">
-                            <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                        <button onclick="showLoginModal()" class="border-2 border-slate-300 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-slate-300 hover:text-slate-900 transition-colors">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Lab Member Login
                         </button>
                     `;
                     break;
                 case 'user':
-                    heroTitle.textContent = 'Welcome back!';
-                    heroDescription.textContent = 'Continue your innovation journey and explore new opportunities';
+                    heroTitle.textContent = 'Welcome back, Researcher!';
+                    heroDescription.textContent = 'Continue your research projects and track your academic progress';
                     heroActions.innerHTML = `
-                        <a href="projects.html" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors inline-block">
-                            View Projects
+                        <a href="projects.html" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-colors inline-block shadow-lg">
+                            <i class="fas fa-project-diagram mr-2"></i>My Research Projects
                         </a>
-                        <a href="ideas.html" class="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition-colors inline-block">
-                            Browse Ideas
+                        <a href="ideas.html" class="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-600 hover:text-white transition-colors inline-block">
+                            <i class="fas fa-lightbulb mr-2"></i>Research Ideas
                         </a>
                     `;
                     break;
                 case 'admin':
-                    heroTitle.textContent = 'Admin Dashboard';
-                    heroDescription.textContent = 'Manage the platform and support our community of innovators';
+                    heroTitle.textContent = 'Professor Dashboard';
+                    heroDescription.textContent = 'Oversee all lab projects and track student progress across multiple research initiatives';
                     heroActions.innerHTML = `
-                        <a href="projects.html" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors inline-block">
-                            Manage Projects
+                        <a href="projects.html" class="bg-slate-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-slate-700 transition-colors inline-block shadow-lg">
+                            <i class="fas fa-users mr-2"></i>Manage Students
                         </a>
-                        <a href="users.html" class="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition-colors inline-block">
-                            View Users
-                        </a>
+                        <button onclick="goToAdminPanel()" class="border-2 border-slate-600 text-slate-600 px-8 py-4 rounded-xl font-semibold hover:bg-slate-600 hover:text-white transition-colors">
+                            <i class="fas fa-chart-line mr-2"></i>Lab Analytics
+                        </button>
                     `;
                     break;
                 case 'premium':
-                    heroTitle.textContent = 'Premium Member';
-                    heroDescription.textContent = 'Unlock exclusive features and advanced tools for your projects';
+                    heroTitle.textContent = 'Senior Researcher';
+                    heroDescription.textContent = 'Access advanced research tools and lead multiple research projects';
                     heroActions.innerHTML = `
-                        <a href="projects.html" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors inline-block">
-                            Premium Dashboard
+                        <a href="projects.html" class="bg-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-purple-700 transition-colors inline-block shadow-lg">
+                            <i class="fas fa-trophy mr-2"></i>Lead Projects
                         </a>
-                        <a href="ideas.html" class="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition-colors inline-block">
-                            Premium Ideas
-                        </a>
+                        <button onclick="explorePremiumFeatures()" class="border-2 border-purple-600 text-purple-600 px-8 py-4 rounded-xl font-semibold hover:bg-purple-600 hover:text-white transition-colors">
+                            <i class="fas fa-star mr-2"></i>Advanced Tools
+                        </button>
                     `;
                     break;
             }
