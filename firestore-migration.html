@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firestore Data Migration Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <style>
+        .status-success { color: #10b981; }
+        .status-error { color: #ef4444; }
+        .status-warning { color: #f59e0b; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Firestore Data Migration Tool</h1>
+            
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Migration Status</h2>
+                <div id="migration-status" class="space-y-2">
+                    <p class="text-gray-600">Ready to start migration...</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Projects Migration</h3>
+                    <button id="migrate-projects" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        Migrate Projects
+                    </button>
+                    <div id="projects-status" class="mt-4 text-sm"></div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Users Migration</h3>
+                    <button id="migrate-users" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                        Migrate Users
+                    </button>
+                    <div id="users-status" class="mt-4 text-sm"></div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Ideas Migration</h3>
+                    <button id="migrate-ideas" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                        Migrate Ideas
+                    </button>
+                    <div id="ideas-status" class="mt-4 text-sm"></div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Lab Data Migration</h3>
+                    <button id="migrate-lab-data" class="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700">
+                        Migrate Lab Data
+                    </button>
+                    <div id="lab-data-status" class="mt-4 text-sm"></div>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Migration Log</h3>
+                <div id="migration-log" class="bg-gray-50 rounded p-4 h-64 overflow-y-auto text-sm font-mono">
+                    <p>Migration tool initialized. Click any migration button to start.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2uc4XlwTgXh9yvawGv9XWOkLDOc7DrYI",
+            authDomain: "xin-s-hall-of-fame.firebaseapp.com",
+            projectId: "xin-s-hall-of-fame",
+            storageBucket: "xin-s-hall-of-fame.firebasestorage.app",
+            messagingSenderId: "692691719687",
+            appId: "1:692691719687:web:6b9f13cf1d3f9328a87ca2",
+            measurementId: "G-4F4QM0QENJ"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Logging function
+        function log(message, type = 'info') {
+            const logContainer = document.getElementById('migration-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const colorClass = type === 'error' ? 'status-error' : type === 'success' ? 'status-success' : type === 'warning' ? 'status-warning' : '';
+            logContainer.innerHTML += `<div class="${colorClass}">[${timestamp}] ${message}</div>`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // Update status
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const colorClass = type === 'error' ? 'status-error' : type === 'success' ? 'status-success' : type === 'warning' ? 'status-warning' : '';
+            element.innerHTML = `<span class="${colorClass}">${message}</span>`;
+        }
+
+        // Migrate projects data
+        async function migrateProjects() {
+            log('Starting projects migration...', 'info');
+            updateStatus('projects-status', 'Migrating...', 'warning');
+
+            try {
+                const projectsSnapshot = await db.collection('projects').get();
+                let migrated = 0;
+                let errors = 0;
+
+                for (const doc of projectsSnapshot.docs) {
+                    try {
+                        const data = doc.data();
+                        const updates = {};
+
+                        // Add missing fields with default values
+                        if (!data.updatedAt) {
+                            updates.updatedAt = firebase.firestore.Timestamp.fromDate(new Date());
+                        }
+                        if (!data.timeline) {
+                            updates.timeline = [];
+                        }
+                        if (!data.achievements) {
+                            updates.achievements = [];
+                        }
+                        if (!data.keyAchievements) {
+                            updates.keyAchievements = [];
+                        }
+                        if (!data.technologies) {
+                            updates.technologies = [];
+                        }
+                        if (!data.tags) {
+                            updates.tags = [];
+                        }
+                        if (!data.roles) {
+                            updates.roles = [];
+                        }
+                        if (!data.members) {
+                            updates.members = 0;
+                        }
+                        if (!data.teamSize) {
+                            updates.teamSize = 1;
+                        }
+                        if (!data.projectType) {
+                            updates.projectType = 'Research';
+                        }
+                        if (!data.duration) {
+                            updates.duration = '';
+                        }
+                        if (!data.projectLink) {
+                            updates.projectLink = '';
+                        }
+                        if (!data.expectedCompletionDate) {
+                            updates.expectedCompletionDate = '';
+                        }
+
+                        // Only update if there are changes
+                        if (Object.keys(updates).length > 0) {
+                            await doc.ref.update(updates);
+                            migrated++;
+                            log(`Updated project: ${data.title || doc.id}`, 'success');
+                        }
+                    } catch (error) {
+                        errors++;
+                        log(`Error updating project ${doc.id}: ${error.message}`, 'error');
+                    }
+                }
+
+                updateStatus('projects-status', `Completed: ${migrated} migrated, ${errors} errors`, errors > 0 ? 'warning' : 'success');
+                log(`Projects migration completed: ${migrated} migrated, ${errors} errors`, errors > 0 ? 'warning' : 'success');
+            } catch (error) {
+                updateStatus('projects-status', `Error: ${error.message}`, 'error');
+                log(`Projects migration failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Migrate users data
+        async function migrateUsers() {
+            log('Starting users migration...', 'info');
+            updateStatus('users-status', 'Migrating...', 'warning');
+
+            try {
+                const usersSnapshot = await db.collection('users').get();
+                let migrated = 0;
+                let errors = 0;
+
+                for (const doc of usersSnapshot.docs) {
+                    try {
+                        const data = doc.data();
+                        const updates = {};
+
+                        // Add missing fields with default values
+                        if (!data.updatedAt) {
+                            updates.updatedAt = firebase.firestore.Timestamp.fromDate(new Date());
+                        }
+                        if (!data.skills) {
+                            updates.skills = [];
+                        }
+                        if (!data.tools) {
+                            updates.tools = [];
+                        }
+                        if (!data.areaOfInterest) {
+                            updates.areaOfInterest = [];
+                        }
+                        if (!data.availability) {
+                            updates.availability = {};
+                        }
+                        if (!data.contributions) {
+                            updates.contributions = 0;
+                        }
+                        if (!data.rank) {
+                            updates.rank = 'Unranked';
+                        }
+                        if (!data.bookmarkedProjects) {
+                            updates.bookmarkedProjects = [];
+                        }
+                        if (!data.isCPSMember) {
+                            updates.isCPSMember = false;
+                        }
+
+                        // Only update if there are changes
+                        if (Object.keys(updates).length > 0) {
+                            await doc.ref.update(updates);
+                            migrated++;
+                            log(`Updated user: ${data.firstName || data.email || doc.id}`, 'success');
+                        }
+                    } catch (error) {
+                        errors++;
+                        log(`Error updating user ${doc.id}: ${error.message}`, 'error');
+                    }
+                }
+
+                updateStatus('users-status', `Completed: ${migrated} migrated, ${errors} errors`, errors > 0 ? 'warning' : 'success');
+                log(`Users migration completed: ${migrated} migrated, ${errors} errors`, errors > 0 ? 'warning' : 'success');
+            } catch (error) {
+                updateStatus('users-status', `Error: ${error.message}`, 'error');
+                log(`Users migration failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Migrate ideas data
+        async function migrateIdeas() {
+            log('Starting ideas migration...', 'info');
+            updateStatus('ideas-status', 'Migrating...', 'warning');
+
+            try {
+                const ideasSnapshot = await db.collection('ideas').get();
+                let migrated = 0;
+                let errors = 0;
+
+                for (const doc of ideasSnapshot.docs) {
+                    try {
+                        const data = doc.data();
+                        const updates = {};
+
+                        // Add missing fields with default values
+                        if (!data.lastEdited) {
+                            updates.lastEdited = null;
+                        }
+                        if (!data.media) {
+                            updates.media = [];
+                        }
+                        if (!data.links) {
+                            updates.links = [];
+                        }
+                        if (!data.tags) {
+                            updates.tags = [];
+                        }
+                        if (!data.comments) {
+                            updates.comments = [];
+                        }
+                        if (!data.likes) {
+                            updates.likes = [];
+                        }
+                        if (!data.convertedToProject) {
+                            updates.convertedToProject = false;
+                        }
+                        if (!data.projectId) {
+                            updates.projectId = null;
+                        }
+
+                        // Only update if there are changes
+                        if (Object.keys(updates).length > 0) {
+                            await doc.ref.update(updates);
+                            migrated++;
+                            log(`Updated idea: ${data.title || doc.id}`, 'success');
+                        }
+                    } catch (error) {
+                        errors++;
+                        log(`Error updating idea ${doc.id}: ${error.message}`, 'error');
+                    }
+                }
+
+                updateStatus('ideas-status', `Completed: ${migrated} migrated, ${errors} errors`, errors > 0 ? 'warning' : 'success');
+                log(`Ideas migration completed: ${migrated} migrated, ${errors} errors`, errors > 0 ? 'warning' : 'success');
+            } catch (error) {
+                updateStatus('ideas-status', `Error: ${error.message}`, 'error');
+                log(`Ideas migration failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Create lab data collection
+        async function migrateLabData() {
+            log('Starting lab data migration...', 'info');
+            updateStatus('lab-data-status', 'Migrating...', 'warning');
+
+            try {
+                // Create lab settings document
+                const labSettings = {
+                    name: 'CPX Lab',
+                    description: 'Research Lab Management Platform',
+                    establishedYear: 2022,
+                    totalMembers: 0,
+                    activeProjects: 0,
+                    completedProjects: 0,
+                    publications: 0,
+                    lastUpdated: firebase.firestore.Timestamp.fromDate(new Date()),
+                    settings: {
+                        allowPublicProjects: true,
+                        requireApprovalForProjects: false,
+                        maxTeamSize: 10,
+                        notificationSettings: {
+                            emailNotifications: true,
+                            projectUpdates: true,
+                            newMembers: true
+                        }
+                    }
+                };
+
+                await db.collection('labData').doc('settings').set(labSettings);
+                log('Created lab settings document', 'success');
+
+                // Create lab statistics document
+                const labStats = {
+                    totalProjects: 0,
+                    activeProjects: 0,
+                    completedProjects: 0,
+                    totalMembers: 0,
+                    totalIdeas: 0,
+                    averageProjectDuration: 0,
+                    successRate: 0,
+                    lastCalculated: firebase.firestore.Timestamp.fromDate(new Date())
+                };
+
+                await db.collection('labData').doc('statistics').set(labStats);
+                log('Created lab statistics document', 'success');
+
+                // Create lab announcements document
+                const labAnnouncements = {
+                    announcements: [
+                        {
+                            id: 'welcome',
+                            title: 'Welcome to CPX Lab Platform',
+                            content: 'Welcome to our new research lab management platform! This tool will help streamline our research workflows and improve collaboration.',
+                            type: 'info',
+                            createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+                            isActive: true
+                        }
+                    ],
+                    lastUpdated: firebase.firestore.Timestamp.fromDate(new Date())
+                };
+
+                await db.collection('labData').doc('announcements').set(labAnnouncements);
+                log('Created lab announcements document', 'success');
+
+                updateStatus('lab-data-status', 'Completed: Lab data created', 'success');
+                log('Lab data migration completed successfully', 'success');
+            } catch (error) {
+                updateStatus('lab-data-status', `Error: ${error.message}`, 'error');
+                log(`Lab data migration failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('migrate-projects').addEventListener('click', migrateProjects);
+        document.getElementById('migrate-users').addEventListener('click', migrateUsers);
+        document.getElementById('migrate-ideas').addEventListener('click', migrateIdeas);
+        document.getElementById('migrate-lab-data').addEventListener('click', migrateLabData);
+
+        // Initialize
+        log('Migration tool loaded successfully', 'success');
+    </script>
+</body>
+</html>
