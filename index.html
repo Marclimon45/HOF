@@ -448,12 +448,40 @@
             transform: scale(1.02);
         }
 
-        /* Left Sidebar Styles - Responsive Design */
-        .sidebar {
+        /* Top Header Styles */
+        .top-header {
             position: fixed;
             top: 0;
             left: 0;
-            height: 100vh;
+            right: 0;
+            height: 64px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0 1.5rem;
+        }
+
+        .header-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        /* Left Sidebar Styles - Responsive Design */
+        .sidebar {
+            position: fixed;
+            top: 64px; /* Start below the header */
+            left: 0;
+            height: calc(100vh - 64px); /* Full height minus header */
             width: 280px;
             background: #f8f9fa;
             border-right: 1px solid #e5e7eb;
@@ -684,6 +712,7 @@
         .main-content {
             transition: margin-left 0.3s ease;
             margin-left: 0;
+            margin-top: 64px; /* Account for the header */
         }
 
         /* Only apply sidebar margin when sidebar is visible and user is logged in */
@@ -728,10 +757,6 @@
         }
 
         .sidebar-toggle {
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 1001;
             background: white;
             border: 1px solid #e5e7eb;
             border-radius: 0.5rem;
@@ -754,11 +779,6 @@
             .sidebar {
                 width: 100%;
                 max-width: 320px;
-            }
-            
-            .sidebar-toggle {
-                top: 0.75rem;
-                left: 0.75rem;
             }
         }
 
@@ -845,19 +865,21 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <!-- Sidebar Toggle Button -->
-    <button id="sidebar-toggle" class="sidebar-toggle hidden">
-        <i class="fas fa-bars"></i>
-    </button>
+    <!-- Top Header -->
+    <header id="top-header" class="top-header">
+        <div class="header-content">
+            <div class="header-logo">CPX Lab</div>
+            <button id="sidebar-toggle" class="sidebar-toggle hidden">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
 
     <!-- Sidebar Overlay -->
     <div id="sidebar-overlay" class="sidebar-overlay"></div>
 
     <!-- Left Sidebar -->
     <div id="sidebar" class="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-logo">CPX Lab</div>
-                </div>
                 
         <!-- Breadcrumb Navigation -->
         <div id="breadcrumb" class="breadcrumb">
@@ -2240,6 +2262,16 @@
             document.getElementById(modalId).classList.remove('show');
         }
 
+        function handleLogout() {
+            auth.signOut().then(() => {
+                showMessage('Success', 'You have been signed out successfully.');
+                updateUI();
+            }).catch((error) => {
+                console.error('Sign out error:', error);
+                showMessage('Error', 'Failed to sign out. Please try again.', true);
+            });
+        }
+
         function showMessage(title, message, isError = false) {
             document.getElementById('messageTitle').textContent = title;
             document.getElementById('messageText').textContent = message;
@@ -2659,8 +2691,11 @@
 
             // Show/hide sidebar based on login status and screen size
             function updateSidebarVisibility() {
+                const topHeader = document.getElementById('top-header');
+                
                 if (currentUser) {
-                    // Show sidebar for logged-in users
+                    // Show header and sidebar for logged-in users
+                    topHeader.style.display = 'flex';
                     sidebar.style.display = 'block';
                     
                     // Check screen size for responsive behavior
@@ -2678,13 +2713,15 @@
                         sidebar.classList.remove('open');
                     }
                 } else {
-                    // Hide sidebar completely for logged-out users
+                    // Hide header and sidebar completely for logged-out users
+                    topHeader.style.display = 'none';
                     sidebar.style.display = 'none';
                     sidebarToggle.classList.add('hidden');
                     mainContent.classList.remove('with-sidebar');
                     sidebar.classList.remove('open');
-                    // Ensure main content takes full width
+                    // Ensure main content takes full width and no top margin
                     mainContent.style.marginLeft = '0';
+                    mainContent.style.marginTop = '0';
                 }
             }
 
