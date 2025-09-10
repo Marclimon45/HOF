@@ -456,7 +456,6 @@
             right: 0;
             height: 64px;
             background: white;
-            border-bottom: 1px solid #e5e7eb;
             z-index: 1100;
             display: flex;
             align-items: center;
@@ -473,7 +472,7 @@
         .header-logo {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #1f2937;
+            color: #000000;
         }
 
         /* Left Sidebar Styles - Responsive Design */
@@ -483,8 +482,7 @@
             left: 0;
             height: calc(100vh - 64px); /* Full height minus header */
             width: 280px;
-            background: #f8f9fa;
-            border-right: 1px solid #e5e7eb;
+            background: white;
             z-index: 1000;
             overflow-y: auto;
             transition: transform 0.3s ease;
@@ -545,26 +543,27 @@
             display: flex;
             align-items: center;
             padding: 0.875rem 1.5rem;
-            color: #6b7280;
+            color: #000000;
             text-decoration: none;
             transition: all 0.2s ease;
-            border-left: 3px solid transparent;
             text-align: left;
+            font-size: 0.875rem; /* 14px - Fibonacci scale */
         }
 
         .sidebar-nav-item span {
             margin-left: 0.75rem;
+            font-weight: 400;
         }
 
         .sidebar-nav-item:hover {
-            background: #f3f4f6;
-            color: #1f2937;
+            background: #f8f9fa;
+            color: #000000;
         }
 
         .sidebar-nav-item.active {
-            background: #eff6ff;
-            color: #2563eb;
-            border-left-color: #2563eb;
+            background: #f8f9fa;
+            color: #000000;
+            font-weight: 700;
         }
 
         .sidebar-nav-item i {
@@ -577,30 +576,31 @@
             align-items: center;
             padding: 1rem 1.5rem;
             background: white;
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 0.875rem;
+            font-size: 0.75rem; /* 12px - Fibonacci scale */
             position: sticky;
             top: 0;
             z-index: 10;
         }
 
         .breadcrumb-item {
-            color: #6b7280;
+            color: #000000;
             text-decoration: none;
+            font-weight: 400;
         }
 
         .breadcrumb-item:hover {
-            color: #1f2937;
+            color: #000000;
+            font-weight: 700;
         }
 
         .breadcrumb-separator {
             margin: 0 0.5rem;
-            color: #9ca3af;
+            color: #000000;
         }
 
         .breadcrumb-current {
-            color: #1f2937;
-            font-weight: 500;
+            color: #000000;
+            font-weight: 700;
         }
 
         /* Sidebar Footer Styles */
@@ -611,7 +611,6 @@
             right: 0;
             padding: 1rem;
             background: white;
-            border-top: 1px solid #e5e7eb;
         }
 
         .sidebar-user-info {
@@ -626,13 +625,13 @@
         .user-avatar {
             width: 2.5rem;
             height: 2.5rem;
-            background: #e5e7eb;
+            background: #f8f9fa;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-right: 0.75rem;
-            color: #6b7280;
+            color: #000000;
         }
 
         .user-details {
@@ -640,16 +639,17 @@
         }
 
         .user-name {
-            font-weight: 600;
-            color: #1f2937;
-            font-size: 0.875rem;
+            font-weight: 700;
+            color: #000000;
+            font-size: 0.875rem; /* 14px - Fibonacci scale */
         }
 
         .user-role {
-            color: #6b7280;
-            font-size: 0.75rem;
+            color: #000000;
+            font-size: 0.75rem; /* 12px - Fibonacci scale */
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            font-weight: 400;
         }
 
         .sidebar-auth-buttons {
@@ -664,10 +664,10 @@
             justify-content: center;
             padding: 0.75rem 1rem;
             border-radius: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
+            font-size: 0.875rem; /* 14px - Fibonacci scale */
+            font-weight: 400;
             transition: all 0.2s ease;
-            border: none;
+            border: 1px solid #000000;
             cursor: pointer;
             text-decoration: none;
         }
@@ -677,32 +677,35 @@
         }
 
         .sidebar-btn-primary {
-            background: #1f2937;
+            background: #000000;
             color: white;
+            font-weight: 700;
         }
 
         .sidebar-btn-primary:hover {
-            background: #374151;
+            background: #333333;
         }
 
         .sidebar-btn-secondary {
-            background: #f3f4f6;
-            color: #1f2937;
-            border: 1px solid #d1d5db;
+            background: white;
+            color: #000000;
+            font-weight: 400;
         }
 
         .sidebar-btn-secondary:hover {
-            background: #e5e7eb;
+            background: #f8f9fa;
+            font-weight: 700;
         }
 
         .sidebar-btn-logout {
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fecaca;
+            background: white;
+            color: #000000;
+            font-weight: 400;
         }
 
         .sidebar-btn-logout:hover {
-            background: #fee2e2;
+            background: #f8f9fa;
+            font-weight: 700;
         }
 
         .sidebar-logout-btn {
@@ -758,16 +761,15 @@
 
         .sidebar-toggle {
             background: white;
-            border: 1px solid #e5e7eb;
+            border: 1px solid #000000;
             border-radius: 0.5rem;
             padding: 0.75rem;
             cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: all 0.2s ease;
         }
 
         .sidebar-toggle:hover {
-            background: #f9fafb;
+            background: #f8f9fa;
         }
 
         .sidebar-toggle.hidden {
