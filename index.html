@@ -2514,6 +2514,7 @@
 
         function handleLogout() {
             auth.signOut().then(() => {
+                showToast('Signed Out', 'You have been successfully signed out.', 'info', 3000);
                 updateUI();
             }).catch((error) => {
                 console.error('Sign out error:', error);
