@@ -178,6 +178,200 @@
         .btn-secondary:hover {
             background-color: var(--gray-200);
         }
+
+        /* Left Sidebar Styles - Responsive Design */
+        .sidebar {
+            position: fixed;
+            top: 64px; /* Start below the header */
+            left: 0;
+            width: 280px;
+            height: calc(100vh - 64px);
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            overflow-y: auto;
+            z-index: 40;
+            display: none; /* Hidden by default */
+        }
+
+        /* Desktop: Always visible by default (only when logged in) */
+        @media (min-width: 1024px) {
+            .sidebar {
+                display: block;
+            }
+        }
+
+        /* Mobile: Hidden by default, can be toggled */
+        @media (max-width: 1023px) {
+            .sidebar {
+                display: none;
+            }
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.875rem 1.5rem;
+            margin: 0.25rem 1rem;
+            color: #000000;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-size: 0.875rem; /* 14px - Fibonacci scale */
+            border-radius: 2rem;
+        }
+
+        .sidebar-nav-item span {
+            margin-left: 0.75rem;
+            font-weight: 400;
+        }
+
+        .sidebar-nav-item:hover {
+            background: #f8f9fa;
+            color: #000000;
+        }
+
+        .sidebar-nav-item.active {
+            background: #f8f9fa;
+            color: #000000;
+            font-weight: 700;
+        }
+
+        .sidebar-nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: white;
+            font-size: 0.75rem; /* 12px - Fibonacci scale */
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .breadcrumb-item {
+            color: #000000;
+            text-decoration: none;
+            font-weight: 400;
+        }
+
+        .breadcrumb-separator {
+            margin: 0 0.5rem;
+            color: #6b7280;
+        }
+
+        .breadcrumb-current {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .sidebar-user-info {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: #e5e7eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #000000;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .sidebar-auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sidebar-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .sidebar-btn-primary {
+            background: #000000;
+            color: white;
+        }
+
+        .sidebar-btn-primary:hover {
+            background: #404040;
+        }
+
+        .sidebar-btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .sidebar-btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .sidebar-btn i {
+            margin-right: 0.5rem;
+        }
+
+        /* Adjust main content when sidebar is visible */
+        .main-content {
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+        }
+
+        @media (min-width: 1024px) {
+            .main-content {
+                margin-left: 280px;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -229,6 +423,74 @@
         </div>
     </nav>
 
+    <!-- Left Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <!-- Breadcrumb Navigation -->
+        <div id="breadcrumb" class="breadcrumb">
+            <a href="index.html" class="breadcrumb-item">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Lab Members</span>
+        </div>
+        
+        <!-- Sidebar Navigation -->
+        <div class="sidebar-nav">
+            <a href="index.html" class="sidebar-nav-item" data-page="home">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="projects.html" class="sidebar-nav-item" data-page="projects">
+                <i class="fas fa-project-diagram"></i>
+                <span>My Projects</span>
+            </a>
+            <a href="ideas.html" class="sidebar-nav-item" data-page="ideas">
+                <i class="fas fa-lightbulb"></i>
+                <span>Research Ideas</span>
+            </a>
+            <a href="users.html" class="sidebar-nav-item active" data-page="users">
+                <i class="fas fa-users"></i>
+                <span>Lab Members</span>
+            </a>
+            <a href="#" class="sidebar-nav-item" data-page="calendar">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Lab Calendar</span>
+            </a>
+            <a href="#" class="sidebar-nav-item" data-page="reports">
+                <i class="fas fa-chart-line"></i>
+                <span>Progress Reports</span>
+            </a>
+            <a href="#" class="sidebar-nav-item" data-page="settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+        
+        <!-- User Info and Auth Buttons -->
+        <div class="sidebar-footer">
+            <div id="sidebar-user-info" class="sidebar-user-info hidden">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name" id="sidebar-user-name">Loading...</div>
+                    <div class="user-role" id="sidebar-user-role">Researcher</div>
+                </div>
+            </div>
+            
+            <div id="sidebar-auth-buttons" class="sidebar-auth-buttons">
+                <button onclick="openModal('loginModal')" class="sidebar-btn sidebar-btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign In
+                </button>
+                <button onclick="openModal('registerModal')" class="sidebar-btn sidebar-btn-secondary">
+                    <i class="fas fa-user-plus"></i>
+                    Sign Up
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-content">
     <!-- Header Section -->
     <div class="bg-white shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -449,6 +711,8 @@
                 currentUser = user;
                 updateAuthButtons();
                 updateFooter();
+                updateSidebar();
+                updateSidebarVisibility();
                 loadUsers();
             });
         }
@@ -835,27 +1099,118 @@
                 return 'Researcher';
             }
         }
+
+        // Update sidebar based on login status
+        function updateSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarUserInfo = document.getElementById('sidebar-user-info');
+            const sidebarAuthButtons = document.getElementById('sidebar-auth-buttons');
+            const sidebarUserName = document.getElementById('sidebar-user-name');
+            const sidebarUserRole = document.getElementById('sidebar-user-role');
+            
+            if (currentUser) {
+                // User is logged in - show user info
+                sidebarUserInfo.classList.remove('hidden');
+                sidebarAuthButtons.classList.add('hidden');
+                
+                // Update user details
+                if (sidebarUserName) {
+                    sidebarUserName.textContent = currentUser.displayName || currentUser.email || 'User';
+                }
+                if (sidebarUserRole) {
+                    sidebarUserRole.textContent = getUserRole();
+                }
+            } else {
+                // User is not logged in - show auth buttons
+                sidebarUserInfo.classList.add('hidden');
+                sidebarAuthButtons.classList.remove('hidden');
+            }
+        }
+
+        // Show/hide sidebar based on login status and screen size
+        function updateSidebarVisibility() {
+            const sidebar = document.getElementById('sidebar');
+            
+            if (currentUser) {
+                // Show sidebar for logged-in users
+                sidebar.style.display = 'block';
+                
+                // Check screen size for responsive behavior
+                if (window.innerWidth >= 1024) {
+                    // Desktop: sidebar always visible
+                    sidebar.style.display = 'block';
+                } else {
+                    // Mobile: sidebar hidden by default, can be toggled
+                    sidebar.style.display = 'none';
+                }
+            } else {
+                // Hide sidebar for logged-out users
+                sidebar.style.display = 'none';
+            }
+        }
+
+        // Handle sidebar navigation
+        function initializeSidebarNavigation() {
+            const sidebarItems = document.querySelectorAll('.sidebar-nav-item');
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Remove active class from all items
+                    sidebarItems.forEach(navItem => navItem.classList.remove('active'));
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    // Update breadcrumb using the span text
+                    const spanText = this.querySelector('span').textContent.trim();
+                    updateBreadcrumb(spanText, this.getAttribute('data-page'));
+                });
+            });
+        }
+
+        // Update breadcrumb
+        function updateBreadcrumb(currentPage, pageId) {
+            const breadcrumb = document.getElementById('breadcrumb');
+            if (breadcrumb) {
+                breadcrumb.innerHTML = `
+                    <a href="index.html" class="breadcrumb-item">Home</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-current">${currentPage}</span>
+                `;
+            }
+        }
+
+        // Initialize sidebar on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSidebarNavigation();
+            updateSidebarVisibility();
+        });
+
+        // Handle window resize for responsive sidebar
+        window.addEventListener('resize', function() {
+            updateSidebarVisibility();
+        });
     </script>
 
+    </div> <!-- End main-content wrapper -->
+
     <!-- Dynamic Footer -->
-    <footer id="dynamic-footer" class="bg-gray-900 text-white">
+    <footer id="dynamic-footer" class="text-gray-900">
         <!-- Logged-out Footer -->
         <div id="footer-guest" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="col-span-1 md:col-span-2">
-                    <h3 class="text-2xl font-bold mb-4" style="font-size: var(--text-2xl);">CPX Lab</h3>
+                    <h3 class="text-2xl font-bold mb-4">CPX Lab</h3>
                     <p class="text-gray-400 mb-4">
                         Join our cutting-edge research community. We're looking for passionate graduate students, 
                         postdocs, and researchers to advance scientific discovery together.
                     </p>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="text-gray-400 hover:text-gray-900 transition-colors">
                             <i class="fab fa-twitter text-xl"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="text-gray-400 hover:text-gray-900 transition-colors">
                             <i class="fab fa-linkedin text-xl"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="text-gray-400 hover:text-gray-900 transition-colors">
                             <i class="fab fa-github text-xl"></i>
                         </a>
                     </div>
@@ -863,8 +1218,8 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Join Our Lab</h4>
                     <ul class="space-y-2">
-                        <li><a href="index.html" class="text-gray-400 hover:text-white transition-colors">Apply to Lab</a></li>
-                        <li><a href="index.html" class="text-gray-400 hover:text-white transition-colors">Lab Member Login</a></li>
+                        <li><a href="#" onclick="showRegisterModal()" class="text-gray-400 hover:text-white transition-colors">Apply to Lab</a></li>
+                        <li><a href="#" onclick="showLoginModal()" class="text-gray-400 hover:text-white transition-colors">Lab Member Login</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Research Areas</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Lab Publications</a></li>
                     </ul>
@@ -888,19 +1243,19 @@
         <div id="footer-logged-in" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style="display: none;">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="col-span-1 md:col-span-2">
-                    <h3 class="text-2xl font-bold mb-4" style="font-size: var(--text-2xl);">CPX Lab Platform</h3>
+                    <h3 class="text-2xl font-bold mb-4">CPX Lab Platform</h3>
                     <p class="text-gray-400 mb-4">
                         Welcome to your research management dashboard. Track projects, collaborate with lab members, 
                         and advance your academic career with our comprehensive platform.
                     </p>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="text-gray-400 hover:text-gray-900 transition-colors">
                             <i class="fab fa-twitter text-xl"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="text-gray-400 hover:text-gray-900 transition-colors">
                             <i class="fab fa-linkedin text-xl"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="text-gray-400 hover:text-gray-900 transition-colors">
                             <i class="fab fa-github text-xl"></i>
                         </a>
                     </div>
