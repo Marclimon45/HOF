@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - Hall of Fame</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hamburger-line {
+            transition: all 0.3s ease;
+        }
+        .hamburger.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        .project-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+        }
+        .status-active { background-color: #dcfce7; color: #166534; }
+        .status-completed { background-color: #dbeafe; color: #1e40af; }
+        .status-looking { background-color: #fef3c7; color: #92400e; }
+        .status-archived { background-color: #f3f4f6; color: #374151; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href="index.html" class="text-2xl font-bold text-blue-600">HOF</a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                        <a href="projects.html" class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Projects</a>
+                        <a href="ideas.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Ideas</a>
+                        <a href="users.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Community</a>
+                        <div id="auth-buttons" class="flex items-center space-x-2">
+                            <!-- Auth buttons will be dynamically inserted here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="hamburger" class="hamburger inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                        <span class="sr-only">Open main menu</span>
+                        <div class="hamburger-line w-6 h-0.5 bg-gray-600 mb-1"></div>
+                        <div class="hamburger-line w-6 h-0.5 bg-gray-600 mb-1"></div>
+                        <div class="hamburger-line w-6 h-0.5 bg-gray-600"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+                <a href="index.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="projects.html" class="text-gray-900 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Projects</a>
+                <a href="ideas.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Ideas</a>
+                <a href="users.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Community</a>
+                <div id="mobile-auth-buttons" class="px-3 py-2">
+                    <!-- Mobile auth buttons will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Projects</h1>
+                    <p class="mt-2 text-gray-600">Discover and collaborate on innovative projects</p>
+                </div>
+                <div class="mt-4 sm:mt-0">
+                    <button id="create-project-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Create Project
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col sm:flex-row gap-4">
+                <div class="flex-1">
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Search projects..." 
+                               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <select id="category-filter" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">All Categories</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Education">Education</option>
+                        <option value="Health">Health</option>
+                        <option value="Business">Business</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <select id="status-filter" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">All Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Looking for Members">Looking for Members</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Archived">Archived</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div id="loading" class="text-center py-12">
+            <i class="fas fa-spinner fa-spin text-4xl text-gray-400"></i>
+            <p class="mt-4 text-gray-600">Loading projects...</p>
+        </div>
+        
+        <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+            <!-- Projects will be dynamically loaded here -->
+        </div>
+        
+        <div id="no-projects" class="text-center py-12 hidden">
+            <i class="fas fa-project-diagram text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">No projects found</h3>
+            <p class="text-gray-500">Try adjusting your search criteria or create a new project.</p>
+        </div>
+    </div>
+
+    <!-- Project Details Modal -->
+    <div id="project-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 id="modal-title" class="text-2xl font-bold text-gray-900"></h2>
+                        <button id="close-modal" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div id="modal-content">
+                        <!-- Project details will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Configuration and App Logic -->
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2uc4XlwTgXh9yvawGv9XWOkLDOc7DrYI",
+            authDomain: "xin-s-hall-of-fame.firebaseapp.com",
+            projectId: "xin-s-hall-of-fame",
+            storageBucket: "xin-s-hall-of-fame.firebasestorage.app",
+            messagingSenderId: "692691719687",
+            appId: "1:692691719687:web:7bd1656dec1613e2a87ca2",
+            measurementId: "G-5Q7JKXX6Q2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Global variables
+        let currentUser = null;
+        let projects = [];
+        let filteredProjects = [];
+
+        // DOM elements
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const authButtons = document.getElementById('auth-buttons');
+        const mobileAuthButtons = document.getElementById('mobile-auth-buttons');
+        const projectsGrid = document.getElementById('projects-grid');
+        const loading = document.getElementById('loading');
+        const noProjects = document.getElementById('no-projects');
+        const searchInput = document.getElementById('search-input');
+        const categoryFilter = document.getElementById('category-filter');
+        const statusFilter = document.getElementById('status-filter');
+        const createProjectBtn = document.getElementById('create-project-btn');
+        const projectModal = document.getElementById('project-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        const closeModal = document.getElementById('close-modal');
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+        });
+
+        // Mobile menu toggle
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking on links
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Modal close handlers
+        closeModal.addEventListener('click', () => {
+            projectModal.classList.add('hidden');
+        });
+
+        projectModal.addEventListener('click', (e) => {
+            if (e.target === projectModal) {
+                projectModal.classList.add('hidden');
+            }
+        });
+
+        // Search and filter handlers
+        searchInput.addEventListener('input', filterProjects);
+        categoryFilter.addEventListener('change', filterProjects);
+        statusFilter.addEventListener('change', filterProjects);
+
+        // Create project button
+        createProjectBtn.addEventListener('click', () => {
+            if (currentUser) {
+                // Redirect to create project page or show modal
+                window.location.href = 'create-project.html';
+            } else {
+                alert('Please sign in to create a project');
+            }
+        });
+
+        // Initialize app
+        function initializeApp() {
+            auth.onAuthStateChanged((user) => {
+                currentUser = user;
+                updateAuthButtons();
+                loadProjects();
+            });
+        }
+
+        // Update authentication buttons
+        function updateAuthButtons() {
+            const desktopButtons = authButtons;
+            const mobileButtons = mobileAuthButtons;
+
+            if (currentUser) {
+                desktopButtons.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-700">Welcome, ${currentUser.displayName || currentUser.email}</span>
+                        <button onclick="signOut()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign Out
+                        </button>
+                    </div>
+                `;
+                
+                mobileButtons.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="text-sm text-gray-700">Welcome, ${currentUser.displayName || currentUser.email}</div>
+                        <button onclick="signOut()" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign Out
+                        </button>
+                    </div>
+                `;
+            } else {
+                desktopButtons.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <button onclick="showLoginModal()" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign In
+                        </button>
+                        <button onclick="showRegisterModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign Up
+                        </button>
+                    </div>
+                `;
+                
+                mobileButtons.innerHTML = `
+                    <div class="space-y-2">
+                        <button onclick="showLoginModal()" class="w-full text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign In
+                        </button>
+                        <button onclick="showRegisterModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign Up
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Load projects from Firestore
+        function loadProjects() {
+            loading.classList.remove('hidden');
+            projectsGrid.classList.add('hidden');
+            noProjects.classList.add('hidden');
+
+            db.collection('projects')
+                .get()
+                .then((querySnapshot) => {
+                    projects = [];
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        projects.push({
+                            id: doc.id,
+                            ...data
+                        });
+                    });
+                    filteredProjects = [...projects];
+                    displayProjects();
+                })
+                .catch((error) => {
+                    console.error('Error loading projects:', error);
+                    loading.classList.add('hidden');
+                    noProjects.classList.remove('hidden');
+                });
+        }
+
+        // Display projects
+        function displayProjects() {
+            loading.classList.add('hidden');
+            
+            if (filteredProjects.length === 0) {
+                noProjects.classList.remove('hidden');
+                return;
+            }
+
+            projectsGrid.classList.remove('hidden');
+            projectsGrid.innerHTML = '';
+
+            filteredProjects.forEach(project => {
+                const projectCard = createProjectCard(project);
+                projectsGrid.appendChild(projectCard);
+            });
+        }
+
+        // Create project card
+        function createProjectCard(project) {
+            const card = document.createElement('div');
+            card.className = 'project-card bg-white rounded-lg shadow-md p-6 cursor-pointer';
+            
+            const statusClass = getStatusClass(project.status);
+            const categoryIcon = getCategoryIcon(project.category);
+            
+            card.innerHTML = `
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center">
+                        <i class="${categoryIcon} text-2xl text-blue-600 mr-3"></i>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">${project.title || 'Untitled Project'}</h3>
+                            <p class="text-sm text-gray-500">${project.category || 'General'}</p>
+                        </div>
+                    </div>
+                    <span class="status-badge ${statusClass}">${project.status || 'Unknown'}</span>
+                </div>
+                
+                <p class="text-gray-600 mb-4 line-clamp-3">${project.description || 'No description available'}</p>
+                
+                <div class="flex items-center justify-between text-sm text-gray-500">
+                    <div class="flex items-center">
+                        <i class="fas fa-users mr-1"></i>
+                        <span>${project.members || 0}/${project.teamSize || 1} members</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-calendar mr-1"></i>
+                        <span>${formatDate(project.createdAt)}</span>
+                    </div>
+                </div>
+                
+                ${project.tags && project.tags.length > 0 ? `
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        ${project.tags.slice(0, 3).map(tag => `
+                            <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">${tag}</span>
+                        `).join('')}
+                        ${project.tags.length > 3 ? `<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">+${project.tags.length - 3} more</span>` : ''}
+                    </div>
+                ` : ''}
+            `;
+            
+            card.addEventListener('click', () => openProjectModal(project));
+            return card;
+        }
+
+        // Get status class for styling
+        function getStatusClass(status) {
+            switch (status) {
+                case 'Active': return 'status-active';
+                case 'Completed': return 'status-completed';
+                case 'Looking for Members': return 'status-looking';
+                case 'Archived': return 'status-archived';
+                default: return 'status-archived';
+            }
+        }
+
+        // Get category icon
+        function getCategoryIcon(category) {
+            const iconMap = {
+                'Technology': 'fas fa-microchip',
+                'Engineering': 'fas fa-cogs',
+                'Education': 'fas fa-graduation-cap',
+                'Health': 'fas fa-heartbeat',
+                'Business': 'fas fa-briefcase',
+                'Other': 'fas fa-project-diagram'
+            };
+            return iconMap[category] || 'fas fa-project-diagram';
+        }
+
+        // Format date
+        function formatDate(date) {
+            if (!date) return 'Unknown';
+            
+            if (date.seconds) {
+                // Firestore timestamp
+                return new Date(date.seconds * 1000).toLocaleDateString();
+            } else if (typeof date === 'string') {
+                return new Date(date).toLocaleDateString();
+            }
+            return 'Unknown';
+        }
+
+        // Filter projects
+        function filterProjects() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const categoryFilterValue = categoryFilter.value;
+            const statusFilterValue = statusFilter.value;
+
+            filteredProjects = projects.filter(project => {
+                const matchesSearch = !searchTerm || 
+                    (project.title && project.title.toLowerCase().includes(searchTerm)) ||
+                    (project.description && project.description.toLowerCase().includes(searchTerm));
+                
+                const matchesCategory = !categoryFilterValue || project.category === categoryFilterValue;
+                const matchesStatus = !statusFilterValue || project.status === statusFilterValue;
+                
+                return matchesSearch && matchesCategory && matchesStatus;
+            });
+
+            displayProjects();
+        }
+
+        // Open project modal
+        function openProjectModal(project) {
+            modalTitle.textContent = project.title || 'Untitled Project';
+            
+            modalContent.innerHTML = `
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <span class="status-badge ${getStatusClass(project.status)} text-lg px-3 py-1">${project.status || 'Unknown'}</span>
+                        <div class="text-sm text-gray-500">
+                            <i class="fas fa-calendar mr-1"></i>
+                            Created: ${formatDate(project.createdAt)}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2">Description</h3>
+                        <p class="text-gray-600">${project.description || 'No description available'}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">Project Details</h3>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Category:</strong> ${project.category || 'General'}</div>
+                                <div><strong>Team Size:</strong> ${project.members || 0}/${project.teamSize || 1} members</div>
+                                <div><strong>Expected Completion:</strong> ${project.expectedCompletionDate || 'Not specified'}</div>
+                                <div><strong>Project Type:</strong> ${project.projectType || 'Not specified'}</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">Technologies</h3>
+                            <div class="flex flex-wrap gap-2">
+                                ${project.technologies && project.technologies.length > 0 ? 
+                                    project.technologies.map(tech => `<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">${tech}</span>`).join('') :
+                                    '<span class="text-gray-500 text-sm">No technologies specified</span>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${project.tags && project.tags.length > 0 ? `
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">Tags</h3>
+                            <div class="flex flex-wrap gap-2">
+                                ${project.tags.map(tag => `<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${project.achievements && project.achievements.length > 0 ? `
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">Achievements</h3>
+                            <ul class="list-disc list-inside space-y-1 text-sm text-gray-600">
+                                ${project.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="flex justify-end space-x-3 pt-4 border-t">
+                        <button onclick="closeProjectModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                            Close
+                        </button>
+                        ${currentUser ? `
+                            <button onclick="joinProject('${project.id}')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                Join Project
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            projectModal.classList.remove('hidden');
+        }
+
+        // Close project modal
+        function closeProjectModal() {
+            projectModal.classList.add('hidden');
+        }
+
+        // Join project
+        function joinProject(projectId) {
+            if (!currentUser) {
+                alert('Please sign in to join a project');
+                return;
+            }
+            
+            // Add user to project
+            const projectRef = db.collection('projects').doc(projectId);
+            projectRef.get().then((doc) => {
+                if (doc.exists) {
+                    const project = doc.data();
+                    const currentMembers = project.members || 0;
+                    const teamSize = project.teamSize || 1;
+                    
+                    if (currentMembers >= teamSize) {
+                        alert('This project is full');
+                        return;
+                    }
+                    
+                    // Update project members
+                    projectRef.update({
+                        members: currentMembers + 1
+                    }).then(() => {
+                        alert('Successfully joined the project!');
+                        loadProjects(); // Reload projects
+                        closeProjectModal();
+                    }).catch((error) => {
+                        console.error('Error joining project:', error);
+                        alert('Error joining project');
+                    });
+                }
+            });
+        }
+
+        // Auth functions
+        function signOut() {
+            auth.signOut().then(() => {
+                console.log('User signed out');
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+            });
+        }
+
+        function showLoginModal() {
+            alert('Login modal would open here');
+        }
+
+        function showRegisterModal() {
+            alert('Register modal would open here');
+        }
+    </script>
+</body>
+</html>

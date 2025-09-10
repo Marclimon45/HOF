@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Firestore Export</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        .warning { background-color: #fff3cd; color: #856404; }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #6c757d; cursor: not-allowed; }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+        }
+        .collection-info {
+            background: #e9ecef;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Complete Firestore Export</h1>
+        <p>This tool will export ALL collections from your Firestore database.</p>
+        
+        <div id="status" class="status info">
+            Ready to export all collections. Click "Export All Collections" to begin.
+        </div>
+        
+        <div>
+            <button id="exportBtn" onclick="exportAllCollections()">Export All Collections</button>
+            <button id="downloadBtn" onclick="downloadJSON()" disabled>Download Complete JSON</button>
+            <button onclick="clearResults()">Clear Results</button>
+        </div>
+        
+        <div id="collectionInfo" style="display: none;">
+            <h3>Collection Status:</h3>
+            <div id="collectionList"></div>
+        </div>
+        
+        <div id="results" style="display: none;">
+            <h3>Complete Export Results:</h3>
+            <pre id="jsonOutput"></pre>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2uc4XlwTgXh9yvawGv9XWOkLDOc7DrYI",
+            authDomain: "xin-s-hall-of-fame.firebaseapp.com",
+            projectId: "xin-s-hall-of-fame",
+            storageBucket: "xin-s-hall-of-fame.firebasestorage.app",
+            messagingSenderId: "692691719687",
+            appId: "1:692691719687:web:7bd1656dec1613e2a87ca2",
+            measurementId: "G-5Q7JKXX6Q2"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let allData = {};
+
+        window.exportAllCollections = async function() {
+            const statusDiv = document.getElementById('status');
+            const exportBtn = document.getElementById('exportBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const collectionInfo = document.getElementById('collectionInfo');
+            const collectionList = document.getElementById('collectionList');
+            const resultsDiv = document.getElementById('results');
+            const jsonOutput = document.getElementById('jsonOutput');
+
+            try {
+                exportBtn.disabled = true;
+                statusDiv.className = 'status info';
+                statusDiv.textContent = '🔄 Starting complete Firestore export...';
+                
+                // Clear previous data
+                allData = {};
+                collectionList.innerHTML = '';
+
+                // Define your specific collections
+                const collectionsToExport = ['ideas', 'projects', 'users'];
+                
+                statusDiv.textContent = `📋 Found ${collectionsToExport.length} collections to export: ${collectionsToExport.join(', ')}`;
+                collectionInfo.style.display = 'block';
+
+                let totalDocuments = 0;
+                let successfulCollections = 0;
+
+                // Export each collection one by one
+                for (let i = 0; i < collectionsToExport.length; i++) {
+                    const collectionName = collectionsToExport[i];
+                    
+                    try {
+                        statusDiv.textContent = `📂 Exporting collection ${i + 1}/${collectionsToExport.length}: ${collectionName}`;
+                        
+                        // Add collection info
+                        const collectionDiv = document.createElement('div');
+                        collectionDiv.className = 'collection-info';
+                        collectionDiv.innerHTML = `🔄 Processing: ${collectionName}...`;
+                        collectionList.appendChild(collectionDiv);
+                        
+                        // Get collection data
+                        const collectionRef = collection(db, collectionName);
+                        const snapshot = await getDocs(collectionRef);
+                        
+                        allData[collectionName] = {};
+                        
+                        if (snapshot.empty) {
+                            collectionDiv.innerHTML = `📭 ${collectionName}: Empty collection`;
+                            console.log(`Collection '${collectionName}' is empty`);
+                        } else {
+                            let docCount = 0;
+                            snapshot.forEach(doc => {
+                                allData[collectionName][doc.id] = doc.data();
+                                docCount++;
+                            });
+                            
+                            totalDocuments += docCount;
+                            collectionDiv.innerHTML = `✅ ${collectionName}: ${docCount} documents exported`;
+                            console.log(`✅ Exported ${docCount} documents from '${collectionName}'`);
+                        }
+                        
+                        successfulCollections++;
+                        
+                        // Add delay to ensure proper processing
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        
+                    } catch (error) {
+                        console.error(`❌ Error exporting collection '${collectionName}':`, error);
+                        allData[collectionName] = { error: error.message };
+                        
+                        const collectionDiv = document.createElement('div');
+                        collectionDiv.className = 'collection-info';
+                        collectionDiv.innerHTML = `❌ ${collectionName}: Error - ${error.message}`;
+                        collectionList.appendChild(collectionDiv);
+                    }
+                }
+
+                // Export completed
+                statusDiv.className = 'status success';
+                statusDiv.textContent = `✅ Export completed! Successfully exported ${successfulCollections}/${collectionsToExport.length} collections with ${totalDocuments} total documents.`;
+                
+                // Show results
+                jsonOutput.textContent = JSON.stringify(allData, null, 2);
+                resultsDiv.style.display = 'block';
+                downloadBtn.disabled = false;
+                
+                // Create downloadable JSON
+                window.exportedJSON = JSON.stringify(allData, null, 2);
+                
+                console.log('Complete export data:', allData);
+                
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ Export failed: ${error.message}`;
+                console.error('Export error:', error);
+            } finally {
+                exportBtn.disabled = false;
+            }
+        };
+
+        window.downloadJSON = function() {
+            if (!window.exportedJSON) {
+                alert('No data to download. Please run export first.');
+                return;
+            }
+            
+            const blob = new Blob([window.exportedJSON], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `complete-firestore-export-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        };
+
+        window.clearResults = function() {
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('collectionInfo').style.display = 'none';
+            document.getElementById('downloadBtn').disabled = true;
+            window.exportedJSON = null;
+            allData = {};
+        };
+    </script>
+</body>
+</html>

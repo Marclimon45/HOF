@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ideas - Hall of Fame</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hamburger-line {
+            transition: all 0.3s ease;
+        }
+        .hamburger.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        .idea-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .idea-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .like-btn.liked {
+            color: #ef4444;
+        }
+        .comment-section {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href="index.html" class="text-2xl font-bold text-blue-600">HOF</a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                        <a href="projects.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Projects</a>
+                        <a href="ideas.html" class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Ideas</a>
+                        <a href="users.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Community</a>
+                        <div id="auth-buttons" class="flex items-center space-x-2">
+                            <!-- Auth buttons will be dynamically inserted here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="hamburger" class="hamburger inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                        <span class="sr-only">Open main menu</span>
+                        <div class="hamburger-line w-6 h-0.5 bg-gray-600 mb-1"></div>
+                        <div class="hamburger-line w-6 h-0.5 bg-gray-600 mb-1"></div>
+                        <div class="hamburger-line w-6 h-0.5 bg-gray-600"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+                <a href="index.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="projects.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Projects</a>
+                <a href="ideas.html" class="text-gray-900 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Ideas</a>
+                <a href="users.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Community</a>
+                <div id="mobile-auth-buttons" class="px-3 py-2">
+                    <!-- Mobile auth buttons will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Ideas</h1>
+                    <p class="mt-2 text-gray-600">Share and discover creative ideas from our community</p>
+                </div>
+                <div class="mt-4 sm:mt-0">
+                    <button id="create-idea-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                        <i class="fas fa-lightbulb mr-2"></i>Share Idea
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col sm:flex-row gap-4">
+                <div class="flex-1">
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Search ideas..." 
+                               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <select id="sort-filter" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="most-liked">Most Liked</option>
+                        <option value="most-commented">Most Commented</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ideas Grid -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div id="loading" class="text-center py-12">
+            <i class="fas fa-spinner fa-spin text-4xl text-gray-400"></i>
+            <p class="mt-4 text-gray-600">Loading ideas...</p>
+        </div>
+        
+        <div id="ideas-grid" class="space-y-6 hidden">
+            <!-- Ideas will be dynamically loaded here -->
+        </div>
+        
+        <div id="no-ideas" class="text-center py-12 hidden">
+            <i class="fas fa-lightbulb text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">No ideas found</h3>
+            <p class="text-gray-500">Try adjusting your search criteria or share a new idea.</p>
+        </div>
+    </div>
+
+    <!-- Idea Details Modal -->
+    <div id="idea-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 id="modal-title" class="text-2xl font-bold text-gray-900"></h2>
+                        <button id="close-modal" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div id="modal-content">
+                        <!-- Idea details will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Configuration and App Logic -->
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2uc4XlwTgXh9yvawGv9XWOkLDOc7DrYI",
+            authDomain: "xin-s-hall-of-fame.firebaseapp.com",
+            projectId: "xin-s-hall-of-fame",
+            storageBucket: "xin-s-hall-of-fame.firebasestorage.app",
+            messagingSenderId: "692691719687",
+            appId: "1:692691719687:web:7bd1656dec1613e2a87ca2",
+            measurementId: "G-5Q7JKXX6Q2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Global variables
+        let currentUser = null;
+        let ideas = [];
+        let filteredIdeas = [];
+
+        // DOM elements
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const authButtons = document.getElementById('auth-buttons');
+        const mobileAuthButtons = document.getElementById('mobile-auth-buttons');
+        const ideasGrid = document.getElementById('ideas-grid');
+        const loading = document.getElementById('loading');
+        const noIdeas = document.getElementById('no-ideas');
+        const searchInput = document.getElementById('search-input');
+        const sortFilter = document.getElementById('sort-filter');
+        const createIdeaBtn = document.getElementById('create-idea-btn');
+        const ideaModal = document.getElementById('idea-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        const closeModal = document.getElementById('close-modal');
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+        });
+
+        // Mobile menu toggle
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking on links
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Modal close handlers
+        closeModal.addEventListener('click', () => {
+            ideaModal.classList.add('hidden');
+        });
+
+        ideaModal.addEventListener('click', (e) => {
+            if (e.target === ideaModal) {
+                ideaModal.classList.add('hidden');
+            }
+        });
+
+        // Search and filter handlers
+        searchInput.addEventListener('input', filterIdeas);
+        sortFilter.addEventListener('change', filterIdeas);
+
+        // Create idea button
+        createIdeaBtn.addEventListener('click', () => {
+            if (currentUser) {
+                // Redirect to create idea page or show modal
+                window.location.href = 'create-idea.html';
+            } else {
+                alert('Please sign in to share an idea');
+            }
+        });
+
+        // Initialize app
+        function initializeApp() {
+            auth.onAuthStateChanged((user) => {
+                currentUser = user;
+                updateAuthButtons();
+                loadIdeas();
+            });
+        }
+
+        // Update authentication buttons
+        function updateAuthButtons() {
+            const desktopButtons = authButtons;
+            const mobileButtons = mobileAuthButtons;
+
+            if (currentUser) {
+                desktopButtons.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-700">Welcome, ${currentUser.displayName || currentUser.email}</span>
+                        <button onclick="signOut()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign Out
+                        </button>
+                    </div>
+                `;
+                
+                mobileButtons.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="text-sm text-gray-700">Welcome, ${currentUser.displayName || currentUser.email}</div>
+                        <button onclick="signOut()" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign Out
+                        </button>
+                    </div>
+                `;
+            } else {
+                desktopButtons.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <button onclick="showLoginModal()" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign In
+                        </button>
+                        <button onclick="showRegisterModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign Up
+                        </button>
+                    </div>
+                `;
+                
+                mobileButtons.innerHTML = `
+                    <div class="space-y-2">
+                        <button onclick="showLoginModal()" class="w-full text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign In
+                        </button>
+                        <button onclick="showRegisterModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sign Up
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Load ideas from Firestore
+        function loadIdeas() {
+            loading.classList.remove('hidden');
+            ideasGrid.classList.add('hidden');
+            noIdeas.classList.add('hidden');
+
+            db.collection('ideas')
+                .get()
+                .then((querySnapshot) => {
+                    ideas = [];
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        ideas.push({
+                            id: doc.id,
+                            ...data
+                        });
+                    });
+                    filteredIdeas = [...ideas];
+                    filterIdeas();
+                })
+                .catch((error) => {
+                    console.error('Error loading ideas:', error);
+                    loading.classList.add('hidden');
+                    noIdeas.classList.remove('hidden');
+                });
+        }
+
+        // Display ideas
+        function displayIdeas() {
+            loading.classList.add('hidden');
+            
+            if (filteredIdeas.length === 0) {
+                noIdeas.classList.remove('hidden');
+                return;
+            }
+
+            ideasGrid.classList.remove('hidden');
+            ideasGrid.innerHTML = '';
+
+            filteredIdeas.forEach(idea => {
+                const ideaCard = createIdeaCard(idea);
+                ideasGrid.appendChild(ideaCard);
+            });
+        }
+
+        // Create idea card
+        function createIdeaCard(idea) {
+            const card = document.createElement('div');
+            card.className = 'idea-card bg-white rounded-lg shadow-md p-6';
+            
+            const isLiked = currentUser && idea.likes && idea.likes.includes(currentUser.uid);
+            const likeCount = idea.likes ? idea.likes.length : 0;
+            const commentCount = idea.comments ? idea.comments.length : 0;
+            
+            card.innerHTML = `
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-lightbulb text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">${idea.title || 'Untitled Idea'}</h3>
+                            <p class="text-sm text-gray-500">by ${idea.creator ? idea.creator.name : 'Anonymous'}</p>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-calendar mr-1"></i>
+                        ${formatDate(idea.createdAt)}
+                    </div>
+                </div>
+                
+                <p class="text-gray-600 mb-4">${idea.summary || 'No summary available'}</p>
+                
+                ${idea.tags && idea.tags.length > 0 ? `
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        ${idea.tags.map(tag => `<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">${tag}</span>`).join('')}
+                    </div>
+                ` : ''}
+                
+                <div class="flex items-center justify-between pt-4 border-t">
+                    <div class="flex items-center space-x-4">
+                        <button onclick="toggleLike('${idea.id}', ${isLiked})" 
+                                class="like-btn flex items-center space-x-1 text-gray-500 hover:text-red-500 transition-colors ${isLiked ? 'liked' : ''}">
+                            <i class="fas fa-heart"></i>
+                            <span>${likeCount}</span>
+                        </button>
+                        <button onclick="openIdeaModal('${idea.id}')" 
+                                class="flex items-center space-x-1 text-gray-500 hover:text-blue-500 transition-colors">
+                            <i class="fas fa-comment"></i>
+                            <span>${commentCount}</span>
+                        </button>
+                        ${idea.convertedToProject ? `
+                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                                <i class="fas fa-check mr-1"></i>Converted to Project
+                            </span>
+                        ` : ''}
+                    </div>
+                    <button onclick="openIdeaModal('${idea.id}')" 
+                            class="text-blue-600 hover:text-blue-800 font-medium">
+                        View Details
+                    </button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Format date
+        function formatDate(date) {
+            if (!date) return 'Unknown';
+            
+            if (date.seconds) {
+                // Firestore timestamp
+                return new Date(date.seconds * 1000).toLocaleDateString();
+            } else if (typeof date === 'string') {
+                return new Date(date).toLocaleDateString();
+            }
+            return 'Unknown';
+        }
+
+        // Filter and sort ideas
+        function filterIdeas() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const sortBy = sortFilter.value;
+
+            filteredIdeas = ideas.filter(idea => {
+                const matchesSearch = !searchTerm || 
+                    (idea.title && idea.title.toLowerCase().includes(searchTerm)) ||
+                    (idea.summary && idea.summary.toLowerCase().includes(searchTerm)) ||
+                    (idea.tags && idea.tags.some(tag => tag.toLowerCase().includes(searchTerm)));
+                
+                return matchesSearch;
+            });
+
+            // Sort ideas
+            switch (sortBy) {
+                case 'newest':
+                    filteredIdeas.sort((a, b) => {
+                        const dateA = a.createdAt?.seconds || 0;
+                        const dateB = b.createdAt?.seconds || 0;
+                        return dateB - dateA;
+                    });
+                    break;
+                case 'oldest':
+                    filteredIdeas.sort((a, b) => {
+                        const dateA = a.createdAt?.seconds || 0;
+                        const dateB = b.createdAt?.seconds || 0;
+                        return dateA - dateB;
+                    });
+                    break;
+                case 'most-liked':
+                    filteredIdeas.sort((a, b) => {
+                        const likesA = a.likes ? a.likes.length : 0;
+                        const likesB = b.likes ? b.likes.length : 0;
+                        return likesB - likesA;
+                    });
+                    break;
+                case 'most-commented':
+                    filteredIdeas.sort((a, b) => {
+                        const commentsA = a.comments ? a.comments.length : 0;
+                        const commentsB = b.comments ? b.comments.length : 0;
+                        return commentsB - commentsA;
+                    });
+                    break;
+            }
+
+            displayIdeas();
+        }
+
+        // Toggle like
+        function toggleLike(ideaId, isLiked) {
+            if (!currentUser) {
+                alert('Please sign in to like ideas');
+                return;
+            }
+
+            const ideaRef = db.collection('ideas').doc(ideaId);
+            ideaRef.get().then((doc) => {
+                if (doc.exists) {
+                    const idea = doc.data();
+                    const likes = idea.likes || [];
+                    const userId = currentUser.uid;
+                    
+                    if (isLiked) {
+                        // Remove like
+                        const updatedLikes = likes.filter(uid => uid !== userId);
+                        ideaRef.update({ likes: updatedLikes });
+                    } else {
+                        // Add like
+                        likes.push(userId);
+                        ideaRef.update({ likes: likes });
+                    }
+                    
+                    // Reload ideas to update UI
+                    loadIdeas();
+                }
+            }).catch((error) => {
+                console.error('Error toggling like:', error);
+            });
+        }
+
+        // Open idea modal
+        function openIdeaModal(ideaId) {
+            const idea = ideas.find(i => i.id === ideaId);
+            if (!idea) return;
+
+            modalTitle.textContent = idea.title || 'Untitled Idea';
+            
+            const isLiked = currentUser && idea.likes && idea.likes.includes(currentUser.uid);
+            const likeCount = idea.likes ? idea.likes.length : 0;
+            const commentCount = idea.comments ? idea.comments.length : 0;
+            
+            modalContent.innerHTML = `
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-lightbulb text-blue-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold">${idea.creator ? idea.creator.name : 'Anonymous'}</h3>
+                                <p class="text-sm text-gray-500">${formatDate(idea.createdAt)}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <button onclick="toggleLike('${idea.id}', ${isLiked})" 
+                                    class="like-btn flex items-center space-x-2 px-4 py-2 rounded-lg border ${isLiked ? 'bg-red-50 border-red-200 text-red-600' : 'bg-gray-50 border-gray-200 text-gray-600'} hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors">
+                                <i class="fas fa-heart"></i>
+                                <span>${likeCount}</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2">Summary</h3>
+                        <p class="text-gray-600">${idea.summary || 'No summary available'}</p>
+                    </div>
+                    
+                    ${idea.tags && idea.tags.length > 0 ? `
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">Tags</h3>
+                            <div class="flex flex-wrap gap-2">
+                                ${idea.tags.map(tag => `<span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${idea.comments && idea.comments.length > 0 ? `
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4">Comments (${commentCount})</h3>
+                            <div class="comment-section space-y-4">
+                                ${idea.comments.map(comment => `
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="font-medium text-gray-900">${comment.userName || 'Anonymous'}</span>
+                                            <span class="text-sm text-gray-500">${formatDate(comment.timestamp)}</span>
+                                        </div>
+                                        <p class="text-gray-600">${comment.text}</p>
+                                        ${comment.replies && comment.replies.length > 0 ? `
+                                            <div class="mt-3 ml-4 space-y-2">
+                                                ${comment.replies.map(reply => `
+                                                    <div class="bg-white p-3 rounded border-l-2 border-blue-200">
+                                                        <div class="flex items-center justify-between mb-1">
+                                                            <span class="font-medium text-sm text-gray-900">${reply.userName || 'Anonymous'}</span>
+                                                            <span class="text-xs text-gray-500">${formatDate(reply.timestamp)}</span>
+                                                        </div>
+                                                        <p class="text-sm text-gray-600">${reply.text}</p>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="flex justify-end space-x-3 pt-4 border-t">
+                        <button onclick="closeIdeaModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                            Close
+                        </button>
+                        ${currentUser ? `
+                            <button onclick="addComment('${idea.id}')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                Add Comment
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            ideaModal.classList.remove('hidden');
+        }
+
+        // Close idea modal
+        function closeIdeaModal() {
+            ideaModal.classList.add('hidden');
+        }
+
+        // Add comment
+        function addComment(ideaId) {
+            if (!currentUser) {
+                alert('Please sign in to add comments');
+                return;
+            }
+            
+            const commentText = prompt('Enter your comment:');
+            if (!commentText) return;
+            
+            const ideaRef = db.collection('ideas').doc(ideaId);
+            const newComment = {
+                userId: currentUser.uid,
+                userName: currentUser.displayName || 'Anonymous',
+                text: commentText,
+                timestamp: new Date().toISOString()
+            };
+            
+            ideaRef.get().then((doc) => {
+                if (doc.exists) {
+                    const idea = doc.data();
+                    const comments = idea.comments || [];
+                    comments.push(newComment);
+                    
+                    ideaRef.update({ comments: comments }).then(() => {
+                        alert('Comment added successfully!');
+                        loadIdeas(); // Reload ideas
+                        closeIdeaModal();
+                    }).catch((error) => {
+                        console.error('Error adding comment:', error);
+                        alert('Error adding comment');
+                    });
+                }
+            });
+        }
+
+        // Auth functions
+        function signOut() {
+            auth.signOut().then(() => {
+                console.log('User signed out');
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+            });
+        }
+
+        function showLoginModal() {
+            alert('Login modal would open here');
+        }
+
+        function showRegisterModal() {
+            alert('Register modal would open here');
+        }
+    </script>
+</body>
+</html>

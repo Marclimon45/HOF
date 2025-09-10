@@ -141,6 +141,7 @@
                 for (const collectionName of collections) {
                     try {
                         statusDiv.textContent = `📂 Exporting collection: ${collectionName}`;
+                        console.log(`Starting export of collection: ${collectionName}`);
                         
                         const collectionRef = collection(db, collectionName);
                         const snapshot = await getDocs(collectionRef);
@@ -149,11 +150,14 @@
                         
                         if (snapshot.empty) {
                             console.log(`Collection '${collectionName}' is empty`);
+                            exportData[collectionName] = {};
                         } else {
+                            let docCount = 0;
                             snapshot.forEach(doc => {
                                 exportData[collectionName][doc.id] = doc.data();
+                                docCount++;
                             });
-                            console.log(`Exported ${snapshot.size} documents from '${collectionName}'`);
+                            console.log(`✅ Successfully exported ${docCount} documents from '${collectionName}'`);
                         }
                         
                         completedCollections++;
@@ -161,9 +165,16 @@
                         progressFill.style.width = `${progress}%`;
                         progressText.textContent = `${Math.round(progress)}%`;
                         
+                        // Add a small delay to ensure proper processing
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        
                     } catch (error) {
-                        console.error(`Error exporting collection '${collectionName}':`, error);
+                        console.error(`❌ Error exporting collection '${collectionName}':`, error);
                         exportData[collectionName] = { error: error.message };
+                        completedCollections++;
+                        const progress = (completedCollections / totalCollections) * 100;
+                        progressFill.style.width = `${progress}%`;
+                        progressText.textContent = `${Math.round(progress)}%`;
                     }
                 }
 
@@ -204,13 +215,16 @@
             
             for (const collectionName of commonCollections) {
                 try {
+                    console.log(`🔍 Checking collection: ${collectionName}`);
                     const collectionRef = collection(db, collectionName);
                     const snapshot = await getDocs(collectionRef);
                     if (!snapshot.empty) {
                         existingCollections.push(collectionName);
                         console.log(`✅ Found collection: ${collectionName} (${snapshot.size} documents)`);
                     } else {
-                        console.log(`📭 Collection '${collectionName}' exists but is empty`);
+                        // Even if empty, we should include it in the export
+                        existingCollections.push(collectionName);
+                        console.log(`📭 Collection '${collectionName}' exists but is empty - will include in export`);
                     }
                 } catch (error) {
                     // Collection might not exist or no access

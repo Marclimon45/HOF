@@ -1,0 +1,1344 @@
+{
+  "ideas": {
+    "HiJozmDkaHA5TaAip4cH": {
+      "tags": [],
+      "summary": "njk",
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "media": [],
+      "creator": {
+        "photoURL": null,
+        "name": "Marc Lim"
+      },
+      "lastEdited": null,
+      "likes": [],
+      "title": "njk",
+      "createdAt": {
+        "seconds": 1745651624,
+        "nanoseconds": 601000000
+      },
+      "comments": [],
+      "links": []
+    },
+    "LgcNEoBrLr87wOCcOCcy": {
+      "comments": [
+        {
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+          "text": "hello",
+          "replies": [
+            {
+              "timestamp": "2025-04-09T05:21:26.649Z",
+              "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+              "userName": "Anonymous",
+              "text": "yur"
+            }
+          ],
+          "userName": "Anonymous",
+          "timestamp": "2025-04-09T05:06:58.306Z"
+        },
+        {
+          "userName": "Anonymous",
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+          "timestamp": "2025-04-09T05:07:05.682Z",
+          "text": "yolo"
+        }
+      ],
+      "title": "game match",
+      "convertedToProject": true,
+      "media": [],
+      "createdAt": {
+        "seconds": 1744174830,
+        "nanoseconds": 537000000
+      },
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "projectId": "vU1yYuqR9QeNBpdmArMJ",
+      "links": [],
+      "tags": [
+        "c++"
+      ],
+      "likes": [
+        "X5BzmVcrCMgyvxKEx4teCSRBwmu1"
+      ],
+      "summary": "game match"
+    },
+    "NPZ7FeGt0W3YA36BB7El": {
+      "summary": "counting fingers",
+      "links": [],
+      "media": [],
+      "createdAt": {
+        "seconds": 1744920053,
+        "nanoseconds": 931000000
+      },
+      "title": "image gen",
+      "comments": [
+        {
+          "text": "https://yingyuliang.github.io/",
+          "userId": "ykRANrvERrhCunFgWg9jYCyCNkP2",
+          "userName": "Anonymous",
+          "timestamp": "2025-04-17T20:01:13.521Z",
+          "replies": [
+            {
+              "text": "wtr",
+              "timestamp": "2025-04-26T05:42:44.297Z",
+              "userName": "Anonymous",
+              "userId": "AovIkdz7SEM8hWj8oIIdRUf4tky2"
+            }
+          ]
+        },
+        {
+          "replies": [
+            {
+              "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+              "timestamp": "2025-04-17T22:39:49.196Z",
+              "text": "hello",
+              "userName": "Anonymous"
+            }
+          ],
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+          "text": "yup",
+          "userName": "Anonymous",
+          "timestamp": "2025-04-17T22:37:27.670Z"
+        },
+        {
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+          "timestamp": "2025-04-17T22:40:42.817Z",
+          "userName": "money@gmail.com",
+          "text": "banan"
+        },
+        {
+          "timestamp": "2025-04-17T22:42:27.954Z",
+          "replies": [
+            {
+              "timestamp": "2025-04-26T00:12:13.611Z",
+              "text": "hiii",
+              "userId": "AovIkdz7SEM8hWj8oIIdRUf4tky2",
+              "userName": "Anonymous"
+            }
+          ],
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+          "text": "g word",
+          "userName": "Marc Lim"
+        },
+        {
+          "timestamp": "2025-04-26T00:12:34.401Z",
+          "userName": "User",
+          "userId": "AovIkdz7SEM8hWj8oIIdRUf4tky2",
+          "text": "i"
+        },
+        {
+          "userId": "AovIkdz7SEM8hWj8oIIdRUf4tky2",
+          "timestamp": "2025-04-26T05:39:17.838Z",
+          "userName": "User",
+          "text": "hello",
+          "replies": [
+            {
+              "timestamp": "2025-04-26T05:42:08.707Z",
+              "userName": "Anonymous",
+              "text": "yur",
+              "userId": "AovIkdz7SEM8hWj8oIIdRUf4tky2"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "fingers",
+        "openai",
+        "window"
+      ],
+      "creatorUid": "ykRANrvERrhCunFgWg9jYCyCNkP2",
+      "likes": []
+    },
+    "V1st63eGcqYXilfzgdrp": {
+      "lastEdited": {
+        "seconds": 1745648107,
+        "nanoseconds": 673000000
+      },
+      "links": [],
+      "createdAt": {
+        "seconds": 1745647793,
+        "nanoseconds": 724000000
+      },
+      "summary": "bghdfds",
+      "tags": [],
+      "comments": [],
+      "creatorUid": "AovIkdz7SEM8hWj8oIIdRUf4tky2",
+      "likes": [],
+      "creator": {
+        "name": "Lebron Atkins James",
+        "photoURL": null
+      },
+      "media": [],
+      "title": "mjk"
+    },
+    "a6AU1kPvirutGJVTjqWA": {
+      "createdAt": {
+        "seconds": 1744176803,
+        "nanoseconds": 297000000
+      },
+      "summary": "yum",
+      "title": "Apple",
+      "tags": [],
+      "comments": [],
+      "likes": [],
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "media": [],
+      "links": []
+    },
+    "ekgqPCWsC28mbSLFp0iJ": {
+      "creator": {
+        "photoURL": null,
+        "name": "Lebron Atkins James"
+      },
+      "links": [],
+      "tags": [],
+      "title": "asdddasd",
+      "createdAt": {
+        "seconds": 1745648122,
+        "nanoseconds": 975000000
+      },
+      "media": [],
+      "likes": [],
+      "creatorUid": "AovIkdz7SEM8hWj8oIIdRUf4tky2",
+      "comments": [
+        {
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+          "timestamp": "2025-04-26T06:33:32.380Z",
+          "userName": "Marc Lim",
+          "text": "stfuw"
+        }
+      ],
+      "summary": "dsfsddf",
+      "lastEdited": null
+    }
+  },
+  "projects": {
+    "2ONTxbqhTftufO19UB0I": {
+      "members": 2,
+      "timeline": [
+        {
+          "media": null,
+          "title": "power",
+          "mediaUrl": "",
+          "description": "ranger\nlink: ",
+          "mediaType": null,
+          "date": "2025-04-01"
+        },
+        {
+          "date": "2025-03-30",
+          "description": "I like banana and coffee\n",
+          "title": "banana"
+        },
+        {
+          "title": "tomato",
+          "date": "2025-03-13",
+          "description": "i like tomato"
+        }
+      ],
+      "duration": "",
+      "title": "test 1",
+      "createdAt": "2025-03-31T03:13:34.191Z",
+      "category": "Engineering",
+      "projectLink": "https://github.com/Marclimon45/HOF/blob/main/styles/navbar.module.css",
+      "media": [],
+      "id": "2ONTxbqhTftufO19UB0I",
+      "tags": [
+        "UI/UX Design",
+        "Marketing"
+      ],
+      "teamSize": 2,
+      "projectType": "Personal",
+      "achievements": [
+        "Banana",
+        "tomato"
+      ],
+      "keyAchievements": [
+        "overleaf"
+      ],
+      "expectedCompletionDate": "2025-04-05",
+      "updatedAt": "2025-04-03T22:47:55.117Z",
+      "technologies": [],
+      "status": "Active",
+      "userRole": "Full Stack Developer",
+      "creatorUid": "hAZUj0HK1aPqpanEnfEB6PoPFxk1",
+      "description": "yO MAMA",
+      "roles": [
+        {
+          "subRole": "Senior",
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+          "role": "DevOps Engineer"
+        },
+        {
+          "subRole": "",
+          "role": "",
+          "userId": "kVgfnKp6lwdhBLvO6AZwkgDNIXl1"
+        }
+      ]
+    },
+    "3KccsSzkwXPu6JFRrHC7": {
+      "tags": [
+        "Python"
+      ],
+      "status": "Looking for Members",
+      "timeline": [],
+      "duration": "",
+      "roles": [
+        {
+          "subRole": "",
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+          "role": "Full Stack Developer"
+        },
+        {
+          "userId": "ykRANrvERrhCunFgWg9jYCyCNkP2",
+          "subRole": "",
+          "role": "Full Stack Developer"
+        }
+      ],
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "createdAt": "2025-04-17T00:30:51.899Z",
+      "teamSize": 2,
+      "expectedCompletionDate": "2025-04-18",
+      "projectLink": "https://xinqin23.github.io/fun/encouragement.html",
+      "description": "test 1",
+      "members": 2,
+      "technologies": [],
+      "title": "Jesus",
+      "keyAchievements": [],
+      "userRole": "Full Stack Developer",
+      "category": "Technology",
+      "projectType": ""
+    },
+    "3VAq1mBICGXW3BOU7bn2": {
+      "category": "Other",
+      "duration": "",
+      "achievements": [],
+      "userRole": "Full Stack Developer",
+      "createdAt": "2025-04-04T00:08:34.413Z",
+      "keyAchievements": [],
+      "projectType": "",
+      "members": 2,
+      "timeline": [],
+      "roles": [
+        {
+          "subRole": "",
+          "userId": null,
+          "role": "Full Stack Developer"
+        },
+        {
+          "role": "chicken",
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+          "subRole": ""
+        },
+        {
+          "joinedAt": "2025-04-26T00:08:53.974Z",
+          "role": "Full Stack Developer",
+          "status": "Active",
+          "userId": "AovIkdz7SEM8hWj8oIIdRUf4tky2",
+          "subRole": ""
+        }
+      ],
+      "description": "sdsad",
+      "expectedCompletionDate": "2025-05-01",
+      "projectLink": "",
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "technologies": [],
+      "updatedAt": "2025-04-04T00:08:50.752Z",
+      "teamSize": 3,
+      "tags": [
+        "UI/UX Design"
+      ],
+      "title": "sweet",
+      "status": "Completed"
+    },
+    "5SIxWCpP2RFtXiMmTuLK": {
+      "members": 1,
+      "createdAt": "2025-04-09T06:21:48.698Z",
+      "category": "Education",
+      "description": "sa",
+      "achievements": [],
+      "tags": [],
+      "userRole": "Full Stack Developer",
+      "teamSize": 1,
+      "projectLink": "",
+      "duration": "",
+      "technologies": [
+        "marcekl"
+      ],
+      "status": "Completed",
+      "title": "apple",
+      "timeline": [
+        {
+          "description": "89",
+          "media": [],
+          "mediaType": null,
+          "date": "2025-04-13",
+          "title": "",
+          "mediaUrl": ""
+        }
+      ],
+      "projectType": "",
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "expectedCompletionDate": "2025-04-25",
+      "keyAchievements": [
+        "c++",
+        "88"
+      ],
+      "roles": [
+        {
+          "subRole": "",
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+          "role": "Full Stack Developer"
+        }
+      ]
+    },
+    "Bfqb83oCoHvo65GKE1F1": {
+      "title": "wow",
+      "expectedCompletionDate": "2025-04-24",
+      "category": "Health",
+      "userRole": "Full Stack Developer",
+      "description": "wow",
+      "status": "Active",
+      "createdAt": "2025-04-09T04:10:31.169Z",
+      "roles": [
+        {
+          "userId": null,
+          "role": "banan"
+        },
+        {
+          "role": "yum",
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1"
+        },
+        {
+          "userId": null,
+          "role": "nut"
+        }
+      ],
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "members": 1,
+      "tags": [
+        "UI/UX Design",
+        "Data Analysis"
+      ],
+      "teamSize": 3
+    },
+    "EHfKHV5TboBC22H9iUzA": {
+      "createdAt": "2025-04-10T05:19:21.927Z",
+      "category": "Technology",
+      "expectedCompletionDate": "2025-05-01",
+      "status": "Looking for Members",
+      "teamSize": 1,
+      "members": 2,
+      "roles": [
+        {
+          "status": "Active",
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+          "role": "Full Stack Developer",
+          "joinedAt": "2025-04-10T07:27:34.829Z"
+        }
+      ],
+      "tags": [
+        "drake"
+      ],
+      "userRole": "Full Stack Developer",
+      "title": "nokia",
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "description": "Nokia is calling"
+    },
+    "Jcvl8XvlZ3t8AGZQhYVm": {
+      "title": "LAGOMA",
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "tags": [
+        "Project",
+        "UI/UX Design"
+      ],
+      "category": "Technology",
+      "userRole": "Full Stack Developer",
+      "createdAt": "2025-05-13T23:49:00.025Z",
+      "status": "Looking for Members",
+      "description": "mklew",
+      "roles": [],
+      "teamSize": 2,
+      "expectedCompletionDate": "2025-05-15",
+      "members": 1
+    },
+    "LHPqjKeyaGaIcAoJBBqc": {
+      "expectedCompletionDate": "2025-05-09",
+      "teamSize": 3,
+      "status": "Looking for Members",
+      "tags": [
+        "UI/UX Design",
+        "Marketing"
+      ],
+      "members": 0,
+      "category": "Business",
+      "roles": [
+        {
+          "0": "F",
+          "1": "u",
+          "2": "l",
+          "3": "l",
+          "4": " ",
+          "5": "S",
+          "6": "t",
+          "7": "a",
+          "8": "c",
+          "9": "k",
+          "10": " ",
+          "11": "D",
+          "12": "e",
+          "13": "v",
+          "14": "e",
+          "15": "l",
+          "16": "o",
+          "17": "p",
+          "18": "e",
+          "19": "r",
+          "userId": null
+        },
+        "banan",
+        "anana"
+      ],
+      "description": "tired",
+      "title": "fix it",
+      "userRole": "Full Stack Developer",
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "createdAt": "2025-04-03T23:54:56.902Z"
+    },
+    "VNd246QneFiZJJHSeBce": {
+      "description": "123",
+      "createdAt": "2025-04-04T00:02:11.460Z",
+      "expectedCompletionDate": "2025-05-09",
+      "duration": "",
+      "userRole": "Full Stack Developer",
+      "title": "bean",
+      "projectType": "",
+      "roles": [
+        {
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+          "role": "",
+          "subRole": ""
+        },
+        {
+          "role": "",
+          "subRole": "",
+          "userId": null
+        },
+        {
+          "subRole": "",
+          "userId": null,
+          "role": ""
+        }
+      ],
+      "projectLink": "",
+      "technologies": [
+        "banana"
+      ],
+      "tags": [
+        "Python",
+        "Marketing"
+      ],
+      "updatedAt": "2025-04-09T04:23:09.723Z",
+      "keyAchievements": [],
+      "timeline": [],
+      "teamSize": 3,
+      "achievements": [],
+      "members": 2,
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "category": "Education",
+      "status": "Looking for Members"
+    },
+    "bMls4UHx2cpg9KNC8B5P": {
+      "userRole": "banana",
+      "roles": [
+        {
+          "subRole": "",
+          "role": ""
+        },
+        {
+          "subRole": "",
+          "role": ""
+        },
+        {
+          "role": "",
+          "subRole": ""
+        },
+        {
+          "subRole": "",
+          "role": ""
+        }
+      ],
+      "projectLink": "",
+      "updatedAt": "2025-04-03T23:54:11.263Z",
+      "tags": [
+        "Python",
+        "Data Analysis"
+      ],
+      "category": "Education",
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "achievements": [],
+      "description": "Young money",
+      "teamSize": 4,
+      "title": "sheesh",
+      "projectType": "",
+      "createdAt": "2025-04-03T23:51:09.280Z",
+      "expectedCompletionDate": "2025-04-30",
+      "status": "Archived",
+      "duration": "",
+      "members": 0,
+      "timeline": []
+    },
+    "h8RiYsiZVemac5g6gU4M": {
+      "timeline": [
+        {
+          "mediaType": null,
+          "date": "2025-04-17",
+          "title": "",
+          "description": "You're capable of incredible things!🌟👏 Never stop believing!\" 💖💫🚀",
+          "media": [],
+          "mediaUrl": ""
+        },
+        {
+          "description": "waiting for xin",
+          "mediaUrl": "",
+          "date": "2025-04-24",
+          "mediaType": null,
+          "title": "",
+          "media": []
+        }
+      ],
+      "duration": "",
+      "roles": [
+        {
+          "subRole": "",
+          "userId": "ykRANrvERrhCunFgWg9jYCyCNkP2",
+          "role": "maid"
+        }
+      ],
+      "keyAchievements": [
+        "xin got her phd"
+      ],
+      "technologies": [
+        "docker",
+        "45in monitor"
+      ],
+      "members": 1,
+      "expectedCompletionDate": "2025-04-30",
+      "tags": [
+        "Python",
+        "UI/UX Design",
+        "c++",
+        "nike"
+      ],
+      "status": "Looking for Members",
+      "creatorUid": "ykRANrvERrhCunFgWg9jYCyCNkP2",
+      "title": "overwatch",
+      "category": "Education",
+      "teamSize": 1,
+      "projectLink": "",
+      "userRole": "maid",
+      "description": "xin at hotel, random",
+      "createdAt": "2025-04-17T19:52:52.450Z",
+      "projectType": ""
+    },
+    "locHeiGrKbdGoNMyl4oV": {
+      "description": "abc asdf asdfsaf ",
+      "category": "Education",
+      "expectedCompletionDate": "2025-05-15",
+      "teamSize": 6,
+      "title": "Cool",
+      "status": "Looking for Members",
+      "userRole": "aaa asdf asdf",
+      "members": 1,
+      "creatorUid": "TFRpNMBxwcblbwxY4L7kTxD8PRN2",
+      "tags": [
+        "Python",
+        "Project",
+        "aaa"
+      ],
+      "roles": [],
+      "createdAt": "2025-05-13T06:57:05.008Z"
+    },
+    "vU1yYuqR9QeNBpdmArMJ": {
+      "teamSize": 2,
+      "projectTags": [
+        "c++"
+      ],
+      "members": 1,
+      "userRole": "designer",
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "title": "game match",
+      "createdAt": {
+        "seconds": 1744180228,
+        "nanoseconds": 385000000
+      },
+      "roles": [
+        {
+          "status": "Active",
+          "uid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+          "joinedAt": "2025-04-09T08:31:13.075Z",
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+          "role": "designer"
+        },
+        {
+          "userId": null,
+          "status": "Open",
+          "role": "banana"
+        }
+      ],
+      "expectedCompletionDate": "2025-04-12",
+      "skillsRequired": [
+        "c++",
+        "sa"
+      ],
+      "projectSummary": "game match",
+      "originatingIdeaId": "LgcNEoBrLr87wOCcOCcy",
+      "areaOfInterest": "Education",
+      "status": "Looking for Members"
+    },
+    "vu7897RU6YS2WQl2fXGp": {
+      "tags": [
+        "Python",
+        "UI/UX Design"
+      ],
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "description": "sam",
+      "expectedCompletionDate": "2025-04-10",
+      "members": 1,
+      "status": "Looking for Members",
+      "roles": [
+        {
+          "role": "Full Stack Developer",
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1"
+        },
+        {
+          "role": "Full Stack Developer",
+          "userId": null
+        }
+      ],
+      "title": "apple",
+      "userRole": "Full Stack Developer",
+      "teamSize": 2,
+      "category": "Education",
+      "createdAt": "2025-04-09T06:22:25.927Z"
+    },
+    "yY40qCCsO1Gsl2sDZoHj": {
+      "members": 1,
+      "teamSize": 2,
+      "title": "EPic",
+      "keyAchievements": [],
+      "roles": [
+        {
+          "role": "Apple",
+          "subRole": "",
+          "userId": "X5BzmVcrCMgyvxKEx4teCSRBwmu1"
+        },
+        {
+          "role": "filecopy.c",
+          "userId": null,
+          "subRole": ""
+        }
+      ],
+      "creatorUid": "X5BzmVcrCMgyvxKEx4teCSRBwmu1",
+      "projectLink": "",
+      "projectType": "",
+      "expectedCompletionDate": "2025-05-28",
+      "category": "Health",
+      "userRole": "man",
+      "status": "Completed",
+      "timeline": [
+        {
+          "media": [],
+          "mediaUrl": "",
+          "mediaType": null,
+          "date": "2025-05-14",
+          "description": "",
+          "title": ""
+        }
+      ],
+      "duration": "",
+      "technologies": [],
+      "description": "sheesh",
+      "tags": [
+        "UI/UX Design"
+      ],
+      "createdAt": "2025-05-14T00:17:15.058Z"
+    }
+  },
+  "users": {
+    "AovIkdz7SEM8hWj8oIIdRUf4tky2": {
+      "updatedAt": {
+        "seconds": 1745647255,
+        "nanoseconds": 619000000
+      },
+      "bookmarkedProjects": [],
+      "skills": [],
+      "currentProject": {
+        "roles": [
+          {
+            "role": "Full Stack Developer",
+            "joinedAt": "2025-04-26T00:08:53.974Z"
+          }
+        ],
+        "name": "sweet",
+        "projectId": "3VAq1mBICGXW3BOU7bn2"
+      },
+      "areaOfInterest": [],
+      "linkedinUrl": "",
+      "discordUsername": "",
+      "lastName": "James",
+      "rank": "CPS",
+      "contributions": 1,
+      "websiteUrl": "",
+      "bio": "",
+      "email": "",
+      "firstName": "Lebron",
+      "availability": {
+        "Saturday": [],
+        "Wednesday": [],
+        "Sunday": [],
+        "Thursday": [],
+        "Friday": [],
+        "Monday": [],
+        "Tuesday": []
+      },
+      "profilePicture": "",
+      "isCPSMember": true,
+      "githubUrl": "",
+      "middleName": "Atkins",
+      "tools": []
+    },
+    "IV2Ibnq4UVfircBCLL55Swx4SdB3": {
+      "availability": {
+        "Monday": [
+          {
+            "end": "17:00",
+            "start": "09:00"
+          }
+        ],
+        "Friday": [
+          {
+            "end": "17:00",
+            "start": "09:00"
+          }
+        ],
+        "Thursday": [
+          {
+            "end": "17:00",
+            "start": "09:00"
+          }
+        ]
+      },
+      "website": "",
+      "areaOfInterest": [
+        "Cybersecurity",
+        "UI/UX Design"
+      ],
+      "tools": [
+        "VS Code",
+        "Git",
+        "AWS",
+        "Slack"
+      ],
+      "github": "",
+      "createdAt": "2025-04-13T21:54:43.492Z",
+      "discordUsername": "123",
+      "lastName": "Park",
+      "middleName": "",
+      "firstName": "Hana",
+      "contributions": 0,
+      "rank": "Unranked",
+      "linkedinUrl": "https://www.youtube.com/shorts/fNDh2olTWC4",
+      "skills": [
+        "c++"
+      ],
+      "email": "69@gmail.com",
+      "githubUrl": "https://www.youtube.com/shorts/fNDh2olTWC4"
+    },
+    "NhlSNMEVjihIo26Jh4xy8r1Ly7d2": {
+      "areaOfInterest": [
+        "Cybersecurity",
+        "Backend Development"
+      ],
+      "rank": "Unranked",
+      "linkedinUrl": "https://calendar.google.com/calendar/u/0/r/month",
+      "contributions": 0,
+      "email": "go@gmail.com",
+      "middleName": "",
+      "lastName": "power",
+      "discordUsername": "m",
+      "github": "",
+      "tools": [
+        "VS Code",
+        "Figma"
+      ],
+      "availability": {
+        "Thursday": [
+          {
+            "end": "17:00",
+            "start": "09:00"
+          },
+          {
+            "start": "06:00",
+            "end": "21:00"
+          }
+        ]
+      },
+      "githubUrl": "https://calendar.google.com/calendar/u/0/r/month",
+      "website": "https://calendar.google.com/calendar/u/0/r/month",
+      "createdAt": "2025-04-17T18:27:42.564Z",
+      "firstName": "blood",
+      "skills": [
+        "c++",
+        "python"
+      ]
+    },
+    "QuDu8ejcWfXWqqDeIrZANYULABI3": {
+      "skills": [
+        "Banana"
+      ],
+      "website": "https://www.youtube.com/shorts/fNDh2olTWC4",
+      "lastName": "Lim",
+      "contributions": 0,
+      "updatedAt": {
+        "seconds": 1745447737,
+        "nanoseconds": 506000000
+      },
+      "middleName": "",
+      "availability": {
+        "Wednesday": [
+          {
+            "end": "17:00",
+            "start": "09:00"
+          }
+        ],
+        "Friday": [
+          {
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ]
+      },
+      "areaOfInterest": [
+        "Cybersecurity",
+        "Data Science"
+      ],
+      "github": "",
+      "githubUrl": "https://github.com/Marclimon45/",
+      "discordUsername": "marc",
+      "linkedinUrl": "https://www.linkedin.com/in/abrham-tamiru-b605151a3/",
+      "tools": [
+        "Git"
+      ],
+      "isCPSMember": true,
+      "firstName": "marc",
+      "email": "123456@gmail.com",
+      "createdAt": "2025-04-23T22:33:57.671Z",
+      "rank": "CPS"
+    },
+    "SxXTe576yYU5c5nyQj19yHmRDUs1": {
+      "email": "Ryo.Fujimura01@student.csulb.edu",
+      "discordUsername": "",
+      "github": "",
+      "areaOfInterest": [],
+      "middleName": "",
+      "tools": [],
+      "githubUrl": "",
+      "website": "",
+      "firstName": "Ryo",
+      "lastName": "Fujimura",
+      "linkedinUrl": "",
+      "contributions": 0,
+      "rank": "Unranked",
+      "skills": [],
+      "availability": {},
+      "createdAt": "2025-06-28T13:07:01.064Z"
+    },
+    "TFRpNMBxwcblbwxY4L7kTxD8PRN2": {
+      "areaOfInterest": [],
+      "contributions": 0,
+      "linkedinUrl": "",
+      "website": "",
+      "tools": [],
+      "rank": "Unranked",
+      "githubUrl": "",
+      "currentProject": {
+        "projectId": "locHeiGrKbdGoNMyl4oV",
+        "name": "Cool",
+        "joinedAt": "2025-05-13T06:57:05.222Z",
+        "role": "aaa asdf asdf"
+      },
+      "firstName": "x",
+      "lastName": "x",
+      "email": "qxin23@gmail.com",
+      "github": "",
+      "availability": {},
+      "discordUsername": "",
+      "createdAt": "2025-05-13T06:55:06.973Z",
+      "middleName": "",
+      "skills": []
+    },
+    "X5BzmVcrCMgyvxKEx4teCSRBwmu1": {
+      "profilePicture": "",
+      "email": "money@gmail.com",
+      "githubUrl": "https://github.com/Marclimon45/",
+      "lastName": "Lim",
+      "websiteUrl": "https://reviewplatform.onrender.com/",
+      "areaOfInterest": [
+        "Frontend Developer",
+        "Data Science",
+        "UI/UX Design",
+        "Data Analysis"
+      ],
+      "contributions": 10,
+      "middleName": "",
+      "updatedAt": {
+        "seconds": 1745455436,
+        "nanoseconds": 108000000
+      },
+      "availability": {
+        "Saturday": [],
+        "Friday": [],
+        "Tuesday": [
+          {
+            "end": "17:00",
+            "start": "09:00"
+          }
+        ],
+        "Monday": [
+          {
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "start": "21:06",
+            "end": "22:00"
+          }
+        ]
+      },
+      "bio": "I created this website",
+      "linkedinUrl": "https://www.linkedin.com/in/abrham-tamiru-b605151a3/",
+      "projects": {
+        "5SIxWCpP2RFtXiMmTuLK": {
+          "joinedAt": {
+            "seconds": 1744183474,
+            "nanoseconds": 178000000
+          },
+          "role": "Full Stack Developer"
+        },
+        "2ONTxbqhTftufO19UB0I": {
+          "role": "DevOps Engineer",
+          "joinedAt": {
+            "seconds": 1744183458,
+            "nanoseconds": 531000000
+          }
+        }
+      },
+      "currentProject": {
+        "name": "EPic",
+        "joinedAt": "2025-05-14T00:17:15.350Z",
+        "role": "man",
+        "projectId": "yY40qCCsO1Gsl2sDZoHj"
+      },
+      "discordUsername": "marc",
+      "rank": "CPS",
+      "createdAt": "2025-04-03T23:28:31.453Z",
+      "skills": [],
+      "tools": [
+        "Git",
+        "VS Code"
+      ],
+      "bookmarkedProjects": [
+        "Bfqb83oCoHvo65GKE1F1",
+        "vU1yYuqR9QeNBpdmArMJ"
+      ],
+      "isCPSMember": true,
+      "firstName": "Marc"
+    },
+    "hAZUj0HK1aPqpanEnfEB6PoPFxk1": {
+      "bookmarkedProjects": []
+    },
+    "ib5nUMmeP6sadJYceix4": {
+      "lastName": "Lim",
+      "userId": "bVrthdz6OohoApyRdnz0UPK01K93",
+      "skills": [
+        "c+++"
+      ],
+      "githubUrl": "https://github.com/Marclimon45/",
+      "discordUsername": "marc",
+      "availability": {
+        "Monday": []
+      },
+      "firstName": "Marc",
+      "linkedinUrl": "https://www.linkedin.com/in/abrham-tamiru-b605151a3/",
+      "tools": [],
+      "customAreaOfInterest": "",
+      "areaOfInterest": [
+        "Backend Development"
+      ],
+      "email": "marclim45@gmail.com"
+    },
+    "k3NzyNO53KbWDTExwJxf": {
+      "email": "hanapark8451@gmail.com",
+      "contributions": 0,
+      "areaOfInterest": [],
+      "lastName": "Park",
+      "tools": [
+        "Docker",
+        "Jira",
+        "Notion"
+      ],
+      "discordUsername": "marc",
+      "userId": "JMLQz7JdjTYecoyGs4YsVI79nJp2",
+      "linkedinUrl": "https://www.linkedin.com/in/abrham-tamiru-b605151a3/",
+      "githubUrl": "https://github.com/Marclimon45/",
+      "skills": [
+        "c++"
+      ],
+      "firstName": "Hana",
+      "availability": {
+        "Monday": [
+          {
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "Sunday": [
+          {
+            "end": "17:00",
+            "start": "09:00"
+          }
+        ]
+      },
+      "rank": "Unranked"
+    },
+    "kFv8K8dHCOUGohzD8BnXodLSQau2": {
+      "websiteUrl": "",
+      "githubUrl": "https://github.com/Marclimon45/",
+      "discordUsername": "",
+      "isCPSMember": true,
+      "tools": [
+        "VS Code"
+      ],
+      "availability": {
+        "Thursday": [
+          {
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ]
+      },
+      "linkedinUrl": "https://www.linkedin.com/in/abrham-tamiru-b605151a3/",
+      "rank": "CPS",
+      "bio": "",
+      "areaOfInterest": [
+        "UI/UX Design"
+      ],
+      "createdAt": "2025-04-23T22:52:39.019Z",
+      "firstName": "marc",
+      "skills": [
+        "skill"
+      ],
+      "github": "",
+      "middleName": "",
+      "updatedAt": {
+        "seconds": 1745448788,
+        "nanoseconds": 47000000
+      },
+      "website": "https://www.youtube.com/shorts/fNDh2olTWC4",
+      "contributions": 0,
+      "lastName": "Lim",
+      "email": "789456@gmail.com",
+      "profilePicture": ""
+    },
+    "kVgfnKp6lwdhBLvO6AZwkgDNIXl1": {
+      "lastName": "Park",
+      "discordUsername": "marc",
+      "firstName": "Hana",
+      "bookmarkedProjects": [],
+      "websiteUrl": "",
+      "bio": "Jurgneto",
+      "createdAt": "2025-04-13T21:57:31.653Z",
+      "tools": [
+        "VS Code",
+        "AWS",
+        "Slack"
+      ],
+      "email": "yo@gmail.com",
+      "middleName": "lim",
+      "skills": [
+        "c++",
+        "546"
+      ],
+      "githubUrl": "https://github.com/Marclimon45/",
+      "isCPSMember": true,
+      "updatedAt": {
+        "seconds": 1744584453,
+        "nanoseconds": 784000000
+      },
+      "notifications": {
+        "projectLikes": true,
+        "projectUpdates": true,
+        "roleFilled": true
+      },
+      "linkedinUrl": "https://www.linkedin.com/in/abrham-tamiru-b605151a3/",
+      "rank": "CPS",
+      "currentProject": {
+        "name": "test 1",
+        "projectId": "2ONTxbqhTftufO19UB0I",
+        "roles": [
+          {
+            "joinedAt": "2025-04-13T22:10:09.680Z",
+            "role": ""
+          }
+        ]
+      },
+      "github": "",
+      "availability": {
+        "Friday": [
+          {
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "Sunday": [],
+        "Monday": [
+          {
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "Thursday": [
+          {
+            "end": "17:00",
+            "start": "09:00"
+          }
+        ],
+        "Wednesday": [
+          {
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "Tuesday": [
+          {
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "Saturday": []
+      },
+      "areaOfInterest": [
+        "Backend Development",
+        "Cybersecurity",
+        "Data Science",
+        "Frontend Development",
+        "Machine Learning",
+        "UI/UX Design",
+        "Data Analysis",
+        "AI Specialist"
+      ],
+      "contributions": 1,
+      "website": "https://www.youtube.com/shorts/fNDh2olTWC4"
+    },
+    "vLCaqWLEGxRANN9ykHhnMqQj3R13": {
+      "createdAt": "2025-04-03T22:59:58.376Z",
+      "email": "123@gmail.com",
+      "contributionCount": 0
+    },
+    "ykRANrvERrhCunFgWg9jYCyCNkP2": {
+      "email": "Ecs503@gmail.com",
+      "tools": [
+        "VS Code",
+        "AWS",
+        "Slack"
+      ],
+      "availability": {
+        "Friday": [
+          {
+            "end": "17:00",
+            "start": "09:00"
+          },
+          {
+            "start": "18:00",
+            "end": "20:00"
+          }
+        ]
+      },
+      "githubUrl": "https://github.com/xinqin23",
+      "discordUsername": "xin.1",
+      "bookmarkedProjects": [
+        "2ONTxbqhTftufO19UB0I",
+        "vU1yYuqR9QeNBpdmArMJ",
+        "bMls4UHx2cpg9KNC8B5P",
+        "VNd246QneFiZJJHSeBce"
+      ],
+      "linkedinUrl": "https://www.linkedin.com/in/xin-qin-4a83b9158/",
+      "areaOfInterest": [
+        "Cybersecurity"
+      ],
+      "rank": "CPS",
+      "createdAt": "2025-04-17T19:50:04.891Z",
+      "middleName": "Xin",
+      "contributions": 2,
+      "firstName": "Weather",
+      "skills": [
+        "c++",
+        "Cool",
+        "Bao"
+      ],
+      "currentProject": {
+        "name": "Jesus",
+        "projectId": "3KccsSzkwXPu6JFRrHC7",
+        "roles": [
+          {
+            "role": "Full Stack Developer",
+            "joinedAt": "2025-04-17T19:56:45.985Z"
+          }
+        ]
+      },
+      "updatedAt": {
+        "seconds": 1744920396,
+        "nanoseconds": 922000000
+      },
+      "website": "https://bananarepublic.gap.com/",
+      "lastName": "Qin",
+      "github": ""
+    },
+    "zzVLrybTbbcNC4cTvuMu": {
+      "userId": "1A8IxbPfyhaq8E4bl6I6uTs31dH2",
+      "lastName": "Thug",
+      "contributions": 0,
+      "availability": {
+        "Monday": [
+          {
+            "end": "17:00",
+            "start": "09:00"
+          },
+          {
+            "start": "18:00",
+            "end": "23:11"
+          }
+        ]
+      },
+      "linkedinUrl": "https://www.linkedin.com/in/young-thug-745584b0",
+      "githubUrl": "https://github.com/Marclimon45/",
+      "areaOfInterest": [
+        "Cybersecurity",
+        "Backend Development"
+      ],
+      "tools": [
+        "VS Code",
+        "AWS",
+        "Figma"
+      ],
+      "email": "youngthug@gmail.com",
+      "rank": "Unranked",
+      "firstName": "Young ",
+      "discordUsername": "marc",
+      "skills": [
+        "c++",
+        "java",
+        "python",
+        "yomamaa"
+      ]
+    }
+  }
+}
