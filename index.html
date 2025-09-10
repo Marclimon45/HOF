@@ -106,6 +106,141 @@
             color: #6b7280;
             margin: 0.25rem 0 0 0;
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 24px 24px 0 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 0 24px 24px 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .close {
+            color: #6b7280;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close:hover {
+            color: #374151;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -115,7 +250,7 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex-shrink-0">
-                    <a href="index.html" class="text-2xl font-bold text-blue-600">HOF</a>
+                    <a href="index.html" class="text-2xl font-bold text-blue-600">CPX Lab</a>
                 </div>
                 
                 <!-- Desktop Menu -->
@@ -162,7 +297,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <div class="text-center">
                 <h1 class="text-4xl md:text-6xl font-bold mb-6" id="hero-title">
-                    Welcome to Hall of Fame
+                    Welcome to CPX Lab
                 </h1>
                 <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto" id="hero-description">
                     Connect, collaborate, and create amazing projects together
@@ -249,7 +384,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="col-span-1 md:col-span-2">
-                    <h3 class="text-2xl font-bold mb-4">Hall of Fame</h3>
+                    <h3 class="text-2xl font-bold mb-4">CPX Lab</h3>
                     <p class="text-gray-400 mb-4">
                         Empowering innovation and connecting brilliant minds across the globe. 
                         Join our community of creators, innovators, and visionaries.
@@ -286,10 +421,88 @@
                 </div>
             </div>
             <div class="border-t border-gray-800 mt-8 pt-8 text-center">
-                <p class="text-gray-400">&copy; 2024 Hall of Fame. All rights reserved.</p>
+                <p class="text-gray-400">&copy; 2024 CPX Lab. All rights reserved.</p>
             </div>
         </div>
     </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-2xl font-bold text-gray-900">Sign In</h2>
+                <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" class="form-input" required>
+                    </div>
+                    <div id="loginError" class="text-red-600 text-sm mb-4 hidden"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('loginModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="handleLogin()">Sign In</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-2xl font-bold text-gray-900">Create Account</h2>
+                <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label" for="registerName">Full Name</label>
+                        <input type="text" id="registerName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" class="form-input" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" class="form-input" required>
+                    </div>
+                    <div id="registerError" class="text-red-600 text-sm mb-4 hidden"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('registerModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="handleRegister()">Create Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Message Modal -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="messageTitle" class="text-2xl font-bold"></h2>
+                <span class="close" onclick="closeModal('messageModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="messageText"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeModal('messageModal')">OK</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Firebase Configuration and App Logic -->
     <script>
@@ -640,7 +853,7 @@
         function updateHeroContent() {
             switch (userType) {
                 case 'guest':
-                    heroTitle.textContent = 'Welcome to Hall of Fame';
+                    heroTitle.textContent = 'Welcome to CPX Lab';
                     heroDescription.textContent = 'Join our community of innovators and start your journey today';
                     heroActions.innerHTML = `
                         <a href="projects.html" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors inline-block">
@@ -700,34 +913,140 @@
         }
 
         function showLoginModal() {
-            // Placeholder for login modal
-            alert('Login modal would open here');
+            document.getElementById('loginModal').classList.add('show');
         }
 
         function showRegisterModal() {
-            // Placeholder for register modal
-            alert('Register modal would open here');
+            document.getElementById('registerModal').classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function showMessage(title, message, isError = false) {
+            document.getElementById('messageTitle').textContent = title;
+            document.getElementById('messageText').textContent = message;
+            document.getElementById('messageTitle').className = isError ? 'text-2xl font-bold text-red-600' : 'text-2xl font-bold text-green-600';
+            document.getElementById('messageModal').classList.add('show');
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+
+            if (!email || !password) {
+                errorDiv.textContent = 'Please fill in all fields';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    closeModal('loginModal');
+                    showMessage('Success', 'Welcome back!', false);
+                    // Clear form
+                    document.getElementById('loginForm').reset();
+                    errorDiv.classList.add('hidden');
+                })
+                .catch((error) => {
+                    let errorMessage = 'An error occurred during sign in';
+                    switch (error.code) {
+                        case 'auth/user-not-found':
+                            errorMessage = 'No account found with this email';
+                            break;
+                        case 'auth/wrong-password':
+                            errorMessage = 'Incorrect password';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMessage = 'Invalid email address';
+                            break;
+                        case 'auth/too-many-requests':
+                            errorMessage = 'Too many failed attempts. Please try again later';
+                            break;
+                    }
+                    errorDiv.textContent = errorMessage;
+                    errorDiv.classList.remove('hidden');
+                });
+        }
+
+        function handleRegister() {
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('registerError');
+
+            if (!name || !email || !password || !confirmPassword) {
+                errorDiv.textContent = 'Please fill in all fields';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'Passwords do not match';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            if (password.length < 6) {
+                errorDiv.textContent = 'Password must be at least 6 characters';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Update user profile
+                    return userCredential.user.updateProfile({
+                        displayName: name
+                    });
+                })
+                .then(() => {
+                    closeModal('registerModal');
+                    showMessage('Success', 'Account created successfully! Welcome to CPX Lab!', false);
+                    // Clear form
+                    document.getElementById('registerForm').reset();
+                    errorDiv.classList.add('hidden');
+                })
+                .catch((error) => {
+                    let errorMessage = 'An error occurred during registration';
+                    switch (error.code) {
+                        case 'auth/email-already-in-use':
+                            errorMessage = 'An account with this email already exists';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMessage = 'Invalid email address';
+                            break;
+                        case 'auth/weak-password':
+                            errorMessage = 'Password is too weak';
+                            break;
+                    }
+                    errorDiv.textContent = errorMessage;
+                    errorDiv.classList.remove('hidden');
+                });
         }
 
         // Navigation functions
         function goToDashboard() {
-            alert('Redirecting to dashboard...');
+            window.location.href = 'projects.html';
         }
 
         function exploreProjects() {
-            alert('Redirecting to projects...');
+            window.location.href = 'projects.html';
         }
 
         function goToAdminPanel() {
-            alert('Redirecting to admin panel...');
+            window.location.href = 'users.html';
         }
 
         function viewAnalytics() {
-            alert('Redirecting to analytics...');
+            showMessage('Analytics', 'Analytics dashboard coming soon!', false);
         }
 
         function explorePremiumFeatures() {
-            alert('Redirecting to premium features...');
+            showMessage('Premium Features', 'Premium features coming soon!', false);
         }
 
         // Initialize the app

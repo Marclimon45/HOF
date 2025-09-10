@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ideas - Hall of Fame</title>
+    <title>Ideas - CPX Lab</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -36,6 +36,106 @@
             max-height: 200px;
             overflow-y: auto;
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 24px 24px 0 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 0 24px 24px 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .close {
+            color: #6b7280;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close:hover {
+            color: #374151;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -45,7 +145,7 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex-shrink-0">
-                    <a href="index.html" class="text-2xl font-bold text-blue-600">HOF</a>
+                    <a href="index.html" class="text-2xl font-bold text-blue-600">CPX Lab</a>
                 </div>
                 
                 <!-- Desktop Menu -->
@@ -164,6 +264,39 @@
         </div>
     </div>
 
+    <!-- Message Modal -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="messageTitle" class="text-2xl font-bold"></h2>
+                <span class="close" onclick="closeModal('messageModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="messageText"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeModal('messageModal')">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comment Modal -->
+    <div id="commentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-2xl font-bold text-gray-900">Add Comment</h2>
+                <span class="close" onclick="closeModal('commentModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <textarea id="commentText" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="4" placeholder="Write your comment here..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('commentModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitComment()">Post Comment</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase Configuration and App Logic -->
     <script>
         // Firebase configuration
@@ -186,6 +319,7 @@
         let currentUser = null;
         let ideas = [];
         let filteredIdeas = [];
+        let currentCommentIdeaId = null;
 
         // DOM elements
         const hamburger = document.getElementById('hamburger');
@@ -243,7 +377,7 @@
                 // Redirect to create idea page or show modal
                 window.location.href = 'create-idea.html';
             } else {
-                alert('Please sign in to share an idea');
+                showMessage('Sign In Required', 'Please sign in to share an idea', true);
             }
         });
 
@@ -476,7 +610,7 @@
         // Toggle like
         function toggleLike(ideaId, isLiked) {
             if (!currentUser) {
-                alert('Please sign in to like ideas');
+                showMessage('Sign In Required', 'Please sign in to like ideas', true);
                 return;
             }
 
@@ -605,14 +739,24 @@
         // Add comment
         function addComment(ideaId) {
             if (!currentUser) {
-                alert('Please sign in to add comments');
+                showMessage('Sign In Required', 'Please sign in to add comments', true);
                 return;
             }
             
-            const commentText = prompt('Enter your comment:');
-            if (!commentText) return;
+            currentCommentIdeaId = ideaId;
+            document.getElementById('commentText').value = '';
+            document.getElementById('commentModal').classList.add('show');
+        }
+
+        // Submit comment
+        function submitComment() {
+            const commentText = document.getElementById('commentText').value.trim();
+            if (!commentText) {
+                showMessage('Error', 'Please enter a comment', true);
+                return;
+            }
             
-            const ideaRef = db.collection('ideas').doc(ideaId);
+            const ideaRef = db.collection('ideas').doc(currentCommentIdeaId);
             const newComment = {
                 userId: currentUser.uid,
                 userName: currentUser.displayName || 'Anonymous',
@@ -627,12 +771,13 @@
                     comments.push(newComment);
                     
                     ideaRef.update({ comments: comments }).then(() => {
-                        alert('Comment added successfully!');
+                        showMessage('Success', 'Comment added successfully!', false);
                         loadIdeas(); // Reload ideas
+                        closeModal('commentModal');
                         closeIdeaModal();
                     }).catch((error) => {
                         console.error('Error adding comment:', error);
-                        alert('Error adding comment');
+                        showMessage('Error', 'Error adding comment. Please try again.', true);
                     });
                 }
             });
@@ -648,11 +793,22 @@
         }
 
         function showLoginModal() {
-            alert('Login modal would open here');
+            showMessage('Sign In', 'Please sign in to access this feature', true);
         }
 
         function showRegisterModal() {
-            alert('Register modal would open here');
+            showMessage('Create Account', 'Please create an account to access this feature', true);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function showMessage(title, message, isError = false) {
+            document.getElementById('messageTitle').textContent = title;
+            document.getElementById('messageText').textContent = message;
+            document.getElementById('messageTitle').className = isError ? 'text-2xl font-bold text-red-600' : 'text-2xl font-bold text-green-600';
+            document.getElementById('messageModal').classList.add('show');
         }
     </script>
 </body>
