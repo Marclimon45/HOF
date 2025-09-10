@@ -274,6 +274,179 @@
         #main-nav {
             display: none;
         }
+
+        /* Subtle Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .fade-in-delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .fade-in-delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .fade-in-delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInLeft 0.8s ease-out forwards;
+        }
+
+        @keyframes slideInLeft {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(30px);
+            animation: slideInRight 0.8s ease-out forwards;
+        }
+
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.9);
+            animation: scaleIn 0.5s ease-out forwards;
+        }
+
+        @keyframes scaleIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .pulse-subtle {
+            animation: pulseSubtle 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseSubtle {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--gray-700), var(--gray-500));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Logged-in specific styles */
+        .project-card-animated {
+            transition: all 0.3s ease;
+        }
+
+        .project-card-animated:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: var(--gray-200);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gray-600);
+            border-radius: 2px;
+            transition: width 0.8s ease;
+        }
+
+        /* Scroll reveal animations */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal-on-scroll.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Micro-interactions */
+        .micro-bounce {
+            transition: transform 0.2s ease;
+        }
+
+        .micro-bounce:hover {
+            transform: scale(1.05);
+        }
+
+        .micro-bounce:active {
+            transform: scale(0.98);
+        }
+
+        /* Smooth transitions for all interactive elements */
+        * {
+            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Loading states */
+        .loading-shimmer {
+            background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        /* Subtle hover effects */
+        .hover-glow:hover {
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -366,144 +539,350 @@
         </div>
     </section>
 
-    <!-- About Section -->
-    <section class="py-32 bg-gray-50">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="text-center mb-24">
-                <h2 class="text-5xl font-light text-gray-900 mb-8" style="font-size: var(--text-5xl);">Research Excellence Through Technology</h2>
-                <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light" style="font-size: var(--text-xl);">
-                    CPX Lab leverages cutting-edge project management technology to streamline research workflows, 
-                    track student progress, and accelerate academic discovery across multiple disciplines.
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                <div class="bg-white p-12 rounded-lg border border-gray-200 hover:shadow-lg transition-shadow">
-                    <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
-                        <i class="fas fa-chart-line text-2xl text-gray-600"></i>
+    <!-- Dynamic Content Sections -->
+    <div id="dynamic-content">
+        <!-- Guest/Logged-out Content -->
+        <div id="guest-content">
+            <!-- About Section -->
+            <section class="py-32 bg-gray-50 fade-in">
+                <div class="max-w-6xl mx-auto px-6">
+                    <div class="text-center mb-24">
+                        <h2 class="text-5xl font-light text-gray-900 mb-8" style="font-size: var(--text-5xl);">Research Excellence Through Technology</h2>
+                        <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light" style="font-size: var(--text-xl);">
+                            CPX Lab leverages cutting-edge project management technology to streamline research workflows, 
+                            track student progress, and accelerate academic discovery across multiple disciplines.
+                        </p>
                     </div>
-                    <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Progress Tracking</h3>
-                    <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Monitor student research progress with automated GitHub integration, milestone tracking, and real-time project analytics.</p>
-                </div>
-                <div class="bg-white p-12 rounded-lg border border-gray-200 hover:shadow-lg transition-shadow">
-                    <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
-                        <i class="fas fa-users-cog text-2xl text-gray-600"></i>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                        <div class="bg-white p-12 rounded-lg border border-gray-200 hover-lift hover-glow micro-bounce reveal-on-scroll">
+                            <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8 micro-bounce">
+                                <i class="fas fa-chart-line text-2xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Progress Tracking</h3>
+                            <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Monitor student research progress with automated GitHub integration, milestone tracking, and real-time project analytics.</p>
+                        </div>
+                        <div class="bg-white p-12 rounded-lg border border-gray-200 hover-lift hover-glow micro-bounce reveal-on-scroll" style="animation-delay: 0.1s;">
+                            <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8 micro-bounce">
+                                <i class="fas fa-users-cog text-2xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Lab Management</h3>
+                            <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Professors can oversee multiple research projects, track student contributions, and manage lab resources efficiently.</p>
+                        </div>
+                        <div class="bg-white p-12 rounded-lg border border-gray-200 hover-lift hover-glow micro-bounce reveal-on-scroll" style="animation-delay: 0.2s;">
+                            <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8 micro-bounce">
+                                <i class="fas fa-graduation-cap text-2xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Student Development</h3>
+                            <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Students manage their research portfolio, track learning milestones, and showcase their academic achievements.</p>
+                        </div>
                     </div>
-                    <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Lab Management</h3>
-                    <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Professors can oversee multiple research projects, track student contributions, and manage lab resources efficiently.</p>
                 </div>
-                <div class="bg-white p-12 rounded-lg border border-gray-200 hover:shadow-lg transition-shadow">
-                    <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
-                        <i class="fas fa-graduation-cap text-2xl text-gray-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Student Development</h3>
-                    <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Students manage their research portfolio, track learning milestones, and showcase their academic achievements.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+            </section>
 
-    <!-- Lab Recruitment Section -->
-    <section class="py-32 bg-white">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="text-center mb-24">
-                <h2 class="text-5xl font-light text-gray-900 mb-8" style="font-size: var(--text-5xl);">Join Our Research Community</h2>
-                <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light" style="font-size: var(--text-xl);">
-                    We're looking for passionate graduate students, postdocs, and researchers to join our cutting-edge research projects.
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                <div class="bg-gray-50 p-12 rounded-lg border border-gray-200">
-                    <div class="w-16 h-16 bg-gray-900 text-white rounded-lg flex items-center justify-center mb-8 text-2xl font-light">1</div>
-                    <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Apply to Lab</h3>
-                    <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Submit your research interests, CV, and academic background through our application portal.</p>
-                    <ul class="text-sm text-gray-500 space-y-3 font-light">
-                        <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research statement</li>
-                        <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Academic transcripts</li>
-                        <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Reference letters</li>
-                    </ul>
+            <!-- Lab Recruitment Section -->
+            <section class="py-32 bg-white">
+                <div class="max-w-6xl mx-auto px-6">
+                    <div class="text-center mb-24">
+                        <h2 class="text-5xl font-light text-gray-900 mb-8" style="font-size: var(--text-5xl);">Join Our Research Community</h2>
+                        <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light" style="font-size: var(--text-xl);">
+                            We're looking for passionate graduate students, postdocs, and researchers to join our cutting-edge research projects.
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                        <div class="bg-gray-50 p-12 rounded-lg border border-gray-200 hover-lift slide-in-left">
+                            <div class="w-16 h-16 bg-gray-900 text-white rounded-lg flex items-center justify-center mb-8 text-2xl font-light">1</div>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Apply to Lab</h3>
+                            <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Submit your research interests, CV, and academic background through our application portal.</p>
+                            <ul class="text-sm text-gray-500 space-y-3 font-light">
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research statement</li>
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Academic transcripts</li>
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Reference letters</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-12 rounded-lg border border-gray-200 hover-lift fade-in">
+                            <div class="w-16 h-16 bg-gray-900 text-white rounded-lg flex items-center justify-center mb-8 text-2xl font-light">2</div>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Interview Process</h3>
+                            <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Meet with lab members and discuss potential research projects and collaboration opportunities.</p>
+                            <ul class="text-sm text-gray-500 space-y-3 font-light">
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Technical interview</li>
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research discussion</li>
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Lab culture fit</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-12 rounded-lg border border-gray-200 hover-lift slide-in-right">
+                            <div class="w-16 h-16 bg-gray-900 text-white rounded-lg flex items-center justify-center mb-8 text-2xl font-light">3</div>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Onboard & Research</h3>
+                            <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Get access to our platform, join research projects, and start your academic journey with us.</p>
+                            <ul class="text-sm text-gray-500 space-y-3 font-light">
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Platform training</li>
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Project assignment</li>
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Mentorship program</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="bg-gray-50 p-12 rounded-lg border border-gray-200">
-                    <div class="w-16 h-16 bg-gray-900 text-white rounded-lg flex items-center justify-center mb-8 text-2xl font-light">2</div>
-                    <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Interview Process</h3>
-                    <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Meet with lab members and discuss potential research projects and collaboration opportunities.</p>
-                    <ul class="text-sm text-gray-500 space-y-3 font-light">
-                        <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Technical interview</li>
-                        <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research discussion</li>
-                        <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Lab culture fit</li>
-                    </ul>
-                </div>
-                <div class="bg-gray-50 p-12 rounded-lg border border-gray-200">
-                    <div class="w-16 h-16 bg-gray-900 text-white rounded-lg flex items-center justify-center mb-8 text-2xl font-light">3</div>
-                    <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Onboard & Research</h3>
-                    <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Get access to our platform, join research projects, and start your academic journey with us.</p>
-                    <ul class="text-sm text-gray-500 space-y-3 font-light">
-                        <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Platform training</li>
-                        <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Project assignment</li>
-                        <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Mentorship program</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+            </section>
 
-    <!-- Platform Features Section -->
-    <section class="py-32 bg-gray-50">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="text-center mb-24">
-                <h2 class="text-5xl font-light text-gray-900 mb-8" style="font-size: var(--text-5xl);">Platform Capabilities</h2>
-                <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light" style="font-size: var(--text-xl);">
-                    Advanced research management tools designed specifically for academic environments
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-                <div class="bg-white p-12 rounded-lg border border-gray-200 hover:shadow-lg transition-shadow">
-                    <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
-                        <i class="fab fa-github text-2xl text-gray-600"></i>
+            <!-- Platform Features Section -->
+            <section class="py-32 bg-gray-50">
+                <div class="max-w-6xl mx-auto px-6">
+                    <div class="text-center mb-24">
+                        <h2 class="text-5xl font-light text-gray-900 mb-8" style="font-size: var(--text-5xl);">Platform Capabilities</h2>
+                        <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light" style="font-size: var(--text-xl);">
+                            Advanced research management tools designed specifically for academic environments
+                        </p>
                     </div>
-                    <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">GitHub Integration</h3>
-                    <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Automatic tracking of commits, branches, and repository activity for each research project.</p>
-                </div>
-                <div class="bg-white p-12 rounded-lg border border-gray-200 hover:shadow-lg transition-shadow">
-                    <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
-                        <i class="fas fa-chart-bar text-2xl text-gray-600"></i>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                        <div class="bg-white p-12 rounded-lg border border-gray-200 hover-lift scale-in">
+                            <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
+                                <i class="fab fa-github text-2xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">GitHub Integration</h3>
+                            <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Automatic tracking of commits, branches, and repository activity for each research project.</p>
+                        </div>
+                        <div class="bg-white p-12 rounded-lg border border-gray-200 hover-lift scale-in" style="animation-delay: 0.1s;">
+                            <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
+                                <i class="fas fa-chart-bar text-2xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Progress Analytics</h3>
+                            <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Real-time dashboards showing project milestones, student contributions, and research outcomes.</p>
+                        </div>
+                        <div class="bg-white p-12 rounded-lg border border-gray-200 hover-lift scale-in" style="animation-delay: 0.2s;">
+                            <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
+                                <i class="fas fa-tasks text-2xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Project Management</h3>
+                            <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Organize research tasks, set deadlines, and track progress across multiple concurrent projects.</p>
+                        </div>
+                        <div class="bg-white p-12 rounded-lg border border-gray-200 hover-lift scale-in" style="animation-delay: 0.3s;">
+                            <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
+                                <i class="fas fa-file-alt text-2xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Publication Tracking</h3>
+                            <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Monitor paper submissions, reviews, and publication status for all lab research outputs.</p>
+                        </div>
+                        <div class="bg-white p-12 rounded-lg border border-gray-200 hover-lift scale-in" style="animation-delay: 0.4s;">
+                            <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
+                                <i class="fas fa-calendar-alt text-2xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Meeting Scheduler</h3>
+                            <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Coordinate lab meetings, one-on-ones, and research presentations with integrated calendar.</p>
+                        </div>
+                        <div class="bg-white p-12 rounded-lg border border-gray-200 hover-lift scale-in" style="animation-delay: 0.5s;">
+                            <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
+                                <i class="fas fa-database text-2xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Research Repository</h3>
+                            <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Centralized storage for research data, papers, and project documentation.</p>
+                        </div>
                     </div>
-                    <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Progress Analytics</h3>
-                    <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Real-time dashboards showing project milestones, student contributions, and research outcomes.</p>
                 </div>
-                <div class="bg-white p-12 rounded-lg border border-gray-200 hover:shadow-lg transition-shadow">
-                    <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
-                        <i class="fas fa-tasks text-2xl text-gray-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Project Management</h3>
-                    <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Organize research tasks, set deadlines, and track progress across multiple concurrent projects.</p>
-                </div>
-                <div class="bg-white p-12 rounded-lg border border-gray-200 hover:shadow-lg transition-shadow">
-                    <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
-                        <i class="fas fa-file-alt text-2xl text-gray-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Publication Tracking</h3>
-                    <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Monitor paper submissions, reviews, and publication status for all lab research outputs.</p>
-                </div>
-                <div class="bg-white p-12 rounded-lg border border-gray-200 hover:shadow-lg transition-shadow">
-                    <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
-                        <i class="fas fa-calendar-alt text-2xl text-gray-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Meeting Scheduler</h3>
-                    <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Coordinate lab meetings, one-on-ones, and research presentations with integrated calendar.</p>
-                </div>
-                <div class="bg-white p-12 rounded-lg border border-gray-200 hover:shadow-lg transition-shadow">
-                    <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8">
-                        <i class="fas fa-database text-2xl text-gray-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Research Repository</h3>
-                    <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Centralized storage for research data, papers, and project documentation.</p>
-                </div>
-            </div>
+            </section>
         </div>
-    </section>
+
+        <!-- Logged-in Content -->
+        <div id="logged-in-content" style="display: none;">
+            <!-- My Projects Section -->
+            <section class="py-24 bg-gray-50">
+                <div class="max-w-6xl mx-auto px-6">
+                    <div class="flex items-center justify-between mb-12">
+                        <h2 class="text-4xl font-light text-gray-900" style="font-size: var(--text-4xl);">My Research Projects</h2>
+                        <a href="projects.html" class="text-gray-600 hover:text-gray-900 transition-colors">
+                            <i class="fas fa-arrow-right mr-2"></i>View All
+                        </a>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-white p-8 rounded-lg border border-gray-200 project-card-animated hover-glow micro-bounce reveal-on-scroll">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-medium text-gray-900">AI Research Project</h3>
+                                <span class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full micro-bounce">Active</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Machine learning algorithms for data analysis</p>
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm text-gray-500 mb-2">
+                                    <span>Progress</span>
+                                    <span>75%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-calendar mr-1"></i>Due: Dec 15</span>
+                                <span><i class="fab fa-github mr-1"></i>12 commits</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-8 rounded-lg border border-gray-200 project-card-animated hover-glow micro-bounce reveal-on-scroll" style="animation-delay: 0.1s;">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-medium text-gray-900">Quantum Computing</h3>
+                                <span class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full micro-bounce">Planning</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Quantum algorithms for optimization problems</p>
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm text-gray-500 mb-2">
+                                    <span>Progress</span>
+                                    <span>25%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 25%"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-calendar mr-1"></i>Due: Mar 20</span>
+                                <span><i class="fab fa-github mr-1"></i>3 commits</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-8 rounded-lg border border-gray-200 project-card-animated hover-glow micro-bounce reveal-on-scroll" style="animation-delay: 0.2s;">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-medium text-gray-900">Data Visualization</h3>
+                                <span class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full micro-bounce">Review</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Interactive dashboards for research data</p>
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm text-gray-500 mb-2">
+                                    <span>Progress</span>
+                                    <span>90%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 90%"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-calendar mr-1"></i>Due: Nov 30</span>
+                                <span><i class="fab fa-github mr-1"></i>28 commits</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lab Activity Section -->
+            <section class="py-24 bg-white">
+                <div class="max-w-6xl mx-auto px-6">
+                    <div class="flex items-center justify-between mb-12">
+                        <h2 class="text-4xl font-light text-gray-900" style="font-size: var(--text-4xl);">Lab Activity</h2>
+                        <a href="users.html" class="text-gray-600 hover:text-gray-900 transition-colors">
+                            <i class="fas fa-arrow-right mr-2"></i>View All Members
+                        </a>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Fellow Lab Members -->
+                        <div class="bg-gray-50 p-8 rounded-lg">
+                            <h3 class="text-2xl font-light text-gray-900 mb-6" style="font-size: var(--text-2xl);">Recent Activity</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-4 p-4 bg-white rounded-lg border border-gray-200">
+                                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                        <span class="text-sm font-medium text-gray-600">JS</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-900"><span class="font-medium">John Smith</span> pushed 3 commits to <span class="font-medium">AI Research</span></p>
+                                        <p class="text-xs text-gray-500">2 hours ago</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4 p-4 bg-white rounded-lg border border-gray-200">
+                                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                        <span class="text-sm font-medium text-gray-600">MJ</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-900"><span class="font-medium">Maria Johnson</span> completed milestone in <span class="font-medium">Quantum Computing</span></p>
+                                        <p class="text-xs text-gray-500">5 hours ago</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4 p-4 bg-white rounded-lg border border-gray-200">
+                                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                        <span class="text-sm font-medium text-gray-600">DR</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm text-gray-900"><span class="font-medium">David Rodriguez</span> submitted paper for review</p>
+                                        <p class="text-xs text-gray-500">1 day ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Professor Updates -->
+                        <div class="bg-gray-50 p-8 rounded-lg">
+                            <h3 class="text-2xl font-light text-gray-900 mb-6" style="font-size: var(--text-2xl);">Professor Updates</h3>
+                            <div class="space-y-4">
+                                <div class="p-4 bg-white rounded-lg border border-gray-200">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-user-tie text-gray-600"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm text-gray-900 font-medium">Dr. Sarah Chen</p>
+                                            <p class="text-sm text-gray-600 mt-1">Lab meeting moved to Friday 2 PM. Please prepare your progress reports.</p>
+                                            <p class="text-xs text-gray-500 mt-2">Yesterday</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 bg-white rounded-lg border border-gray-200">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-user-tie text-gray-600"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm text-gray-900 font-medium">Dr. Michael Brown</p>
+                                            <p class="text-sm text-gray-600 mt-1">Great work on the AI project! The results look promising for publication.</p>
+                                            <p class="text-xs text-gray-500 mt-2">3 days ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions Section -->
+            <section class="py-24 bg-gray-50">
+                <div class="max-w-6xl mx-auto px-6">
+                    <h2 class="text-4xl font-light text-gray-900 mb-12 text-center" style="font-size: var(--text-4xl);">Quick Actions</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <a href="projects.html" class="bg-white p-8 rounded-lg border border-gray-200 hover-lift text-center group">
+                            <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-gray-200 transition-colors">
+                                <i class="fas fa-plus text-2xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">New Project</h3>
+                            <p class="text-sm text-gray-600">Start a new research project</p>
+                        </a>
+                        
+                        <a href="ideas.html" class="bg-white p-8 rounded-lg border border-gray-200 hover-lift text-center group">
+                            <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-gray-200 transition-colors">
+                                <i class="fas fa-lightbulb text-2xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Share Idea</h3>
+                            <p class="text-sm text-gray-600">Submit a research idea</p>
+                        </a>
+                        
+                        <a href="#" class="bg-white p-8 rounded-lg border border-gray-200 hover-lift text-center group">
+                            <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-gray-200 transition-colors">
+                                <i class="fas fa-calendar text-2xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Schedule Meeting</h3>
+                            <p class="text-sm text-gray-600">Book lab meeting</p>
+                        </a>
+                        
+                        <a href="#" class="bg-white p-8 rounded-lg border border-gray-200 hover-lift text-center group">
+                            <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-gray-200 transition-colors">
+                                <i class="fas fa-file-alt text-2xl text-gray-600"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Submit Paper</h3>
+                            <p class="text-sm text-gray-600">Upload research paper</p>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
 
     <!-- CTA Section -->
     <section class="py-32 bg-gray-900 text-white">
@@ -855,7 +1234,52 @@
             updateNavigationVisibility();
             updateAuthButtons();
             updateHeroContent();
+            updateDynamicContent();
             loadProjects();
+        }
+
+        // Update dynamic content based on login status
+        function updateDynamicContent() {
+            const guestContent = document.getElementById('guest-content');
+            const loggedInContent = document.getElementById('logged-in-content');
+            
+            if (currentUser) {
+                // User is logged in - show logged-in content
+                guestContent.style.display = 'none';
+                loggedInContent.style.display = 'block';
+                
+                // Add animations to logged-in content
+                setTimeout(() => {
+                    const elements = loggedInContent.querySelectorAll('.project-card-animated, .hover-lift');
+                    elements.forEach((element, index) => {
+                        element.style.opacity = '0';
+                        element.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            element.style.transition = 'all 0.6s ease';
+                            element.style.opacity = '1';
+                            element.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    });
+                }, 100);
+            } else {
+                // User is not logged in - show guest content
+                guestContent.style.display = 'block';
+                loggedInContent.style.display = 'none';
+                
+                // Add animations to guest content
+                setTimeout(() => {
+                    const elements = guestContent.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .scale-in');
+                    elements.forEach((element, index) => {
+                        element.style.opacity = '0';
+                        element.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            element.style.transition = 'all 0.6s ease';
+                            element.style.opacity = '1';
+                            element.style.transform = 'translateY(0)';
+                        }, index * 150);
+                    });
+                }, 100);
+            }
         }
 
         // Load projects from Firestore
@@ -1521,7 +1945,29 @@
         // Initialize the app
         document.addEventListener('DOMContentLoaded', () => {
             updateUI();
+            initScrollReveal();
         });
+
+        // Initialize scroll reveal animations
+        function initScrollReveal() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all elements with reveal-on-scroll class
+            document.querySelectorAll('.reveal-on-scroll').forEach(el => {
+                observer.observe(el);
+            });
+        }
     </script>
 </body>
 </html>
