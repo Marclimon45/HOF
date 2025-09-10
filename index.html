@@ -447,9 +447,214 @@
         .hover-scale:hover {
             transform: scale(1.02);
         }
+
+        /* Left Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            background: #f8f9fa;
+            border-right: 1px solid #e5e7eb;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            background: white;
+        }
+
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .sidebar-nav-item {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: #6b7280;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav-item:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .sidebar-nav-item.active {
+            background: #eff6ff;
+            color: #2563eb;
+            border-left-color: #2563eb;
+        }
+
+        .sidebar-nav-item i {
+            width: 20px;
+            margin-right: 0.75rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb-item {
+            color: #6b7280;
+            text-decoration: none;
+        }
+
+        .breadcrumb-item:hover {
+            color: #1f2937;
+        }
+
+        .breadcrumb-separator {
+            margin: 0 0.5rem;
+            color: #9ca3af;
+        }
+
+        .breadcrumb-current {
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .main-content {
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.with-sidebar {
+            margin-left: 280px;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background: #f9fafb;
+        }
+
+        .sidebar-toggle.hidden {
+            display: none;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                max-width: 320px;
+            }
+            
+            .main-content.with-sidebar {
+                margin-left: 0;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebar-toggle" class="sidebar-toggle hidden">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Overlay -->
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <!-- Left Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">CPX Lab</div>
+        </div>
+        
+        <!-- Breadcrumb Navigation -->
+        <div id="breadcrumb" class="breadcrumb">
+            <a href="index.html" class="breadcrumb-item">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Dashboard</span>
+        </div>
+        
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar-nav">
+            <a href="index.html" class="sidebar-nav-item active" data-page="home">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </a>
+            <a href="projects.html" class="sidebar-nav-item" data-page="projects">
+                <i class="fas fa-project-diagram"></i>
+                My Projects
+            </a>
+            <a href="ideas.html" class="sidebar-nav-item" data-page="ideas">
+                <i class="fas fa-lightbulb"></i>
+                Research Ideas
+            </a>
+            <a href="users.html" class="sidebar-nav-item" data-page="users">
+                <i class="fas fa-users"></i>
+                Lab Members
+            </a>
+            <a href="#" class="sidebar-nav-item" data-page="calendar">
+                <i class="fas fa-calendar-alt"></i>
+                Lab Calendar
+            </a>
+            <a href="#" class="sidebar-nav-item" data-page="reports">
+                <i class="fas fa-chart-line"></i>
+                Progress Reports
+            </a>
+            <a href="#" class="sidebar-nav-item" data-page="settings">
+                <i class="fas fa-cog"></i>
+                Settings
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div id="main-content" class="main-content">
     <!-- Navigation Bar -->
     <nav id="main-nav" class="bg-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -517,11 +722,11 @@
                 </div>
                 
                 <!-- Lab Stats -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+                <div id="lab-stats" class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
                     <div class="text-center p-8 bg-gray-50 rounded-lg border border-gray-200">
                         <div class="text-4xl font-light text-gray-900 mb-3" style="font-size: var(--text-4xl);">15+</div>
                         <div class="text-gray-600 text-sm font-medium uppercase tracking-wide">Active Research Projects</div>
-                    </div>
+            </div>
                     <div class="text-center p-8 bg-gray-50 rounded-lg border border-gray-200">
                         <div class="text-4xl font-light text-gray-900 mb-3" style="font-size: var(--text-4xl);">25+</div>
                         <div class="text-gray-600 text-sm font-medium uppercase tracking-wide">Graduate Students</div>
@@ -552,16 +757,16 @@
                             CPX Lab leverages cutting-edge project management technology to streamline research workflows, 
                             track student progress, and accelerate academic discovery across multiple disciplines.
                         </p>
-                    </div>
+                </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                         <div class="bg-white p-12 rounded-lg border border-gray-200 hover-lift hover-glow micro-bounce reveal-on-scroll">
                             <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8 micro-bounce">
                                 <i class="fas fa-chart-line text-2xl text-gray-600"></i>
-                            </div>
+                </div>
                             <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Progress Tracking</h3>
                             <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Monitor student research progress with automated GitHub integration, milestone tracking, and real-time project analytics.</p>
-                        </div>
+                </div>
                         <div class="bg-white p-12 rounded-lg border border-gray-200 hover-lift hover-glow micro-bounce reveal-on-scroll" style="animation-delay: 0.1s;">
                             <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-8 micro-bounce">
                                 <i class="fas fa-users-cog text-2xl text-gray-600"></i>
@@ -576,9 +781,9 @@
                             <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Student Development</h3>
                             <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Students manage their research portfolio, track learning milestones, and showcase their academic achievements.</p>
                         </div>
-                    </div>
-                </div>
-            </section>
+            </div>
+        </div>
+    </section>
 
             <!-- Lab Recruitment Section -->
             <section class="py-32 bg-white">
@@ -588,7 +793,7 @@
                         <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light" style="font-size: var(--text-xl);">
                             We're looking for passionate graduate students, postdocs, and researchers to join our cutting-edge research projects.
                         </p>
-                    </div>
+            </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                         <div class="bg-gray-50 p-12 rounded-lg border border-gray-200 hover-lift slide-in-left">
@@ -621,9 +826,9 @@
                                 <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Mentorship program</li>
                             </ul>
                         </div>
-                    </div>
-                </div>
-            </section>
+            </div>
+        </div>
+    </section>
 
             <!-- Platform Features Section -->
             <section class="py-32 bg-gray-50">
@@ -633,7 +838,7 @@
                         <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light" style="font-size: var(--text-xl);">
                             Advanced research management tools designed specifically for academic environments
                         </p>
-                    </div>
+            </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
                         <div class="bg-white p-12 rounded-lg border border-gray-200 hover-lift scale-in">
@@ -678,9 +883,9 @@
                             <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Research Repository</h3>
                             <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Centralized storage for research data, papers, and project documentation.</p>
                         </div>
-                    </div>
-                </div>
-            </section>
+            </div>
+        </div>
+    </section>
         </div>
 
         <!-- Logged-in Content -->
@@ -693,14 +898,14 @@
                         <a href="projects.html" class="text-gray-600 hover:text-gray-900 transition-colors">
                             <i class="fas fa-arrow-right mr-2"></i>View All
                         </a>
-                    </div>
+                </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <div class="bg-white p-8 rounded-lg border border-gray-200 project-card-animated hover-glow micro-bounce reveal-on-scroll">
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-xl font-medium text-gray-900">AI Research Project</h3>
                                 <span class="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full micro-bounce">Active</span>
-                            </div>
+            </div>
                             <p class="text-gray-600 mb-4">Machine learning algorithms for data analysis</p>
                             <div class="mb-4">
                                 <div class="flex justify-between text-sm text-gray-500 mb-2">
@@ -758,9 +963,9 @@
                                 <span><i class="fab fa-github mr-1"></i>28 commits</span>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
+            </div>
+        </div>
+    </section>
 
             <!-- Lab Activity Section -->
             <section class="py-24 bg-white">
@@ -837,9 +1042,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
+            </div>
+        </div>
+    </section>
 
             <!-- Quick Actions Section -->
             <section class="py-24 bg-gray-50">
@@ -1283,6 +1488,11 @@
             updateDynamicContent();
             updateFooter();
             loadProjects();
+            
+            // Update sidebar visibility
+            if (window.updateSidebarVisibility) {
+                window.updateSidebarVisibility();
+            }
         }
 
         // Update dynamic content based on login status
@@ -1290,12 +1500,14 @@
             const guestContent = document.getElementById('guest-content');
             const loggedInContent = document.getElementById('logged-in-content');
             const ctaSection = document.getElementById('cta-section');
+            const labStats = document.getElementById('lab-stats');
             
             if (currentUser) {
-                // User is logged in - show logged-in content, hide CTA section
+                // User is logged in - show logged-in content, hide CTA section and stats
                 guestContent.style.display = 'none';
                 loggedInContent.style.display = 'block';
                 ctaSection.style.display = 'none';
+                labStats.style.display = 'none';
                 
                 // Add animations to logged-in content
                 setTimeout(() => {
@@ -1311,10 +1523,11 @@
                     });
                 }, 100);
             } else {
-                // User is not logged in - show guest content and CTA section
+                // User is not logged in - show guest content, CTA section and stats
                 guestContent.style.display = 'block';
                 loggedInContent.style.display = 'none';
                 ctaSection.style.display = 'block';
+                labStats.style.display = 'grid';
                 
                 // Add animations to guest content
                 setTimeout(() => {
@@ -2020,6 +2233,8 @@
             initScrollReveal();
             initFormKeyHandlers();
             initModalClickOutside();
+            initSidebar();
+            initBreadcrumb();
         });
 
         // Add Enter key support for forms
@@ -2111,6 +2326,121 @@
             }
             return true;
         }
+
+        // Sidebar functionality
+        function initSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const mainContent = document.getElementById('main-content');
+            const mainNav = document.getElementById('main-nav');
+
+            // Toggle sidebar
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                sidebarOverlay.classList.toggle('open');
+                mainContent.classList.toggle('with-sidebar');
+            }
+
+            // Close sidebar
+            function closeSidebar() {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('open');
+                mainContent.classList.remove('with-sidebar');
+            }
+
+            // Event listeners
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', toggleSidebar);
+            }
+            
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', closeSidebar);
+            }
+
+            // Handle sidebar navigation
+            const sidebarItems = document.querySelectorAll('.sidebar-nav-item');
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Remove active class from all items
+                    sidebarItems.forEach(navItem => navItem.classList.remove('active'));
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    // Update breadcrumb
+                    updateBreadcrumb(this.textContent.trim(), this.getAttribute('data-page'));
+                });
+            });
+
+            // Show/hide sidebar based on login status
+            function updateSidebarVisibility() {
+                if (currentUser) {
+                    sidebarToggle.classList.remove('hidden');
+                    mainContent.classList.add('with-sidebar');
+                    sidebar.classList.add('open');
+                } else {
+                    sidebarToggle.classList.add('hidden');
+                    mainContent.classList.remove('with-sidebar');
+                    sidebar.classList.remove('open');
+                }
+            }
+
+            // Update sidebar visibility on auth state change
+            updateSidebarVisibility();
+            
+            // Store function globally for use in updateUI
+            window.updateSidebarVisibility = updateSidebarVisibility;
+        }
+
+        // Update breadcrumb navigation
+        function updateBreadcrumb(pageName, pageId) {
+            const breadcrumb = document.getElementById('breadcrumb');
+            if (!breadcrumb) return;
+
+            const breadcrumbItems = {
+                'home': 'Dashboard',
+                'projects': 'My Projects',
+                'ideas': 'Research Ideas',
+                'users': 'Lab Members',
+                'calendar': 'Lab Calendar',
+                'reports': 'Progress Reports',
+                'settings': 'Settings'
+            };
+
+            const currentPageName = breadcrumbItems[pageId] || pageName;
+            
+            breadcrumb.innerHTML = `
+                <a href="index.html" class="breadcrumb-item">Home</a>
+                <span class="breadcrumb-separator">/</span>
+                <span class="breadcrumb-current">${currentPageName}</span>
+            `;
+        }
+
+        // Initialize breadcrumb based on current page
+        function initBreadcrumb() {
+            const currentPage = window.location.pathname.split('/').pop();
+            const pageMap = {
+                'index.html': { id: 'home', name: 'Dashboard' },
+                'projects.html': { id: 'projects', name: 'My Projects' },
+                'ideas.html': { id: 'ideas', name: 'Research Ideas' },
+                'users.html': { id: 'users', name: 'Lab Members' }
+            };
+
+            const currentPageInfo = pageMap[currentPage];
+            if (currentPageInfo) {
+                updateBreadcrumb(currentPageInfo.name, currentPageInfo.id);
+                
+                // Update active sidebar item
+                const sidebarItems = document.querySelectorAll('.sidebar-nav-item');
+                sidebarItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.getAttribute('data-page') === currentPageInfo.id) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+        }
     </script>
+    </div> <!-- End main-content wrapper -->
 </body>
 </html>
