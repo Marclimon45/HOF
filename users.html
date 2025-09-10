@@ -10,6 +10,34 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* Fibonacci Typography Scale */
+        :root {
+            --text-xs: 0.75rem;    /* 12px */
+            --text-sm: 0.875rem;   /* 14px */
+            --text-base: 1rem;     /* 16px */
+            --text-lg: 1.125rem;   /* 18px */
+            --text-xl: 1.25rem;    /* 20px */
+            --text-2xl: 1.5rem;    /* 24px */
+            --text-3xl: 1.875rem;  /* 30px */
+            --text-4xl: 2.25rem;   /* 36px */
+            --text-5xl: 3rem;      /* 48px */
+            --text-6xl: 3.75rem;   /* 60px */
+            --text-7xl: 4.5rem;    /* 72px */
+            --text-8xl: 6rem;      /* 96px */
+            
+            /* Monotone Color Palette */
+            --gray-50: #fafafa;
+            --gray-100: #f5f5f5;
+            --gray-200: #e5e5e5;
+            --gray-300: #d4d4d4;
+            --gray-400: #a3a3a3;
+            --gray-500: #737373;
+            --gray-600: #525252;
+            --gray-700: #404040;
+            --gray-800: #262626;
+            --gray-900: #171717;
+        }
+
         .hamburger-line {
             transition: all 0.3s ease;
         }
@@ -30,19 +58,20 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
         .rank-badge {
-            font-size: 0.75rem;
+            font-size: var(--text-xs);
             padding: 0.25rem 0.5rem;
             border-radius: 9999px;
             font-weight: 600;
         }
-        .rank-cps { background-color: #dbeafe; color: #1e40af; }
-        .rank-unranked { background-color: #f3f4f6; color: #374151; }
+        .rank-cps { background-color: var(--gray-100); color: var(--gray-900); border: 1px solid var(--gray-300); }
+        .rank-unranked { background-color: var(--gray-200); color: var(--gray-700); border: 1px solid var(--gray-400); }
         .skill-tag {
-            font-size: 0.75rem;
+            font-size: var(--text-xs);
             padding: 0.25rem 0.5rem;
             border-radius: 9999px;
-            background-color: #f3f4f6;
-            color: #374151;
+            background-color: var(--gray-100);
+            color: var(--gray-800);
+            border: 1px solid var(--gray-300);
         }
 
         /* Modal Styles */
@@ -128,21 +157,26 @@
         }
 
         .btn-primary {
-            background-color: #3b82f6;
+            background-color: #000000;
             color: white;
+            font-size: var(--text-base);
+            font-weight: 600;
         }
 
         .btn-primary:hover {
-            background-color: #2563eb;
+            background-color: #404040;
         }
 
         .btn-secondary {
-            background-color: #f3f4f6;
-            color: #374151;
+            background-color: var(--gray-100);
+            color: var(--gray-900);
+            font-size: var(--text-base);
+            font-weight: 600;
+            border: 1px solid var(--gray-300);
         }
 
         .btn-secondary:hover {
-            background-color: #e5e7eb;
+            background-color: var(--gray-200);
         }
     </style>
 </head>
@@ -153,16 +187,16 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex-shrink-0">
-                    <a href="index.html" class="text-2xl font-bold text-blue-600">CPX Lab</a>
+                    <a href="index.html" class="text-2xl font-bold text-gray-900" style="font-size: var(--text-2xl);">CPX Lab</a>
                 </div>
                 
                 <!-- Desktop Menu -->
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="index.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
-                        <a href="projects.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Projects</a>
-                        <a href="ideas.html" class="text-gray-500 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Ideas</a>
-                        <a href="users.html" class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Community</a>
+                        <a href="index.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors" style="font-size: var(--text-sm);">Home</a>
+                        <a href="projects.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors" style="font-size: var(--text-sm);">Projects</a>
+                        <a href="ideas.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors" style="font-size: var(--text-sm);">Ideas</a>
+                        <a href="users.html" class="text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors" style="font-size: var(--text-sm);">Community</a>
                         <div id="auth-buttons" class="flex items-center space-x-2">
                             <!-- Auth buttons will be dynamically inserted here -->
                         </div>
@@ -184,10 +218,10 @@
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="md:hidden hidden">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
-                <a href="index.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Home</a>
-                <a href="projects.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Projects</a>
-                <a href="ideas.html" class="text-gray-500 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Ideas</a>
-                <a href="users.html" class="text-gray-900 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">Community</a>
+                <a href="index.html" class="text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium" style="font-size: var(--text-base);">Home</a>
+                <a href="projects.html" class="text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium" style="font-size: var(--text-base);">Projects</a>
+                <a href="ideas.html" class="text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium" style="font-size: var(--text-base);">Ideas</a>
+                <a href="users.html" class="text-gray-900 hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium" style="font-size: var(--text-base);">Community</a>
                 <div id="mobile-auth-buttons" class="px-3 py-2">
                     <!-- Mobile auth buttons will be dynamically inserted here -->
                 </div>
@@ -200,11 +234,11 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Community</h1>
-                    <p class="mt-2 text-gray-600">Connect with talented individuals and build your network</p>
+                    <h1 class="text-3xl font-bold text-gray-900" style="font-size: var(--text-3xl);">Community</h1>
+                    <p class="mt-2 text-gray-600 font-normal" style="font-size: var(--text-lg);">Connect with talented individuals and build your network</p>
                 </div>
                 <div class="mt-4 sm:mt-0">
-                    <button id="edit-profile-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                    <button id="edit-profile-btn" class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg font-medium transition-colors" style="font-size: var(--text-base);">
                         <i class="fas fa-user-edit mr-2"></i>Edit Profile
                     </button>
                 </div>
@@ -669,7 +703,7 @@
                             <div>
                                 <h3 class="text-lg font-semibold mb-2">Areas of Interest</h3>
                                 <div class="flex flex-wrap gap-2">
-                                    ${areaOfInterest.map(interest => `<span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">${interest}</span>`).join('')}
+                                    ${areaOfInterest.map(interest => `<span class="px-3 py-1 bg-gray-100 text-gray-800 text-sm rounded-full" style="font-size: var(--text-sm);">${interest}</span>`).join('')}
                                 </div>
                             </div>
                         ` : ''}
@@ -679,7 +713,7 @@
                         <div>
                             <h3 class="text-lg font-semibold mb-2">Tools</h3>
                             <div class="flex flex-wrap gap-2">
-                                ${tools.map(tool => `<span class="px-3 py-1 bg-purple-100 text-purple-800 text-sm rounded-full">${tool}</span>`).join('')}
+                                ${tools.map(tool => `<span class="px-3 py-1 bg-gray-100 text-gray-800 text-sm rounded-full" style="font-size: var(--text-sm);">${tool}</span>`).join('')}
                             </div>
                         </div>
                     ` : ''}
@@ -809,7 +843,7 @@
         <div id="footer-guest" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="col-span-1 md:col-span-2">
-                    <h3 class="text-2xl font-bold mb-4">CPX Lab</h3>
+                    <h3 class="text-2xl font-bold mb-4" style="font-size: var(--text-2xl);">CPX Lab</h3>
                     <p class="text-gray-400 mb-4">
                         Join our cutting-edge research community. We're looking for passionate graduate students, 
                         postdocs, and researchers to advance scientific discovery together.
@@ -854,7 +888,7 @@
         <div id="footer-logged-in" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style="display: none;">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="col-span-1 md:col-span-2">
-                    <h3 class="text-2xl font-bold mb-4">CPX Lab Platform</h3>
+                    <h3 class="text-2xl font-bold mb-4" style="font-size: var(--text-2xl);">CPX Lab Platform</h3>
                     <p class="text-gray-400 mb-4">
                         Welcome to your research management dashboard. Track projects, collaborate with lab members, 
                         and advance your academic career with our comprehensive platform.
