@@ -1,7 +1,7 @@
 {
-  "name": "hof-website",
+  "name": "cpx-lab-website",
   "version": "1.0.0",
-  "description": "HOF - Home of Innovation website with Firebase integration",
+  "description": "CPX Lab - Home of Innovation website with Firebase integration",
   "main": "index.html",
   "scripts": {
     "start": "python -m http.server 8000",
@@ -16,7 +16,7 @@
     "html",
     "javascript"
   ],
-  "author": "HOF Team",
+  "author": "CPX Lab Team",
   "license": "MIT",
   "devDependencies": {},
   "dependencies": {}

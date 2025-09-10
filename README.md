@@ -1,4 +1,4 @@
-# Xin's Hall of Fame
+# CPX Lab
 
 A clean, responsive website built with HTML, Tailwind CSS, and Firebase integration for showcasing achievements and innovations.
 
@@ -13,7 +13,7 @@ A clean, responsive website built with HTML, Tailwind CSS, and Firebase integrat
 ## Project Structure
 
 ```
-HOF/
+CPX Lab/
 ├── index.html              # Main HTML file
 ├── firebase-config.js      # Firebase configuration
 ├── package.json            # Project dependencies and scripts
@@ -24,7 +24,7 @@ HOF/
 
 ### 1. Firebase Setup
 
-The Firebase configuration is already set up for "Xin's Hall of Fame" project:
+The Firebase configuration is already set up for "CPX Lab" project:
 
 - **Project ID**: xin-s-hall-of-fame
 - **Authentication**: Ready to be enabled
