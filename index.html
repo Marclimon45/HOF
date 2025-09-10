@@ -118,22 +118,23 @@
         }
 
         .project-card i {
-            font-size: 1.5rem;
+            font-size: var(--text-2xl);
             margin-bottom: 0.5rem;
-            color: #3b82f6;
+            color: #000000;
         }
 
         .project-card h4 {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #1f2937;
+            font-size: var(--text-sm);
+            font-weight: 700;
+            color: #000000;
             margin: 0;
         }
 
         .project-card p {
-            font-size: 0.75rem;
-            color: #6b7280;
+            font-size: var(--text-xs);
+            color: #000000;
             margin: 0.25rem 0 0 0;
+            font-weight: 400;
         }
 
         /* Modal Styles */
@@ -196,16 +197,16 @@
         }
 
         .close {
-            color: #6b7280;
+            color: #000000;
             float: right;
-            font-size: 28px;
-            font-weight: bold;
+            font-size: var(--text-3xl);
+            font-weight: 700;
             cursor: pointer;
             transition: color 0.2s;
         }
 
         .close:hover {
-            color: #374151;
+            color: #333333;
         }
 
         .form-group {
@@ -215,8 +216,9 @@
         .form-label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
-            color: #374151;
+            font-weight: 700;
+            color: #000000;
+            font-size: var(--text-sm);
         }
 
         .form-input {
@@ -224,51 +226,55 @@
             padding: 12px 16px;
             border: 1px solid #d1d5db;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: var(--text-base);
             transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            border-color: #000000;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
         }
 
         .btn {
             padding: 12px 24px;
             border-radius: 8px;
-            font-weight: 500;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             border: none;
-            font-size: 16px;
+            font-size: var(--text-base);
         }
 
         .btn-primary {
-            background-color: #3b82f6;
+            background-color: #000000;
             color: white;
+            font-weight: 700;
         }
 
         .btn-primary:hover {
-            background-color: #2563eb;
+            background-color: #333333;
         }
 
         .btn-secondary {
             background-color: #f3f4f6;
-            color: #374151;
+            color: #000000;
+            font-weight: 400;
         }
 
         .btn-secondary:hover {
             background-color: #e5e7eb;
+            font-weight: 700;
         }
 
         .btn-danger {
-            background-color: #ef4444;
+            background-color: #000000;
             color: white;
+            font-weight: 700;
         }
 
         .btn-danger:hover {
-            background-color: #dc2626;
+            background-color: #333333;
         }
         
         /* Hide navigation by default for guests */
@@ -544,11 +550,13 @@
             display: flex;
             align-items: center;
             padding: 0.875rem 1.5rem;
+            margin: 0.25rem 1rem;
             color: #000000;
             text-decoration: none;
             transition: all 0.2s ease;
             text-align: left;
             font-size: 0.875rem; /* 14px - Fibonacci scale */
+            border-radius: 2rem;
         }
 
         .sidebar-nav-item span {
@@ -847,9 +855,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #9ca3af;
-            font-size: 0.875rem;
-            font-weight: 500;
+            color: #000000;
+            font-size: var(--text-sm);
+            font-weight: 700;
             text-align: center;
             border: 2px dashed #d1d5db;
         }
@@ -859,9 +867,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #64748b;
-            font-size: 1rem;
-            font-weight: 500;
+            color: #000000;
+            font-size: var(--text-base);
+            font-weight: 700;
             text-align: center;
             min-height: 100vh;
         }
@@ -967,10 +975,10 @@
                     <i class="fas fa-flask text-gray-600 mr-2" style="font-size: var(--text-sm);"></i>
                     <span class="text-sm font-medium text-gray-600">Research Lab Management Platform</span>
                 </div>
-                <h1 class="text-6xl md:text-8xl font-light mb-8 tracking-tight text-gray-900" id="hero-title" style="font-size: var(--text-8xl);">
+                <h1 class="text-6xl md:text-8xl font-bold mb-8 tracking-tight text-gray-900" id="hero-title" style="font-size: var(--text-8xl);">
                     CPX Lab
                 </h1>
-                <p class="text-xl md:text-2xl mb-16 max-w-4xl mx-auto text-gray-700 font-light leading-relaxed" id="hero-description" style="font-size: var(--text-2xl);">
+                <p class="text-xl md:text-2xl mb-16 max-w-4xl mx-auto text-gray-700 font-normal leading-relaxed" id="hero-description" style="font-size: var(--text-2xl);">
                     Advanced research project management and student progress tracking for academic excellence
                 </p>
                 <div id="hero-actions" class="flex flex-col sm:flex-row gap-6 justify-center mb-24">
@@ -980,19 +988,19 @@
                 <!-- Lab Stats -->
                 <div id="lab-stats" class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
                     <div class="text-center p-8 rounded-lg border border-gray-200">
-                        <div class="text-4xl font-light text-gray-900 mb-3" style="font-size: var(--text-4xl);">15+</div>
+                        <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">15+</div>
                         <div class="text-gray-600 text-sm font-medium uppercase tracking-wide">Active Research Projects</div>
             </div>
                     <div class="text-center p-8 rounded-lg border border-gray-200">
-                        <div class="text-4xl font-light text-gray-900 mb-3" style="font-size: var(--text-4xl);">25+</div>
+                        <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">25+</div>
                         <div class="text-gray-600 text-sm font-medium uppercase tracking-wide">Graduate Students</div>
                     </div>
                     <div class="text-center p-8 rounded-lg border border-gray-200">
-                        <div class="text-4xl font-light text-gray-900 mb-3" style="font-size: var(--text-4xl);">8+</div>
+                        <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">8+</div>
                         <div class="text-gray-600 text-sm font-medium uppercase tracking-wide">Publications</div>
                     </div>
                     <div class="text-center p-8 rounded-lg border border-gray-200">
-                        <div class="text-4xl font-light text-gray-900 mb-3" style="font-size: var(--text-4xl);">3+</div>
+                        <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">3+</div>
                         <div class="text-gray-600 text-sm font-medium uppercase tracking-wide">Years Active</div>
                     </div>
                 </div>
@@ -1008,8 +1016,8 @@
             <section class="py-32 fade-in">
                 <div class="max-w-6xl mx-auto px-6">
                     <div class="text-center mb-24">
-                        <h2 class="text-5xl font-light text-gray-900 mb-8" style="font-size: var(--text-5xl);">Research Excellence Through Technology</h2>
-                        <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light" style="font-size: var(--text-xl);">
+                        <h2 class="text-5xl font-bold text-gray-900 mb-8" style="font-size: var(--text-5xl);">Research Excellence Through Technology</h2>
+                        <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-normal" style="font-size: var(--text-xl);">
                             CPX Lab leverages cutting-edge project management technology to streamline research workflows, 
                             track student progress, and accelerate academic discovery across multiple disciplines.
                         </p>
@@ -1031,22 +1039,22 @@
                             <div class="w-20 h-20 rounded-lg flex items-center justify-center mb-8 micro-bounce">
                                 <i class="fas fa-chart-line text-2xl text-gray-600"></i>
                 </div>
-                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Progress Tracking</h3>
-                            <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Monitor student research progress with automated GitHub integration, milestone tracking, and real-time project analytics.</p>
+                            <h3 class="text-2xl font-bold mb-6 text-gray-900" style="font-size: var(--text-2xl);">Progress Tracking</h3>
+                            <p class="text-gray-600 leading-relaxed font-normal" style="font-size: var(--text-lg);">Monitor student research progress with automated GitHub integration, milestone tracking, and real-time project analytics.</p>
                 </div>
                         <div class="p-12 rounded-lg border border-gray-200 hover-lift hover-glow micro-bounce reveal-on-scroll" style="animation-delay: 0.1s;">
                             <div class="w-20 h-20 rounded-lg flex items-center justify-center mb-8 micro-bounce">
                                 <i class="fas fa-users-cog text-2xl text-gray-600"></i>
                             </div>
-                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Lab Management</h3>
-                            <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Professors can oversee multiple research projects, track student contributions, and manage lab resources efficiently.</p>
+                            <h3 class="text-2xl font-bold mb-6 text-gray-900" style="font-size: var(--text-2xl);">Lab Management</h3>
+                            <p class="text-gray-600 leading-relaxed font-normal" style="font-size: var(--text-lg);">Professors can oversee multiple research projects, track student contributions, and manage lab resources efficiently.</p>
                         </div>
                         <div class="p-12 rounded-lg border border-gray-200 hover-lift hover-glow micro-bounce reveal-on-scroll" style="animation-delay: 0.2s;">
                             <div class="w-20 h-20 rounded-lg flex items-center justify-center mb-8 micro-bounce">
                                 <i class="fas fa-graduation-cap text-2xl text-gray-600"></i>
                             </div>
-                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Student Development</h3>
-                            <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Students manage their research portfolio, track learning milestones, and showcase their academic achievements.</p>
+                            <h3 class="text-2xl font-bold mb-6 text-gray-900" style="font-size: var(--text-2xl);">Student Development</h3>
+                            <p class="text-gray-600 leading-relaxed font-normal" style="font-size: var(--text-lg);">Students manage their research portfolio, track learning milestones, and showcase their academic achievements.</p>
                 </div>
             </div>
         </div>
@@ -1180,13 +1188,13 @@
                     <div class="rounded-lg border border-gray-200 p-8 mb-8">
                         <div class="flex items-start space-x-4">
                             <div class="w-12 h-12  rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-blue-600"></i>
+                                <i class="fas fa-user text-gray-600"></i>
                             </div>
                             <div class="flex-1">
                                 <textarea 
                                     id="quick-update" 
                                     placeholder="What did you work on today? Any challenges or breakthroughs?"
-                                    class="w-full p-4 border border-gray-200 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="w-full p-4 border border-gray-200 rounded-lg resize-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                                     rows="3"
                                 ></textarea>
                                 <div class="flex justify-between items-center mt-4">
@@ -1226,8 +1234,8 @@
                                 <div class=" p-4 rounded-lg border border-gray-200">
                                     <div class="flex items-center justify-between mb-2">
                                         <h4 class="font-medium text-gray-900">AI Research Project</h4>
-                                        <span class="text-sm text-green-600">
-                                            <i class="fas fa-circle mr-1"></i>Active
+                                        <span class="text-sm text-gray-900">
+                                            <i class="fas fa-circle mr-1 text-green-600"></i>Active
                                         </span>
                                     </div>
                                     <div class="text-sm text-gray-600 mb-3">Machine learning algorithms for data analysis</div>
@@ -1242,8 +1250,8 @@
                                 <div class=" p-4 rounded-lg border border-gray-200">
                                     <div class="flex items-center justify-between mb-2">
                                         <h4 class="font-medium text-gray-900">Quantum Computing</h4>
-                                        <span class="text-sm text-yellow-600">
-                                            <i class="fas fa-circle mr-1"></i>Planning
+                                        <span class="text-sm text-gray-900">
+                                            <i class="fas fa-circle mr-1 text-yellow-600"></i>Planning
                                         </span>
                                     </div>
                                     <div class="text-sm text-gray-600 mb-3">Quantum algorithms for optimization problems</div>
@@ -1258,8 +1266,8 @@
                                 <div class=" p-4 rounded-lg border border-gray-200">
                                     <div class="flex items-center justify-between mb-2">
                                         <h4 class="font-medium text-gray-900">Data Visualization</h4>
-                                        <span class="text-sm text-blue-600">
-                                            <i class="fas fa-circle mr-1"></i>Review
+                                        <span class="text-sm text-gray-900">
+                                            <i class="fas fa-circle mr-1 text-blue-600"></i>Review
                                         </span>
                                     </div>
                                     <div class="text-sm text-gray-600 mb-3">Interactive dashboards for research data</div>
@@ -1280,7 +1288,7 @@
                                 <div class=" p-4 rounded-lg border border-gray-200">
                                     <div class="flex items-start space-x-3">
                                         <div class="w-8 h-8  rounded-full flex items-center justify-center">
-                                            <i class="fas fa-check text-green-600 text-sm"></i>
+                                            <i class="fas fa-check text-gray-600 text-sm"></i>
                                         </div>
                                         <div class="flex-1">
                                             <div class="text-sm text-gray-900">Completed milestone: "Data preprocessing pipeline"</div>
@@ -1292,7 +1300,7 @@
                                 <div class=" p-4 rounded-lg border border-gray-200">
                                     <div class="flex items-start space-x-3">
                                         <div class="w-8 h-8  rounded-full flex items-center justify-center">
-                                            <i class="fab fa-github text-blue-600 text-sm"></i>
+                                            <i class="fab fa-github text-gray-600 text-sm"></i>
                                         </div>
                                         <div class="flex-1">
                                             <div class="text-sm text-gray-900">Pushed 3 commits to quantum-computing branch</div>
@@ -1303,8 +1311,8 @@
                                 
                                 <div class=" p-4 rounded-lg border border-gray-200">
                                     <div class="flex items-start space-x-3">
-                                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                                            <i class="fas fa-comment text-purple-600 text-sm"></i>
+                                        <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-comment text-gray-600 text-sm"></i>
                                         </div>
                                         <div class="flex-1">
                                             <div class="text-sm text-gray-900">Professor Johnson commented on your progress</div>
@@ -1333,7 +1341,7 @@
                             <div class="space-y-4">
                                 <div class="flex items-start space-x-3">
                                     <div class="w-8 h-8  rounded-full flex items-center justify-center">
-                                        <i class="fas fa-check text-green-600 text-sm"></i>
+                                        <i class="fas fa-check text-gray-600 text-sm"></i>
                                     </div>
                                     <div class="flex-1">
                                         <div class="text-sm text-gray-900"><span class="font-medium">John Smith</span> completed milestone</div>
@@ -1343,7 +1351,7 @@
                                 
                                 <div class="flex items-start space-x-3">
                                     <div class="w-8 h-8  rounded-full flex items-center justify-center">
-                                        <i class="fab fa-github text-blue-600 text-sm"></i>
+                                        <i class="fab fa-github text-gray-600 text-sm"></i>
                                     </div>
                                     <div class="flex-1">
                                         <div class="text-sm text-gray-900"><span class="font-medium">Maria Johnson</span> pushed commits</div>
@@ -1352,8 +1360,8 @@
                                 </div>
                                 
                                 <div class="flex items-start space-x-3">
-                                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-comment text-purple-600 text-sm"></i>
+                                    <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-comment text-gray-600 text-sm"></i>
                                     </div>
                                     <div class="flex-1">
                                         <div class="text-sm text-gray-900"><span class="font-medium">David Rodriguez</span> shared update</div>
@@ -1368,19 +1376,19 @@
                             <h3 class="text-xl font-medium text-gray-900 mb-6">Quick Actions</h3>
                             <div class="space-y-3">
                                 <button class="w-full text-left p-3  rounded-lg hover: transition-colors">
-                                    <i class="fas fa-question-circle text-blue-600 mr-3"></i>
+                                    <i class="fas fa-question-circle text-gray-600 mr-3"></i>
                                     Ask a Question
                                 </button>
                                 <button class="w-full text-left p-3  rounded-lg hover: transition-colors">
-                                    <i class="fas fa-lightbulb text-yellow-600 mr-3"></i>
+                                    <i class="fas fa-lightbulb text-gray-600 mr-3"></i>
                                     Share an Idea
                                 </button>
                                 <button class="w-full text-left p-3  rounded-lg hover: transition-colors">
-                                    <i class="fas fa-calendar text-green-600 mr-3"></i>
+                                    <i class="fas fa-calendar text-gray-600 mr-3"></i>
                                     Schedule Meeting
                                 </button>
                                 <button class="w-full text-left p-3  rounded-lg hover: transition-colors">
-                                    <i class="fas fa-file-alt text-purple-600 mr-3"></i>
+                                    <i class="fas fa-file-alt text-gray-600 mr-3"></i>
                                     Request Feedback
                                 </button>
                             </div>
@@ -1390,10 +1398,10 @@
                         <div class=" rounded-lg p-6 border border-gray-200">
                             <h3 class="text-xl font-medium text-gray-900 mb-6">Professor Insights</h3>
                             <div class="space-y-4">
-                                <div class="p-4 bg-blue-50 rounded-lg">
+                                <div class="p-4 bg-gray-50 rounded-lg">
                                     <div class="flex items-start space-x-3">
                                         <div class="w-8 h-8  rounded-full flex items-center justify-center">
-                                            <i class="fas fa-user-tie text-blue-600 text-sm"></i>
+                                            <i class="fas fa-user-tie text-gray-600 text-sm"></i>
                                         </div>
                                         <div class="flex-1">
                                             <div class="text-sm text-gray-900 font-medium">Dr. Sarah Johnson</div>
@@ -1402,10 +1410,10 @@
                                     </div>
                                 </div>
                                 
-                                <div class="p-4 bg-green-50 rounded-lg">
+                                <div class="p-4 bg-gray-50 rounded-lg">
                                     <div class="flex items-start space-x-3">
                                         <div class="w-8 h-8  rounded-full flex items-center justify-center">
-                                            <i class="fas fa-chart-line text-green-600 text-sm"></i>
+                                            <i class="fas fa-chart-line text-gray-600 text-sm"></i>
                                         </div>
                                         <div class="flex-1">
                                             <div class="text-sm text-gray-900 font-medium">Weekly Summary</div>
