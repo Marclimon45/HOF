@@ -173,6 +173,45 @@
             background-color: var(--gray-200);
         }
 
+        /* Project Card Styles */
+        .project-card {
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Status Badge Styles */
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Line clamp for description */
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
         /* Top Header */
         .top-header {
             position: fixed;
@@ -395,7 +434,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-white min-h-screen">
     <!-- Top Header -->
     <header id="top-header" class="top-header">
         <div class="header-content">
@@ -471,73 +510,117 @@
 
     <!-- Main Content Wrapper -->
     <div class="main-content">
-    <!-- Header Section -->
-    <div class="bg-white shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900" style="font-size: var(--text-3xl);">Projects</h1>
-                    <p class="mt-2 text-gray-600 font-normal" style="font-size: var(--text-lg);">Discover and collaborate on innovative projects</p>
-                </div>
-                <div class="mt-4 sm:mt-0">
-                    <button id="create-project-btn" class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg font-medium transition-colors" style="font-size: var(--text-base);">
-                        <i class="fas fa-plus mr-2"></i>Create Project
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Filters and Search -->
-    <div class="bg-white border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex flex-col sm:flex-row gap-4">
-                <div class="flex-1">
-                    <div class="relative">
-                        <input type="text" id="search-input" placeholder="Search projects..." 
-                               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+        <!-- Hero Section -->
+        <div class="bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="text-center">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4" style="font-size: var(--text-4xl);">My Projects</h1>
+                    <p class="text-xl text-gray-600 mb-8" style="font-size: var(--text-xl);">Manage and collaborate on your research projects</p>
+                    <div class="flex justify-center space-x-4">
+                        <button id="create-project-btn" class="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-medium transition-colors" style="font-size: var(--text-base);">
+                            <i class="fas fa-plus mr-2"></i>Create New Project
+                        </button>
+                        <button id="join-project-btn" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-6 py-3 rounded-lg font-medium transition-colors" style="font-size: var(--text-base);">
+                            <i class="fas fa-search mr-2"></i>Browse Projects
+                        </button>
                     </div>
                 </div>
-                <div class="flex gap-2">
-                    <select id="category-filter" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option value="">All Categories</option>
-                        <option value="Technology">Technology</option>
-                        <option value="Engineering">Engineering</option>
-                        <option value="Education">Education</option>
-                        <option value="Health">Health</option>
-                        <option value="Business">Business</option>
-                        <option value="Other">Other</option>
-                    </select>
-                    <select id="status-filter" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option value="">All Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Looking for Members">Looking for Members</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Archived">Archived</option>
-                    </select>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 text-center">
+                        <div class="text-3xl font-bold text-gray-900 mb-2" id="total-projects">0</div>
+                        <div class="text-sm text-gray-600">Total Projects</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 text-center">
+                        <div class="text-3xl font-bold text-gray-900 mb-2" id="active-projects">0</div>
+                        <div class="text-sm text-gray-600">Active Projects</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 text-center">
+                        <div class="text-3xl font-bold text-gray-900 mb-2" id="completed-projects">0</div>
+                        <div class="text-sm text-gray-600">Completed</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 text-center">
+                        <div class="text-3xl font-bold text-gray-900 mb-2" id="favorite-projects">0</div>
+                        <div class="text-sm text-gray-600">Favorites</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Projects Grid -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div id="loading" class="text-center py-12">
-            <i class="fas fa-spinner fa-spin text-4xl text-gray-400"></i>
-            <p class="mt-4 text-gray-600">Loading projects...</p>
+        <!-- Filter and Search Section -->
+        <div class="bg-white border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex flex-col lg:flex-row gap-4">
+                    <div class="flex-1">
+                        <div class="relative">
+                            <input type="text" id="search-input" placeholder="Search projects..." 
+                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent" style="font-size: var(--text-base);">
+                            <i class="fas fa-search absolute left-3 top-4 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <select id="category-filter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent" style="font-size: var(--text-base);">
+                            <option value="">All Categories</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Education">Education</option>
+                            <option value="Health">Health</option>
+                            <option value="Business">Business</option>
+                            <option value="Research">Research</option>
+                        </select>
+                        <select id="status-filter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent" style="font-size: var(--text-base);">
+                            <option value="">All Status</option>
+                            <option value="Active">Active</option>
+                            <option value="Looking for Members">Looking for Members</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Archived">Archived</option>
+                        </select>
+                        <select id="sort-filter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent" style="font-size: var(--text-base);">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="name">Name A-Z</option>
+                            <option value="status">Status</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
-            <!-- Projects will be dynamically loaded here -->
+
+        <!-- Projects Section -->
+        <div class="bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Loading State -->
+                <div id="loading" class="text-center py-12">
+                    <i class="fas fa-spinner fa-spin text-4xl text-gray-400"></i>
+                    <p class="mt-4 text-gray-600" style="font-size: var(--text-lg);">Loading projects...</p>
+                </div>
+                
+                <!-- Projects Grid -->
+                <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+                    <!-- Projects will be dynamically loaded here -->
+                </div>
+                
+                <!-- Empty State -->
+                <div id="no-projects" class="text-center py-12 hidden">
+                    <i class="fas fa-folder-open text-6xl text-gray-300"></i>
+                    <h3 class="mt-4 text-xl font-medium text-gray-900" style="font-size: var(--text-xl);">No projects found</h3>
+                    <p class="mt-2 text-gray-600" style="font-size: var(--text-lg);">Get started by creating your first project or browse existing ones.</p>
+                    <div class="mt-6 space-x-4">
+                        <button id="create-first-project" class="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-medium transition-colors" style="font-size: var(--text-base);">
+                            <i class="fas fa-plus mr-2"></i>Create Project
+                        </button>
+                        <button id="browse-projects" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-6 py-3 rounded-lg font-medium transition-colors" style="font-size: var(--text-base);">
+                            <i class="fas fa-search mr-2"></i>Browse Projects
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div id="no-projects" class="text-center py-12 hidden">
-            <i class="fas fa-project-diagram text-6xl text-gray-300 mb-4"></i>
-            <h3 class="text-xl font-semibold text-gray-600 mb-2">No projects found</h3>
-            <p class="text-gray-500">Try adjusting your search criteria or create a new project.</p>
-        </div>
-    </div>
 
     <!-- Project Details Modal -->
     <div id="project-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
@@ -687,6 +770,41 @@
             }
         });
 
+        // Toggle favorite project
+        function toggleFavorite(projectId, isFavorite) {
+            if (!currentUser) {
+                showMessage('Authentication Required', 'Please sign in to manage favorites.', true);
+                return;
+            }
+
+            const favoriteRef = db.collection('userFavorites')
+                .where('userId', '==', currentUser.uid)
+                .where('itemId', '==', projectId)
+                .where('type', '==', 'project');
+
+            if (isFavorite) {
+                // Remove from favorites
+                favoriteRef.get().then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        doc.ref.delete();
+                    });
+                    showMessage('Removed from Favorites', 'Project removed from your favorites.', false);
+                    loadProjects(); // Reload to update UI
+                });
+            } else {
+                // Add to favorites
+                db.collection('userFavorites').add({
+                    userId: currentUser.uid,
+                    itemId: projectId,
+                    type: 'project',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }).then(() => {
+                    showMessage('Added to Favorites', 'Project added to your favorites.', false);
+                    loadProjects(); // Reload to update UI
+                });
+            }
+        }
+
         // Initialize app
         function initializeApp() {
             auth.onAuthStateChanged((user) => {
@@ -695,7 +813,18 @@
                 updateFooter();
                 updateSidebar();
                 updateSidebarVisibility();
-                loadProjects();
+                
+                if (user) {
+                    loadProjects();
+                } else {
+                    // Clear projects when user logs out
+                    projects = [];
+                    userProjects = [];
+                    favoriteProjects = [];
+                    filteredProjects = [];
+                    updateProjectStats();
+                    displayProjects();
+                }
             });
         }
 
@@ -747,31 +876,124 @@
             }
         }
 
-        // Load projects from Firestore
+        // Data storage
+        let userProjects = [];
+        let favoriteProjects = [];
+        let projectStats = {
+            total: 0,
+            active: 0,
+            completed: 0,
+            favorites: 0
+        };
+
+        // Load user projects from Firestore
         function loadProjects() {
+            if (!currentUser) {
+                showMessage('Authentication Required', 'Please sign in to view your projects.', true);
+                return;
+            }
+
             loading.classList.remove('hidden');
             projectsGrid.classList.add('hidden');
             noProjects.classList.add('hidden');
 
+            // Load user's own projects
             db.collection('projects')
+                .where('createdBy', '==', currentUser.uid)
+                .orderBy('createdAt', 'desc')
                 .get()
                 .then((querySnapshot) => {
-                    projects = [];
+                    userProjects = [];
                     querySnapshot.forEach((doc) => {
                         const data = doc.data();
-                        projects.push({
+                        userProjects.push({
                             id: doc.id,
-                            ...data
+                            ...data,
+                            isOwner: true,
+                            isFavorite: false
                         });
                     });
-                    filteredProjects = [...projects];
-                    displayProjects();
+                    
+                    // Load favorite projects
+                    loadFavoriteProjects();
                 })
                 .catch((error) => {
-                    console.error('Error loading projects:', error);
+                    console.error('Error loading user projects:', error);
                     loading.classList.add('hidden');
                     noProjects.classList.remove('hidden');
                 });
+        }
+
+        // Load favorite projects
+        function loadFavoriteProjects() {
+            if (!currentUser) {
+                projects = userProjects;
+                updateProjectStats();
+                displayProjects();
+                return;
+            }
+
+            db.collection('userFavorites')
+                .where('userId', '==', currentUser.uid)
+                .where('type', '==', 'project')
+                .get()
+                .then((querySnapshot) => {
+                    const favoriteIds = [];
+                    querySnapshot.forEach((doc) => {
+                        favoriteIds.push(doc.data().itemId);
+                    });
+
+                    // Load favorite project details
+                    if (favoriteIds.length > 0) {
+                        db.collection('projects')
+                            .where('__name__', 'in', favoriteIds)
+                            .get()
+                            .then((favSnapshot) => {
+                                favoriteProjects = [];
+                                favSnapshot.forEach((doc) => {
+                                    const data = doc.data();
+                                    favoriteProjects.push({
+                                        id: doc.id,
+                                        ...data,
+                                        isOwner: false,
+                                        isFavorite: true
+                                    });
+                                });
+                                
+                                // Combine user projects and favorites
+                                projects = [...userProjects, ...favoriteProjects];
+                                filteredProjects = [...projects];
+                                updateProjectStats();
+                                displayProjects();
+                            });
+                    } else {
+                        projects = userProjects;
+                        filteredProjects = [...projects];
+                        updateProjectStats();
+                        displayProjects();
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error loading favorite projects:', error);
+                    projects = userProjects;
+                    filteredProjects = [...projects];
+                    updateProjectStats();
+                    displayProjects();
+                });
+        }
+
+        // Update project statistics
+        function updateProjectStats() {
+            projectStats.total = projects.length;
+            projectStats.active = projects.filter(p => p.status === 'Active').length;
+            projectStats.completed = projects.filter(p => p.status === 'Completed').length;
+            projectStats.favorites = projects.filter(p => p.isFavorite).length;
+
+            // Update UI
+            document.getElementById('total-projects').textContent = projectStats.total;
+            document.getElementById('active-projects').textContent = projectStats.active;
+            document.getElementById('completed-projects').textContent = projectStats.completed;
+            document.getElementById('favorite-projects').textContent = projectStats.favorites;
         }
 
         // Display projects
@@ -795,44 +1017,54 @@
         // Create project card
         function createProjectCard(project) {
             const card = document.createElement('div');
-            card.className = 'project-card bg-white rounded-lg shadow-md p-6 cursor-pointer';
+            card.className = 'bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow cursor-pointer';
             
-            const statusClass = getStatusClass(project.status);
-            const categoryIcon = getCategoryIcon(project.category);
+            const statusColors = {
+                'Active': 'bg-green-100 text-green-800',
+                'Looking for Members': 'bg-yellow-100 text-yellow-800',
+                'Completed': 'bg-blue-100 text-blue-800',
+                'Archived': 'bg-gray-100 text-gray-800'
+            };
+
+            const statusClass = statusColors[project.status] || 'bg-gray-100 text-gray-800';
             
             card.innerHTML = `
                 <div class="flex items-start justify-between mb-4">
                     <div class="flex items-center">
-                        <i class="${categoryIcon} text-2xl text-gray-600 mr-3"></i>
+                        <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-project-diagram text-gray-600 text-xl"></i>
+                        </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900" style="font-size: var(--text-lg);">${project.title || 'Untitled Project'}</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1" style="font-size: var(--text-lg);">${project.title || 'Untitled Project'}</h3>
                             <p class="text-sm text-gray-500" style="font-size: var(--text-sm);">${project.category || 'General'}</p>
                         </div>
                     </div>
-                    <span class="status-badge ${statusClass}">${project.status || 'Unknown'}</span>
-                </div>
-                
-                <p class="text-gray-600 mb-4 line-clamp-3">${project.description || 'No description available'}</p>
-                
-                <div class="flex items-center justify-between text-sm text-gray-500">
-                    <div class="flex items-center">
-                        <i class="fas fa-users mr-1"></i>
-                        <span>${project.members || 0}/${project.teamSize || 1} members</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-calendar mr-1"></i>
-                        <span>${formatDate(project.createdAt)}</span>
+                    <div class="flex items-center space-x-2">
+                        ${project.isFavorite ? '<i class="fas fa-heart text-red-500"></i>' : ''}
+                        ${project.isOwner ? '<i class="fas fa-crown text-yellow-500"></i>' : ''}
                     </div>
                 </div>
                 
-                ${project.tags && project.tags.length > 0 ? `
-                    <div class="mt-4 flex flex-wrap gap-2">
-                        ${project.tags.slice(0, 3).map(tag => `
-                            <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full" style="font-size: var(--text-xs);">${tag}</span>
-                        `).join('')}
-                        ${project.tags.length > 3 ? `<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">+${project.tags.length - 3} more</span>` : ''}
+                <p class="text-gray-600 mb-4 line-clamp-3" style="font-size: var(--text-sm);">${project.description || 'No description available'}</p>
+                
+                <div class="flex items-center justify-between mb-4">
+                    <span class="px-2 py-1 rounded-full text-xs font-medium ${statusClass}">
+                        ${project.status || 'Unknown'}
+                    </span>
+                    <span class="text-xs text-gray-500">
+                        ${formatDate(project.createdAt)}
+                    </span>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                        <span><i class="fas fa-users mr-1"></i>${project.members ? project.members.length : 0}</span>
+                        <span><i class="fas fa-tasks mr-1"></i>${project.tasks ? project.tasks.length : 0}</span>
                     </div>
-                ` : ''}
+                    <button onclick="openProjectModal('${project.id}')" class="text-gray-600 hover:text-gray-900 font-medium" style="font-size: var(--text-sm);">
+                        View Details
+                    </button>
+                </div>
             `;
             
             card.addEventListener('click', () => openProjectModal(project));
