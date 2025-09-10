@@ -582,12 +582,19 @@
 
         /* Only apply sidebar margin when sidebar is visible and user is logged in */
         .main-content.with-sidebar {
-            margin-left: 280px;
+            margin-left: 280px !important;
         }
 
         /* Ensure logged-out users get full width */
         .main-content:not(.with-sidebar) {
-            margin-left: 0;
+            margin-left: 0 !important;
+        }
+
+        /* Force margin for logged-in desktop users */
+        @media (min-width: 1024px) {
+            .main-content.with-sidebar {
+                margin-left: 280px !important;
+            }
         }
 
         /* Ensure navigation bar stays in main content */
@@ -838,17 +845,6 @@
 
     <!-- Hero Section -->
     <section id="home" class="bg-white text-gray-900 relative overflow-hidden">
-        <!-- Hero Background Image (for logged-out users) -->
-        <div id="hero-background" class="absolute inset-0 pointer-events-none">
-            <div class="hero-image-placeholder w-full h-full opacity-10">
-                <div class="opacity-30">
-                    <i class="fas fa-flask text-4xl mb-4"></i>
-                    <div>Lab Research Environment</div>
-                    <div class="text-sm mt-2">Students working on robotics and AI projects</div>
-                </div>
-            </div>
-            <div class="hero-overlay"></div>
-        </div>
         
         <div id="hero-content" class="max-w-6xl mx-auto px-6 py-32 relative z-20">
             <div class="text-center">
@@ -1755,6 +1751,21 @@
             if (window.updateSidebarVisibility) {
                 window.updateSidebarVisibility();
             }
+            
+            // Force margin update for logged-in users
+            const mainContent = document.getElementById('main-content');
+            if (currentUser && mainContent) {
+                if (window.innerWidth >= 1024) {
+                    mainContent.style.marginLeft = '280px';
+                    mainContent.classList.add('with-sidebar');
+                } else {
+                    mainContent.style.marginLeft = '0';
+                    mainContent.classList.remove('with-sidebar');
+                }
+            } else if (mainContent) {
+                mainContent.style.marginLeft = '0';
+                mainContent.classList.remove('with-sidebar');
+            }
         }
 
         // Update dynamic content based on login status
@@ -2649,11 +2660,13 @@
                         // Desktop: Always visible, no toggle needed
                         sidebarToggle.classList.add('hidden');
                         mainContent.classList.add('with-sidebar');
+                        mainContent.style.marginLeft = '280px';
                         sidebar.classList.remove('open');
                     } else {
                         // Mobile/Tablet: Overlay menu with toggle
                         sidebarToggle.classList.remove('hidden');
                         mainContent.classList.remove('with-sidebar');
+                        mainContent.style.marginLeft = '0';
                         sidebar.classList.remove('open');
                     }
                 } else {
