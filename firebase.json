@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "csulbcpxlab",
     "public": ".",
     "ignore": [
       "firebase.json",
