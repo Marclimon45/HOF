@@ -22,6 +22,90 @@
         .hamburger.active .hamburger-line:nth-child(3) {
             transform: rotate(-45deg) translate(7px, -6px);
         }
+
+        /* Carousel Styles */
+        .looper {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .looper__innerList {
+            display: flex;
+            justify-content: flex-start;
+            width: fit-content;
+            animation: slideAnimation 60s linear infinite;
+        }
+
+        .looper__innerList--reverse {
+            animation: slideAnimationReverse 60s linear infinite;
+        }
+
+        .looper__listInstance {
+            display: flex;
+            width: max-content;
+            animation: none;
+        }
+
+        @keyframes slideAnimation {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes slideAnimationReverse {
+            0% {
+                transform: translateX(-50%);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .project-card {
+            flex: 0 0 auto;
+            width: 200px;
+            height: 100px;
+            margin: 0.5rem;
+            border-radius: 0.75rem;
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .project-card i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #3b82f6;
+        }
+
+        .project-card h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .project-card p {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin: 0.25rem 0 0 0;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -74,7 +158,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+    <section id="home" class="bg-gradient-to-r from-white via-blue-50 to-white text-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <div class="text-center">
                 <h1 class="text-4xl md:text-6xl font-bold mb-6" id="hero-title">
@@ -85,6 +169,25 @@
                 </p>
                 <div id="hero-actions" class="flex flex-col sm:flex-row gap-4 justify-center">
                     <!-- Dynamic action buttons will be inserted here -->
+                </div>
+            </div>
+            
+            <!-- Projects Carousel -->
+            <div class="mt-16">
+                <h3 class="text-2xl font-semibold text-center mb-8">Featured Projects</h3>
+                
+                <!-- First carousel row - moves left to right -->
+                <div class="looper">
+                    <div class="looper__innerList looper__innerList--normal">
+                        <!-- Dynamic content will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Second carousel row - moves right to left -->
+                <div class="looper mt-4">
+                    <div class="looper__innerList looper__innerList--reverse">
+                        <!-- Dynamic content will be populated by JavaScript -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -209,6 +312,9 @@
         // User state management
         let currentUser = null;
         let userType = 'guest'; // 'guest', 'user', 'admin', 'premium'
+        
+        // Projects data
+        let projects = [];
 
         // DOM elements
         const hamburger = document.getElementById('hamburger');
@@ -256,6 +362,175 @@
         function updateUI() {
             updateAuthButtons();
             updateHeroContent();
+            loadProjects();
+        }
+
+        // Load projects from Firestore
+        function loadProjects() {
+            db.collection('projects')
+                .where('featured', '==', true)
+                .limit(12)
+                .get()
+                .then((querySnapshot) => {
+                    projects = [];
+                    querySnapshot.forEach((doc) => {
+                        projects.push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                    });
+                    populateCarousel();
+                })
+                .catch((error) => {
+                    console.error('Error loading projects:', error);
+                    // Fallback to default projects if Firebase fails
+                    loadDefaultProjects();
+                });
+        }
+
+        // Fallback default projects
+        function loadDefaultProjects() {
+            projects = [
+                {
+                    id: '1',
+                    title: 'AI Assistant',
+                    description: 'Smart automation',
+                    icon: 'fas fa-robot',
+                    category: 'AI'
+                },
+                {
+                    id: '2',
+                    title: 'Mobile App',
+                    description: 'iOS & Android',
+                    icon: 'fas fa-mobile-alt',
+                    category: 'Mobile'
+                },
+                {
+                    id: '3',
+                    title: 'Web Platform',
+                    description: 'Global reach',
+                    icon: 'fas fa-globe',
+                    category: 'Web'
+                },
+                {
+                    id: '4',
+                    title: 'Data Analytics',
+                    description: 'Insights & reports',
+                    icon: 'fas fa-database',
+                    category: 'Analytics'
+                },
+                {
+                    id: '5',
+                    title: 'Security Suite',
+                    description: 'Enterprise grade',
+                    icon: 'fas fa-shield-alt',
+                    category: 'Security'
+                },
+                {
+                    id: '6',
+                    title: 'Cloud Infrastructure',
+                    description: 'Scalable & secure',
+                    icon: 'fas fa-cloud',
+                    category: 'Cloud'
+                },
+                {
+                    id: '7',
+                    title: 'Machine Learning',
+                    description: 'Advanced algorithms',
+                    icon: 'fas fa-brain',
+                    category: 'AI'
+                },
+                {
+                    id: '8',
+                    title: 'Analytics Dashboard',
+                    description: 'Real-time insights',
+                    icon: 'fas fa-chart-line',
+                    category: 'Analytics'
+                },
+                {
+                    id: '9',
+                    title: 'Dev Tools',
+                    description: 'Developer productivity',
+                    icon: 'fas fa-code',
+                    category: 'Development'
+                },
+                {
+                    id: '10',
+                    title: 'AR/VR Experience',
+                    description: 'Immersive technology',
+                    icon: 'fas fa-vr-cardboard',
+                    category: 'Emerging Tech'
+                },
+                {
+                    id: '11',
+                    title: 'IoT Solutions',
+                    description: 'Connected devices',
+                    icon: 'fas fa-microchip',
+                    category: 'IoT'
+                },
+                {
+                    id: '12',
+                    title: 'Blockchain',
+                    description: 'Secure transactions',
+                    icon: 'fas fa-lock',
+                    category: 'Blockchain'
+                }
+            ];
+            populateCarousel();
+        }
+
+        // Populate carousel with project data
+        function populateCarousel() {
+            const carousel1 = document.querySelector('.looper__innerList--normal');
+            const carousel2 = document.querySelector('.looper__innerList--reverse');
+            
+            if (!carousel1 || !carousel2) return;
+
+            // Clear existing content
+            carousel1.innerHTML = '';
+            carousel2.innerHTML = '';
+
+            // Split projects into two groups
+            const firstHalf = projects.slice(0, Math.ceil(projects.length / 2));
+            const secondHalf = projects.slice(Math.ceil(projects.length / 2));
+
+            // Create first carousel (normal direction)
+            createCarouselRow(carousel1, firstHalf);
+            createCarouselRow(carousel1, firstHalf); // Duplicate for seamless loop
+
+            // Create second carousel (reverse direction)
+            createCarouselRow(carousel2, secondHalf);
+            createCarouselRow(carousel2, secondHalf); // Duplicate for seamless loop
+        }
+
+        // Create a carousel row with project cards
+        function createCarouselRow(container, projectList) {
+            const listInstance = document.createElement('div');
+            listInstance.className = 'looper__listInstance';
+
+            projectList.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.innerHTML = `
+                    <i class="${project.icon || 'fas fa-project-diagram'}"></i>
+                    <h4>${project.title || 'Project'}</h4>
+                    <p>${project.description || 'Innovation project'}</p>
+                `;
+                
+                // Add click handler for project details
+                card.addEventListener('click', () => {
+                    openProjectDetails(project);
+                });
+                
+                listInstance.appendChild(card);
+            });
+
+            container.appendChild(listInstance);
+        }
+
+        // Open project details (placeholder)
+        function openProjectDetails(project) {
+            alert(`Project: ${project.title}\nDescription: ${project.description}\nCategory: ${project.category || 'General'}`);
         }
 
         // Update authentication buttons
@@ -315,10 +590,10 @@
                     heroTitle.textContent = 'Welcome to CPX Lab';
                     heroDescription.textContent = 'Join our community of innovators and start your journey today';
                     heroActions.innerHTML = `
-                        <button onclick="showRegisterModal()" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                        <button onclick="showRegisterModal()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                             Get Started
                         </button>
-                        <button onclick="showLoginModal()" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                        <button onclick="showLoginModal()" class="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition-colors">
                             Sign In
                         </button>
                     `;
@@ -327,10 +602,10 @@
                     heroTitle.textContent = 'Welcome back!';
                     heroDescription.textContent = 'Continue your innovation journey and explore new opportunities';
                     heroActions.innerHTML = `
-                        <button onclick="goToDashboard()" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                        <button onclick="goToDashboard()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                             Go to Dashboard
                         </button>
-                        <button onclick="exploreProjects()" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                        <button onclick="exploreProjects()" class="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition-colors">
                             Explore Projects
                         </button>
                     `;
@@ -339,10 +614,10 @@
                     heroTitle.textContent = 'Admin Dashboard';
                     heroDescription.textContent = 'Manage the platform and support our community of innovators';
                     heroActions.innerHTML = `
-                        <button onclick="goToAdminPanel()" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                        <button onclick="goToAdminPanel()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                             Admin Panel
                         </button>
-                        <button onclick="viewAnalytics()" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                        <button onclick="viewAnalytics()" class="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition-colors">
                             View Analytics
                         </button>
                     `;
@@ -351,10 +626,10 @@
                     heroTitle.textContent = 'Premium Member';
                     heroDescription.textContent = 'Unlock exclusive features and advanced tools for your projects';
                     heroActions.innerHTML = `
-                        <button onclick="goToDashboard()" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                        <button onclick="goToDashboard()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                             Premium Dashboard
                         </button>
-                        <button onclick="explorePremiumFeatures()" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                        <button onclick="explorePremiumFeatures()" class="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition-colors">
                             Premium Features
                         </button>
                     `;
