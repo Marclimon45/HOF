@@ -448,7 +448,7 @@
             transform: scale(1.02);
         }
 
-        /* Left Sidebar Styles */
+        /* Left Sidebar Styles - Responsive Design */
         .sidebar {
             position: fixed;
             top: 0;
@@ -457,20 +457,52 @@
             width: 280px;
             background: #f8f9fa;
             border-right: 1px solid #e5e7eb;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
             z-index: 1000;
             overflow-y: auto;
+            transition: transform 0.3s ease;
         }
 
-        .sidebar.open {
-            transform: translateX(0);
+        /* Desktop: Always visible by default */
+        @media (min-width: 1024px) {
+            .sidebar {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 280px;
+            }
+            
+            .sidebar-toggle {
+                display: none;
+            }
+        }
+
+        /* Tablet and Mobile: Overlay menu */
+        @media (max-width: 1023px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar-toggle {
+                display: block;
+            }
         }
 
         .sidebar-header {
             padding: 1.5rem;
             border-bottom: 1px solid #e5e7eb;
             background: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .sidebar-logo {
@@ -480,23 +512,20 @@
         }
 
         .sidebar-nav {
-            padding: 2rem 0;
+            padding: 1rem 0;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
-            gap: 0.5rem;
         }
 
         .sidebar-nav-item {
             display: flex;
             align-items: center;
-            padding: 1rem 1.5rem;
+            padding: 0.875rem 1.5rem;
             color: #6b7280;
             text-decoration: none;
             transition: all 0.2s ease;
             border-left: 3px solid transparent;
             text-align: left;
-            margin: 0.25rem 0;
         }
 
         .sidebar-nav-item span {
@@ -516,7 +545,7 @@
 
         .sidebar-nav-item i {
             width: 20px;
-            margin-right: 0.75rem;
+            text-align: center;
         }
 
         .breadcrumb {
@@ -526,6 +555,9 @@
             background: white;
             border-bottom: 1px solid #e5e7eb;
             font-size: 0.875rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .breadcrumb-item {
@@ -548,12 +580,7 @@
         }
 
         .main-content {
-            margin-left: 0;
             transition: margin-left 0.3s ease;
-        }
-
-        .main-content.with-sidebar {
-            margin-left: 280px;
         }
 
         /* Ensure navigation bar stays in main content */
@@ -594,10 +621,6 @@
             transition: all 0.2s ease;
         }
 
-        .main-content.with-sidebar .sidebar-toggle {
-            left: 1rem;
-        }
-
         .sidebar-toggle:hover {
             background: #f9fafb;
         }
@@ -606,15 +629,16 @@
             display: none;
         }
 
-        /* Mobile responsive */
+        /* Mobile specific adjustments */
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
                 max-width: 320px;
             }
             
-            .main-content.with-sidebar {
-                margin-left: 0;
+            .sidebar-toggle {
+                top: 0.75rem;
+                left: 0.75rem;
             }
         }
 
@@ -869,7 +893,7 @@
                             CPX Lab leverages cutting-edge project management technology to streamline research workflows, 
                             track student progress, and accelerate academic discovery across multiple disciplines.
                         </p>
-                    </div>
+                </div>
                     
                     <!-- Lab Environment Image -->
                     <div class="mb-16">
@@ -878,7 +902,7 @@
                                 <i class="fas fa-users text-4xl mb-4"></i>
                                 <div>Lab Research Environment</div>
                                 <div class="text-sm mt-2">Graduate students collaborating on research projects</div>
-                            </div>
+                </div>
                         </div>
                     </div>
                     
@@ -903,7 +927,7 @@
                             </div>
                             <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Student Development</h3>
                             <p class="text-gray-600 leading-relaxed font-light" style="font-size: var(--text-lg);">Students manage their research portfolio, track learning milestones, and showcase their academic achievements.</p>
-                        </div>
+                </div>
             </div>
         </div>
     </section>
@@ -916,7 +940,7 @@
                         <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light" style="font-size: var(--text-xl);">
                             We're looking for passionate graduate students, postdocs, and researchers to join our cutting-edge research projects.
                         </p>
-                    </div>
+            </div>
                     
                     <!-- Team Collaboration Image -->
                     <div class="mb-16">
@@ -1046,23 +1070,23 @@
                                     rows="3"
                                 ></textarea>
                                 <div class="flex justify-between items-center mt-4">
-                                    <div class="flex space-x-2">
+                <div class="flex space-x-2">
                                         <button class="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200">
                                             <i class="fas fa-tag mr-1"></i>Add Tag
                                         </button>
                                         <button class="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200">
                                             <i class="fas fa-link mr-1"></i>Link Project
-                                        </button>
-                                    </div>
+                    </button>
+                </div>
                                     <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                                         <i class="fas fa-paper-plane mr-2"></i>Share Update
                                     </button>
-                                </div>
+            </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
+            </div>
+        </div>
+    </section>
 
             <!-- Automated Project Overview -->
             <section class="py-16 bg-white">
@@ -1170,9 +1194,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
+            </div>
+        </div>
+    </section>
 
             <!-- Lab Insights & Collaboration -->
             <section class="py-16 bg-gray-50">
@@ -2567,18 +2591,18 @@
             const mainContent = document.getElementById('main-content');
             const mainNav = document.getElementById('main-nav');
 
-            // Toggle sidebar
+            // Toggle sidebar (only for mobile/tablet)
             function toggleSidebar() {
-                sidebar.classList.toggle('open');
-                sidebarOverlay.classList.toggle('open');
-                mainContent.classList.toggle('with-sidebar');
+                if (window.innerWidth < 1024) {
+                    sidebar.classList.toggle('open');
+                    sidebarOverlay.classList.toggle('open');
+                }
             }
 
             // Close sidebar
             function closeSidebar() {
                 sidebar.classList.remove('open');
                 sidebarOverlay.classList.remove('open');
-                mainContent.classList.remove('with-sidebar');
             }
 
             // Event listeners
@@ -2605,19 +2629,42 @@
                 });
             });
 
-            // Show/hide sidebar based on login status
+            // Show/hide sidebar based on login status and screen size
             function updateSidebarVisibility() {
                 if (currentUser) {
-                    sidebarToggle.classList.remove('hidden');
-                    mainContent.classList.add('with-sidebar');
-                    // Don't auto-open sidebar, let user control it
-                    sidebar.classList.remove('open');
+                    // Show sidebar for logged-in users
+                    sidebar.style.display = 'block';
+                    
+                    // Check screen size for responsive behavior
+                    if (window.innerWidth >= 1024) {
+                        // Desktop: Always visible, no toggle needed
+                        sidebarToggle.classList.add('hidden');
+                        mainContent.classList.add('with-sidebar');
+                        sidebar.classList.remove('open');
+                    } else {
+                        // Mobile/Tablet: Overlay menu with toggle
+                        sidebarToggle.classList.remove('hidden');
+                        mainContent.classList.remove('with-sidebar');
+                        sidebar.classList.remove('open');
+                    }
                 } else {
+                    // Hide sidebar for logged-out users
+                    sidebar.style.display = 'none';
                     sidebarToggle.classList.add('hidden');
                     mainContent.classList.remove('with-sidebar');
                     sidebar.classList.remove('open');
                 }
             }
+
+            // Handle window resize
+            function handleResize() {
+                if (currentUser) {
+                    updateSidebarVisibility();
+                }
+            }
+
+            // Add resize listener
+            window.addEventListener('resize', handleResize);
 
             // Update sidebar visibility on auth state change
             updateSidebarVisibility();
