@@ -414,6 +414,7 @@
             auth.onAuthStateChanged((user) => {
                 currentUser = user;
                 updateAuthButtons();
+                updateFooter();
                 loadIdeas();
             });
         }
@@ -838,6 +839,134 @@
             document.getElementById('messageTitle').className = isError ? 'text-2xl font-bold text-red-600' : 'text-2xl font-bold text-green-600';
             document.getElementById('messageModal').classList.add('show');
         }
+
+        // Update footer based on login status
+        function updateFooter() {
+            const guestFooter = document.getElementById('footer-guest');
+            const loggedInFooter = document.getElementById('footer-logged-in');
+            const userRoleDisplay = document.getElementById('user-role-display');
+            
+            if (currentUser) {
+                // User is logged in - show logged-in footer
+                if (guestFooter) guestFooter.style.display = 'none';
+                if (loggedInFooter) loggedInFooter.style.display = 'block';
+                
+                // Update user role display
+                if (userRoleDisplay) {
+                    userRoleDisplay.textContent = getUserRole();
+                }
+            } else {
+                // User is not logged in - show guest footer
+                if (guestFooter) guestFooter.style.display = 'block';
+                if (loggedInFooter) loggedInFooter.style.display = 'none';
+            }
+        }
+
+        // Get user role for display
+        function getUserRole() {
+            if (!currentUser) return 'Guest';
+            
+            if (currentUser.email && currentUser.email.includes('admin')) {
+                return 'Professor';
+            } else if (currentUser.email && currentUser.email.includes('senior')) {
+                return 'Senior Researcher';
+            } else {
+                return 'Researcher';
+            }
+        }
     </script>
+
+    <!-- Dynamic Footer -->
+    <footer id="dynamic-footer" class="bg-gray-900 text-white">
+        <!-- Logged-out Footer -->
+        <div id="footer-guest" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-2xl font-bold mb-4">CPX Lab</h3>
+                    <p class="text-gray-400 mb-4">
+                        Join our cutting-edge research community. We're looking for passionate graduate students, 
+                        postdocs, and researchers to advance scientific discovery together.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Join Our Lab</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition-colors">Apply to Lab</a></li>
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition-colors">Lab Member Login</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Research Areas</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Lab Publications</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Lab Guidelines</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Research Ethics</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2024 CPX Lab. All rights reserved.</p>
+            </div>
+        </div>
+
+        <!-- Logged-in Footer -->
+        <div id="footer-logged-in" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style="display: none;">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-2xl font-bold mb-4">CPX Lab Platform</h3>
+                    <p class="text-gray-400 mb-4">
+                        Welcome to your research management dashboard. Track projects, collaborate with lab members, 
+                        and advance your academic career with our comprehensive platform.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Lab Resources</h4>
+                    <ul class="space-y-2">
+                        <li><a href="projects.html" class="text-gray-400 hover:text-white transition-colors">My Projects</a></li>
+                        <li><a href="ideas.html" class="text-gray-400 hover:text-white transition-colors">Research Ideas</a></li>
+                        <li><a href="users.html" class="text-gray-400 hover:text-white transition-colors">Lab Members</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Lab Calendar</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Support & Tools</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Platform Help</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">GitHub Integration</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Lab Policies</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact Admin</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2024 CPX Lab. All rights reserved. | <span id="user-role-display">Lab Member</span></p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
