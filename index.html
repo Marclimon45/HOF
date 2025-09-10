@@ -885,7 +885,7 @@
     </div>
 
     <!-- CTA Section -->
-    <section class="py-32 bg-gray-900 text-white">
+    <section id="cta-section" class="py-32 bg-gray-900 text-white">
         <div class="max-w-6xl mx-auto text-center px-6">
             <h2 class="text-5xl font-light mb-8" style="font-size: var(--text-5xl);">Ready to Advance Your Research?</h2>
             <p class="text-xl mb-16 text-gray-300 max-w-4xl mx-auto leading-relaxed font-light" style="font-size: var(--text-xl);">
@@ -1289,11 +1289,13 @@
         function updateDynamicContent() {
             const guestContent = document.getElementById('guest-content');
             const loggedInContent = document.getElementById('logged-in-content');
+            const ctaSection = document.getElementById('cta-section');
             
             if (currentUser) {
-                // User is logged in - show logged-in content
+                // User is logged in - show logged-in content, hide CTA section
                 guestContent.style.display = 'none';
                 loggedInContent.style.display = 'block';
+                ctaSection.style.display = 'none';
                 
                 // Add animations to logged-in content
                 setTimeout(() => {
@@ -1309,9 +1311,10 @@
                     });
                 }, 100);
             } else {
-                // User is not logged in - show guest content
+                // User is not logged in - show guest content and CTA section
                 guestContent.style.display = 'block';
                 loggedInContent.style.display = 'none';
+                ctaSection.style.display = 'block';
                 
                 // Add animations to guest content
                 setTimeout(() => {
