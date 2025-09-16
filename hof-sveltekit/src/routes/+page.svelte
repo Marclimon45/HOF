@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import Hero from '$lib/components/Hero.svelte';
+  import AboutSection from '$lib/components/AboutSection.svelte';
   import { user, loading } from '$lib/stores/auth';
-  import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
-  import { db } from '$lib/firebase';
+  import { onMount } from 'svelte';
   
   let stats = {
     totalProjects: 0,
@@ -11,73 +11,26 @@
     publications: 0
   };
   
-  let featuredProjects = [];
-  let recentActivity = [];
-  let labInsights = [];
-  
   onMount(async () => {
-    if ($user) {
-      await loadDashboardData();
-    }
+    // Load basic stats - in the original these were hardcoded
+    stats = {
+      totalProjects: 15,
+      activeMembers: 25,
+      researchIdeas: 42,
+      publications: 8
+    };
   });
   
-  async function loadDashboardData() {
-    try {
-      // Load stats
-      const projectsSnapshot = await getDocs(collection(db, 'projects'));
-      stats.totalProjects = projectsSnapshot.size;
-      
-      const usersSnapshot = await getDocs(collection(db, 'users'));
-      stats.activeMembers = usersSnapshot.size;
-      
-      const ideasSnapshot = await getDocs(collection(db, 'ideas'));
-      stats.researchIdeas = ideasSnapshot.size;
-      
-      // Load featured projects
-      const featuredQuery = query(
-        collection(db, 'projects'),
-        orderBy('createdAt', 'desc'),
-        limit(3)
-      );
-      const featuredSnapshot = await getDocs(featuredQuery);
-      featuredProjects = featuredSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      
-      // Load recent activity
-      const activityQuery = query(
-        collection(db, 'activity'),
-        orderBy('timestamp', 'desc'),
-        limit(5)
-      );
-      const activitySnapshot = await getDocs(activityQuery);
-      recentActivity = activitySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      
-      // Load lab insights
-      const insightsQuery = query(
-        collection(db, 'insights'),
-        orderBy('createdAt', 'desc'),
-        limit(3)
-      );
-      const insightsSnapshot = await getDocs(insightsQuery);
-      labInsights = insightsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      
-    } catch (error) {
-      console.error('Error loading dashboard data:', error);
-    }
+  function openModal(event: CustomEvent) {
+    // Dispatch the modal event to the parent layout
+    const modalEvent = new CustomEvent('openModal', { detail: event.detail });
+    document.dispatchEvent(modalEvent);
   }
 </script>
 
 <svelte:head>
-  <title>CPX Lab - Research Collaboration Platform</title>
-  <meta name="description" content="Advancing research through collaboration and innovation. Join our community of researchers, engineers, and innovators." />
+  <title>CPX Lab - Research Lab Management Platform</title>
+  <meta name="description" content="Advanced research project management and student progress tracking for academic excellence" />
 </svelte:head>
 
 {#if $loading}
@@ -87,201 +40,184 @@
       <p class="mt-4 text-gray-600">Loading...</p>
     </div>
   </div>
-{:else if $user}
-  <!-- Logged-in Homepage -->
-  <div class="pt-16">
-    <!-- Hero Section -->
-    <div class="bg-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="text-center">
-          <h1 class="text-4xl font-bold text-gray-900 mb-4" style="font-size: var(--text-4xl);">
-            Welcome back, {$user.displayName || 'Researcher'}!
-          </h1>
-          <p class="text-xl text-gray-600 mb-8" style="font-size: var(--text-xl);">
-            Continue your research journey and collaborate with fellow innovators
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stats Section -->
-    <div class="bg-gray-50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div class="stats-card">
-            <div class="text-3xl font-bold text-gray-900 mb-2">{stats.totalProjects}</div>
-            <div class="text-sm text-gray-600">Active Projects</div>
-          </div>
-          <div class="stats-card">
-            <div class="text-3xl font-bold text-gray-900 mb-2">{stats.activeMembers}</div>
-            <div class="text-sm text-gray-600">Lab Members</div>
-          </div>
-          <div class="stats-card">
-            <div class="text-3xl font-bold text-gray-900 mb-2">{stats.researchIdeas}</div>
-            <div class="text-sm text-gray-600">Research Ideas</div>
-          </div>
-          <div class="stats-card">
-            <div class="text-3xl font-bold text-gray-900 mb-2">{stats.publications}</div>
-            <div class="text-sm text-gray-600">Publications</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="bg-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <!-- Featured Projects -->
-          <div class="lg:col-span-2">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6" style="font-size: var(--text-2xl);">
-              Featured Projects
-            </h2>
-            <div class="space-y-4">
-              {#each featuredProjects as project}
-                <div class="project-card">
-                  <div class="flex items-start justify-between mb-4">
-                    <div class="flex items-center">
-                      <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-project-diagram text-gray-600 text-xl"></i>
-                      </div>
-                      <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-1" style="font-size: var(--text-lg);">
-                          {project.title || 'Untitled Project'}
-                        </h3>
-                        <p class="text-sm text-gray-500" style="font-size: var(--text-sm);">
-                          {project.category || 'General'}
-                        </p>
-                      </div>
-                    </div>
-                    <span class="status-badge status-{project.status?.toLowerCase() || 'active'}">
-                      {project.status || 'Active'}
-                    </span>
-                  </div>
-                  
-                  <p class="text-gray-600 mb-4 line-clamp-3" style="font-size: var(--text-sm);">
-                    {project.description || 'No description available'}
-                  </p>
-                  
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-4 text-sm text-gray-500">
-                      <span><i class="fas fa-users mr-1"></i>{project.members?.length || 0}</span>
-                      <span><i class="fas fa-tasks mr-1"></i>{project.tasks?.length || 0}</span>
-                    </div>
-                    <a href="/projects" class="text-gray-600 hover:text-gray-900 font-medium" style="font-size: var(--text-sm);">
-                      View Details
-                    </a>
-                  </div>
-                </div>
-              {/each}
-            </div>
-          </div>
-
-          <!-- Recent Activity -->
-          <div>
-            <h2 class="text-2xl font-bold text-gray-900 mb-6" style="font-size: var(--text-2xl);">
-              Recent Activity
-            </h2>
-            <div class="space-y-4">
-              {#each recentActivity as activity}
-                <div class="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
-                  <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                    <i class="fas fa-{activity.type === 'project' ? 'project-diagram' : 'lightbulb'} text-gray-600 text-sm"></i>
-                  </div>
-                  <div class="flex-1">
-                    <p class="text-sm text-gray-900" style="font-size: var(--text-sm);">
-                      {activity.description || 'New activity'}
-                    </p>
-                    <p class="text-xs text-gray-500" style="font-size: var(--text-xs);">
-                      {activity.timestamp?.toDate?.()?.toLocaleDateString() || 'Recently'}
-                    </p>
-                  </div>
-                </div>
-              {/each}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 {:else}
-  <!-- Guest Homepage -->
-  <div class="pt-16">
-    <!-- Hero Section -->
-    <div class="bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div class="text-center">
-          <h1 class="text-5xl font-bold mb-6" style="font-size: var(--text-5xl);">
-            Welcome to CPX Lab
-          </h1>
-          <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto" style="font-size: var(--text-xl);">
-            Advancing research through collaboration and innovation. Join our community of researchers, 
-            engineers, and innovators working on cutting-edge projects.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/auth/signin" class="btn-primary">
-              <i class="fas fa-sign-in-alt mr-2"></i>
-              Sign In
-            </a>
-            <a href="/auth/signup" class="btn-secondary">
-              <i class="fas fa-user-plus mr-2"></i>
-              Join Lab
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Features Section -->
-    <div class="bg-white py-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <h2 class="text-3xl font-bold text-gray-900 mb-4" style="font-size: var(--text-3xl);">
-            Why Choose CPX Lab?
-          </h2>
-          <p class="text-lg text-gray-600 max-w-2xl mx-auto" style="font-size: var(--text-lg);">
-            Our platform provides everything you need to collaborate, innovate, and advance your research.
-          </p>
-        </div>
+  <Hero on:openModal={openModal} />
+  
+  {#if !$user}
+    <!-- Dynamic Content Sections -->
+    <div id="dynamic-content">
+      <!-- Guest/Logged-out Content -->
+      <div id="guest-content">
+        <AboutSection />
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="text-center">
-            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i class="fas fa-project-diagram text-2xl text-gray-600"></i>
+        <!-- Lab Recruitment Section -->
+        <section class="py-32">
+          <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-24">
+              <h2 class="text-5xl font-light text-gray-900 mb-8" style="font-size: var(--text-5xl);">Join Our Research Community</h2>
+              <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light" style="font-size: var(--text-xl);">
+                We're looking for passionate graduate students, postdocs, and researchers to join our cutting-edge research projects.
+              </p>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2" style="font-size: var(--text-xl);">
-              Project Management
-            </h3>
-            <p class="text-gray-600" style="font-size: var(--text-base);">
-              Organize and track your research projects with our intuitive project management tools.
-            </p>
+                  
+            <!-- Team Collaboration Image -->
+            <div class="mb-16">
+              <div class="section-image image-placeholder">
+                <div>
+                  <i class="fas fa-handshake text-4xl mb-4"></i>
+                  <div>Team Collaboration</div>
+                  <div class="text-sm mt-2">Researchers working together on innovative projects</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+              <div class="p-12 rounded-lg border border-gray-200 hover-lift slide-in-left">
+                <div class="w-16 h-16 text-gray-900 rounded-lg flex items-center justify-center mb-8 text-2xl font-light">1</div>
+                <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Apply to Lab</h3>
+                <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Submit your research interests, CV, and academic background through our application portal.</p>
+                <ul class="text-sm text-gray-500 space-y-3 font-light">
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research statement</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Academic transcripts</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Reference letters</li>
+                </ul>
+              </div>
+              <div class="p-12 rounded-lg border border-gray-200 hover-lift fade-in">
+                <div class="w-16 h-16 text-gray-900 rounded-lg flex items-center justify-center mb-8 text-2xl font-light">2</div>
+                <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Interview Process</h3>
+                <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Meet with lab members and discuss potential research projects and collaboration opportunities.</p>
+                <ul class="text-sm text-gray-500 space-y-3 font-light">
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Technical interview</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research discussion</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Lab culture fit</li>
+                </ul>
+              </div>
+              <div class="p-12 rounded-lg border border-gray-200 hover-lift slide-in-right">
+                <div class="w-16 h-16 text-gray-900 rounded-lg flex items-center justify-center mb-8 text-2xl font-light">3</div>
+                <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Onboard & Research</h3>
+                <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Get access to our platform, join research projects, and start your academic journey with us.</p>
+                <ul class="text-sm text-gray-500 space-y-3 font-light">
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Platform training</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Project assignment</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Mentorship program</li>
+                </ul>
+              </div>
+            </div>
           </div>
-          
-          <div class="text-center">
-            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i class="fas fa-users text-2xl text-gray-600"></i>
+        </section>
+        
+        <!-- Integration Features Section -->
+        <section class="py-32">
+          <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-24">
+              <h2 class="text-5xl font-bold text-gray-900 mb-8" style="font-size: var(--text-5xl);">Seamless Integration Hub</h2>
+              <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-normal" style="font-size: var(--text-xl);">
+                Connect your lab's most-used tools: GitHub, Discord, and Overleaf in one unified platform
+              </p>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2" style="font-size: var(--text-xl);">
-              Collaboration
-            </h3>
-            <p class="text-gray-600" style="font-size: var(--text-base);">
-              Connect with fellow researchers and collaborate on groundbreaking projects.
-            </p>
+            
+            <!-- Integration Overview -->
+            <div class="mb-16 p-8 rounded-lg border border-gray-200 bg-gray-50">
+              <div class="flex items-center justify-center space-x-8 mb-6">
+                <div class="flex items-center space-x-2">
+                  <i class="fab fa-github text-3xl text-gray-600"></i>
+                  <span class="text-lg font-bold text-gray-900">GitHub</span>
+                </div>
+                <div class="text-gray-400">+</div>
+                <div class="flex items-center space-x-2">
+                  <i class="fab fa-discord text-3xl text-gray-600"></i>
+                  <span class="text-lg font-bold text-gray-900">Discord</span>
+                </div>
+                <div class="text-gray-400">+</div>
+                <div class="flex items-center space-x-2">
+                  <i class="fas fa-file-code text-3xl text-gray-600"></i>
+                  <span class="text-lg font-bold text-gray-900">Overleaf</span>
+                </div>
+              </div>
+              <p class="text-center text-gray-600 font-normal">All your research tools, unified in one place</p>
+            </div>
           </div>
-          
+        </section>
+      </div>
+    </div>
+  {:else}
+    <!-- Logged-in user content -->
+    <div class="pt-8">
+      <!-- Welcome Section -->
+      <div class="bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div class="text-center">
-            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i class="fas fa-lightbulb text-2xl text-gray-600"></i>
-            </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2" style="font-size: var(--text-xl);">
-              Innovation
-            </h3>
-            <p class="text-gray-600" style="font-size: var(--text-base);">
-              Share ideas and discover new opportunities for research and development.
+            <h1 class="text-4xl font-bold text-gray-900 mb-4" style="font-size: var(--text-4xl);">
+              Welcome back, {$user.displayName || $user.email || 'Researcher'}!
+            </h1>
+            <p class="text-xl text-gray-600 mb-8" style="font-size: var(--text-xl);">
+              Continue your research journey and collaborate with fellow innovators
             </p>
           </div>
         </div>
       </div>
+
+      <!-- Stats Section -->
+      <div class="bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
+              <div class="text-3xl font-bold text-gray-900 mb-2">{stats.totalProjects}</div>
+              <div class="text-sm text-gray-600">Active Projects</div>
+            </div>
+            <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
+              <div class="text-3xl font-bold text-gray-900 mb-2">{stats.activeMembers}</div>
+              <div class="text-sm text-gray-600">Lab Members</div>
+            </div>
+            <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
+              <div class="text-3xl font-bold text-gray-900 mb-2">{stats.researchIdeas}</div>
+              <div class="text-sm text-gray-600">Research Ideas</div>
+            </div>
+            <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
+              <div class="text-3xl font-bold text-gray-900 mb-2">{stats.publications}</div>
+              <div class="text-sm text-gray-600">Publications</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6" style="font-size: var(--text-2xl);">Quick Actions</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <a href="/projects" class="p-6 rounded-lg border border-gray-200 hover:shadow-lg transition-all duration-300">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+                  <i class="fas fa-project-diagram text-gray-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">My Projects</h3>
+              </div>
+              <p class="text-gray-600">View and manage your active research projects</p>
+            </a>
+            
+            <a href="/ideas" class="p-6 rounded-lg border border-gray-200 hover:shadow-lg transition-all duration-300">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+                  <i class="fas fa-lightbulb text-gray-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Research Ideas</h3>
+              </div>
+              <p class="text-gray-600">Explore new research opportunities and ideas</p>
+            </a>
+            
+            <a href="/users" class="p-6 rounded-lg border border-gray-200 hover:shadow-lg transition-all duration-300">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+                  <i class="fas fa-users text-gray-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Lab Members</h3>
+              </div>
+              <p class="text-gray-600">Connect with other researchers in the lab</p>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+  {/if}
 {/if}

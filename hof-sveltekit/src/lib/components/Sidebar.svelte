@@ -3,89 +3,99 @@
   import { page } from '$app/stores';
   import { signOut } from 'firebase/auth';
   import { auth } from '../firebase';
+  import { createEventDispatcher } from 'svelte';
+  import { showToast } from '../stores/toast';
   
   export let sidebarOpen = false;
   
+  const dispatch = createEventDispatcher();
+  
   const navigation = [
-    { name: 'Dashboard', href: '/', icon: 'fas fa-home' },
-    { name: 'Projects', href: '/projects', icon: 'fas fa-project-diagram' },
-    { name: 'Ideas', href: '/ideas', icon: 'fas fa-lightbulb' },
-    { name: 'Community', href: '/users', icon: 'fas fa-users' },
+    { name: 'Dashboard', href: '/', icon: 'fas fa-home', page: 'home' },
+    { name: 'My Projects', href: '/projects', icon: 'fas fa-project-diagram', page: 'projects' },
+    { name: 'Research Ideas', href: '/ideas', icon: 'fas fa-lightbulb', page: 'ideas' },
+    { name: 'Lab Members', href: '/users', icon: 'fas fa-users', page: 'users' },
+    { name: 'Lab Calendar', href: '#', icon: 'fas fa-calendar-alt', page: 'calendar' },
+    { name: 'Progress Reports', href: '#', icon: 'fas fa-chart-line', page: 'reports' },
+    { name: 'Settings', href: '#', icon: 'fas fa-cog', page: 'settings' },
   ];
   
   async function handleSignOut() {
     try {
       await signOut(auth);
+      dispatch('userSignedOut');
+      showToast('Signed Out', 'You have been successfully signed out.', 'info', 3000);
     } catch (error) {
       console.error('Error signing out:', error);
+      showToast('Error', 'Failed to sign out. Please try again.', 'error');
     }
   }
   
   function isActive(href: string) {
     return $page.url.pathname === href;
   }
+  
+  function openModal(modalId: string) {
+    dispatch('openModal', { modalId });
+  }
+  
+  function getCurrentPageName() {
+    const currentNav = navigation.find(nav => isActive(nav.href));
+    return currentNav?.name || 'Dashboard';
+  }
 </script>
 
-{#if $user}
-  <aside class="sidebar {sidebarOpen ? 'block' : 'hidden lg:block'}">
+<!-- Sidebar Overlay -->
+<div id="sidebar-overlay" class="sidebar-overlay {sidebarOpen ? 'open' : ''}"></div>
+
+<!-- Left Sidebar -->
+<div id="sidebar" class="sidebar {sidebarOpen ? 'open' : ''}">
+        
     <!-- Breadcrumb Navigation -->
-    <div class="px-4 py-3 border-b border-gray-200">
-      <nav class="flex" aria-label="Breadcrumb">
-        <ol class="flex items-center space-x-2">
-          <li>
-            <a href="/" class="text-gray-500 hover:text-gray-700" style="font-size: var(--text-sm);">
-              Home
+    <div id="breadcrumb" class="breadcrumb">
+        <a href="/" class="breadcrumb-item">Home</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">{getCurrentPageName()}</span>
+    </div>
+    
+    <!-- Sidebar Navigation -->
+    <div class="sidebar-nav">
+        {#each navigation as item}
+            <a href={item.href} class="sidebar-nav-item {isActive(item.href) ? 'active' : ''}" data-page={item.page}>
+                <i class={item.icon}></i>
+                <span>{item.name}</span>
             </a>
-          </li>
-          <li>
-            <span class="text-gray-400" style="font-size: var(--text-sm);">/</span>
-          </li>
-          <li>
-            <span class="text-gray-900 font-medium" style="font-size: var(--text-sm);">
-              {navigation.find(nav => isActive(nav.href))?.name || 'Dashboard'}
-            </span>
-          </li>
-        </ol>
-      </nav>
+        {/each}
+    </div>
+            
+    <!-- User Info and Auth Buttons -->
+    <div class="sidebar-footer">
+        <div id="sidebar-user-info" class="sidebar-user-info {$user ? '' : 'hidden'}">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-details">
+                <div class="user-name" id="sidebar-user-name">{$user?.displayName || $user?.email || 'Loading...'}</div>
+                <div class="user-role" id="sidebar-user-role">Researcher</div>
+        </div>
     </div>
     
-    <!-- Navigation Menu -->
-    <nav class="mt-4">
-      {#each navigation as item}
-        <a
-          href={item.href}
-          class="sidebar-nav-item {isActive(item.href) ? 'active' : ''}"
-        >
-          <i class={item.icon}></i>
-          <span>{item.name}</span>
-        </a>
-      {/each}
-    </nav>
-    
-    <!-- User Info -->
-    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-gray-50">
-      <div class="flex items-center mb-3">
-        <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
-          <i class="fas fa-user text-gray-600"></i>
+        <div id="sidebar-auth-buttons" class="sidebar-auth-buttons {$user ? 'hidden' : ''}">
+            <button on:click={() => openModal('loginModal')} class="sidebar-btn sidebar-btn-primary">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Sign In</span>
+            </button>
+            <button on:click={() => openModal('registerModal')} class="sidebar-btn sidebar-btn-secondary">
+                <i class="fas fa-user-plus"></i>
+                <span>Apply to Lab</span>
+            </button>
+            </div>
+        
+        <div id="sidebar-logout-btn" class="sidebar-logout-btn {$user ? '' : 'hidden'}">
+            <button on:click={handleSignOut} class="sidebar-btn sidebar-btn-logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sign Out</span>
+            </button>
         </div>
-        <div>
-          <div class="font-medium text-gray-900" style="font-size: var(--text-sm);">
-            {$user.displayName || $user.email}
-          </div>
-          <div class="text-gray-500" style="font-size: var(--text-xs);">
-            Lab Member
-          </div>
-        </div>
-      </div>
-      
-      <button
-        on:click={handleSignOut}
-        class="w-full text-left px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
-        style="font-size: var(--text-sm);"
-      >
-        <i class="fas fa-sign-out-alt mr-2"></i>
-        Sign Out
-      </button>
     </div>
-  </aside>
-{/if}
+</div>
