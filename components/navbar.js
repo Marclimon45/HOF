@@ -197,15 +197,22 @@ const Navbar = () => {
                 elevation: 0,
                 sx: {
                   overflow: 'visible',
-                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.15))',
+                  filter: 'drop-shadow(0 var(--space-5) var(--space-21) rgba(0,0,0,0.08))',
                   mt: 1.5,
-                  borderRadius: 2,
-                  minWidth: 220,
+                  borderRadius: 'var(--space-8)',
+                  minWidth: 240,
+                  border: '1px solid var(--color-gray-200)',
+                  '& .MuiMenuItem-root': {
+                    padding: 'var(--space-13) var(--space-21)',
+                    '&:hover': {
+                      backgroundColor: 'var(--color-gray-100)',
+                    }
+                  },
                   '& .MuiAvatar-root': {
-                    width: 32,
-                    height: 32,
+                    width: 'var(--space-34)',
+                    height: 'var(--space-34)',
                     ml: -0.5,
-                    mr: 1,
+                    mr: 2,
                   },
                   '& a': {
                     textDecoration: 'none',
@@ -219,42 +226,66 @@ const Navbar = () => {
                     right: 14,
                     width: 10,
                     height: 10,
-                    bgcolor: 'background.paper',
+                    bgcolor: 'var(--color-white)',
                     transform: 'translateY(-50%) rotate(45deg)',
                     zIndex: 0,
+                    border: '1px solid var(--color-gray-200)',
+                    borderRight: 'none',
+                    borderBottom: 'none',
                   },
                 },
               }}
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-              <Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid #eee' }}>
+              <Box sx={{ 
+                px: 'var(--space-21)', 
+                py: 'var(--space-13)', 
+                borderBottom: '1px solid var(--color-gray-200)',
+                mb: 'var(--space-8)'
+              }}>
                 <Typography variant="subtitle1" sx={{ 
                   fontWeight: 500,
-                  color: getRankColor(userData?.contributions, userData?.isCPSMember)
+                  color: 'var(--color-gray-900)',
+                  fontSize: 'var(--text-base)',
+                  marginBottom: 'var(--space-3)'
                 }}>
                   {userData?.displayName || user?.email?.split('@')[0] || 'User'}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{
+                  color: 'var(--color-gray-500)',
+                  fontSize: 'var(--text-sm)'
+                }}>
                   {user?.email}
                 </Typography>
               </Box>
 
               <Link href="/profile" passHref>
                 <MenuItem onClick={handleMenuClose} sx={{
-                  py: 1.5,
-                  px: 2,
+                  py: 'var(--space-13)',
+                  px: 'var(--space-21)',
+                  borderRadius: 'var(--space-3)',
+                  margin: '0 var(--space-8)',
                   '&:hover': {
-                    bgcolor: `${getRankColor(userData?.contributions, userData?.isCPSMember)}15`,
-                    '& .MuiTypography-root': {
-                      color: getRankColor(userData?.contributions, userData?.isCPSMember)
-                    }
+                    bgcolor: 'var(--color-gray-100)',
                   }
                 }}>
-                  <Avatar src={userData?.photoURL || user?.photoURL || '/jeff1.jpg'} sx={{ mr: 2 }} />
+                  <Avatar src={userData?.photoURL || user?.photoURL || '/jeff1.jpg'} sx={{ 
+                    mr: 'var(--space-13)',
+                    border: '1px solid var(--color-gray-200)'
+                  }} />
                   <Box>
-                    <Typography variant="body1">Profile</Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body1" sx={{ 
+                      fontSize: 'var(--text-base)',
+                      color: 'var(--color-gray-900)',
+                      fontWeight: 500
+                    }}>
+                      Profile
+                    </Typography>
+                    <Typography variant="body2" sx={{
+                      color: 'var(--color-gray-500)',
+                      fontSize: 'var(--text-xs)'
+                    }}>
                       View and edit your profile
                     </Typography>
                   </Box>
@@ -263,41 +294,62 @@ const Navbar = () => {
 
               <Link href="/settings" passHref>
                 <MenuItem onClick={handleMenuClose} sx={{
-                  py: 1.5,
-                  px: 2,
+                  py: 'var(--space-13)',
+                  px: 'var(--space-21)',
+                  borderRadius: 'var(--space-3)',
+                  margin: '0 var(--space-8)',
                   '&:hover': {
-                    bgcolor: `${getRankColor(userData?.contributions, userData?.isCPSMember)}15`,
-                    '& .MuiTypography-root': {
-                      color: getRankColor(userData?.contributions, userData?.isCPSMember)
-                    }
+                    bgcolor: 'var(--color-gray-100)',
                   }
                 }}>
-                  <Avatar sx={{ bgcolor: 'primary.light', mr: 2 }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 24 24" fill="white">
+                  <Avatar sx={{ 
+                    bgcolor: 'var(--color-gray-200)', 
+                    color: 'var(--color-gray-600)',
+                    mr: 'var(--space-13)',
+                    border: '1px solid var(--color-gray-200)'
+                  }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
                     </svg>
                   </Avatar>
                   <Box>
-                    <Typography variant="body1">Settings</Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body1" sx={{ 
+                      fontSize: 'var(--text-base)',
+                      color: 'var(--color-gray-900)',
+                      fontWeight: 500
+                    }}>
+                      Settings
+                    </Typography>
+                    <Typography variant="body2" sx={{
+                      color: 'var(--color-gray-500)',
+                      fontSize: 'var(--text-xs)'
+                    }}>
                       Manage your preferences
                     </Typography>
                   </Box>
                 </MenuItem>
               </Link>
 
-              <Box sx={{ px: 2, py: 1.5, borderTop: '1px solid #eee' }}>
+              <Box sx={{ 
+                px: 'var(--space-21)', 
+                py: 'var(--space-13)', 
+                borderTop: '1px solid var(--color-gray-200)',
+                mt: 'var(--space-8)'
+              }}>
                 <Button 
                   onClick={handleLogoutClick}
                   fullWidth
-                  color="error"
                   variant="outlined"
                   sx={{
-                    borderRadius: 2,
-                    textTransform: 'none',
+                    borderRadius: 'var(--space-3)',
+                    padding: 'var(--space-8) var(--space-21)',
+                    fontSize: 'var(--text-sm)',
+                    color: 'var(--color-gray-700)',
+                    borderColor: 'var(--color-gray-300)',
                     '&:hover': {
-                      backgroundColor: 'error.light',
-                      color: 'white'
+                      backgroundColor: 'var(--color-gray-100)',
+                      borderColor: 'var(--color-gray-400)',
+                      color: 'var(--color-gray-900)'
                     }
                   }}
                 >
@@ -315,29 +367,54 @@ const Navbar = () => {
                 sx: {
                   width: '100%',
                   maxWidth: '400px',
-                  p: 1
+                  borderRadius: 'var(--space-8)',
+                  border: '1px solid var(--color-gray-200)',
+                  padding: 'var(--space-21)'
                 }
               }}
             >
-              <DialogTitle id="logout-dialog-title" sx={{ pb: 1 }}>
+              <DialogTitle id="logout-dialog-title" sx={{ 
+                padding: '0 0 var(--space-21) 0',
+                fontSize: 'var(--text-xl)',
+                fontWeight: 500,
+                color: 'var(--color-gray-900)'
+              }}>
                 Confirm Logout
               </DialogTitle>
-              <DialogContent>
-                <Typography>
+              <DialogContent sx={{ padding: 0 }}>
+                <Typography sx={{
+                  color: 'var(--color-gray-600)',
+                  lineHeight: 'var(--leading-relaxed)',
+                  fontSize: 'var(--text-base)'
+                }}>
                   Are you sure you want to log out? You will need to sign in again to access your account.
                 </Typography>
               </DialogContent>
-              <DialogActions sx={{ p: 2, pt: 1 }}>
+              <DialogActions sx={{ 
+                padding: 'var(--space-21) 0 0 0',
+                gap: 'var(--space-13)',
+                borderTop: '1px solid var(--color-gray-200)',
+                marginTop: 'var(--space-21)'
+              }}>
                 <Button 
                   onClick={() => setLogoutDialogOpen(false)}
                   variant="outlined"
+                  sx={{
+                    padding: 'var(--space-8) var(--space-21)',
+                  }}
                 >
                   Cancel
                 </Button>
                 <Button 
                   onClick={handleLogoutConfirm}
-                  color="error"
                   variant="contained"
+                  sx={{
+                    padding: 'var(--space-8) var(--space-21)',
+                    backgroundColor: 'var(--color-gray-900)',
+                    '&:hover': {
+                      backgroundColor: 'var(--color-gray-700)',
+                    }
+                  }}
                   autoFocus
                 >
                   Logout
