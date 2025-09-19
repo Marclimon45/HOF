@@ -1,17 +1,10 @@
+@import './design-system.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ✅ Force the entire body to match the reference image */
-body {
-    @apply bg-gray-100 text-gray-900;
-}
-
-/* ✅ Make sure buttons match reference */
-button {
-    @apply transition duration-200 ease-in-out;
-}
-
+/* Area 17 Minimal Design System Override */
 html,
 body {
   padding: 0;
@@ -19,10 +12,116 @@ body {
   height: 100%;
   width: 100%;
   overflow-y: auto !important;
+  background-color: var(--color-white);
+  color: var(--color-gray-900);
 }
 
 #__next {
   min-height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+/* Override Material-UI styles for minimal aesthetic */
+.MuiButton-root {
+  text-transform: none !important;
+  font-weight: 500 !important;
+  border-radius: var(--space-2) !important;
+  transition: all var(--transition-fast) !important;
+}
+
+.MuiButton-contained {
+  background-color: var(--color-gray-900) !important;
+  color: var(--color-white) !important;
+  box-shadow: none !important;
+}
+
+.MuiButton-contained:hover {
+  background-color: var(--color-gray-700) !important;
+  box-shadow: 0 var(--space-2) var(--space-8) -var(--space-2) rgba(0, 0, 0, 0.1) !important;
+}
+
+.MuiButton-outlined {
+  background-color: transparent !important;
+  color: var(--color-gray-900) !important;
+  border-color: var(--color-gray-300) !important;
+}
+
+.MuiButton-outlined:hover {
+  background-color: var(--color-gray-100) !important;
+  border-color: var(--color-gray-400) !important;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root {
+  border-radius: var(--space-3) !important;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-gray-300) !important;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-gray-400) !important;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-gray-900) !important;
+  border-width: 1px !important;
+}
+
+/* Minimal card styling */
+.MuiPaper-root {
+  box-shadow: 0 var(--space-2) var(--space-8) -var(--space-2) rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid var(--color-gray-200) !important;
+  border-radius: var(--space-5) !important;
+}
+
+.MuiAppBar-root {
+  background-color: var(--color-white) !important;
+  color: var(--color-gray-900) !important;
+  border-bottom: 1px solid var(--color-gray-200) !important;
+  box-shadow: none !important;
+}
+
+/* Typography adjustments */
+.MuiTypography-h1 {
+  font-size: var(--text-4xl) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.025em !important;
+}
+
+.MuiTypography-h2 {
+  font-size: var(--text-3xl) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.025em !important;
+}
+
+.MuiTypography-h3 {
+  font-size: var(--text-2xl) !important;
+  font-weight: 500 !important;
+}
+
+.MuiTypography-h4 {
+  font-size: var(--text-xl) !important;
+  font-weight: 500 !important;
+}
+
+.MuiTypography-h5 {
+  font-size: var(--text-lg) !important;
+  font-weight: 500 !important;
+}
+
+.MuiTypography-h6 {
+  font-size: var(--text-base) !important;
+  font-weight: 500 !important;
+}
+
+.MuiTypography-body1 {
+  color: var(--color-gray-600) !important;
+  line-height: var(--leading-relaxed) !important;
+}
+
+.MuiTypography-body2 {
+  color: var(--color-gray-500) !important;
+  font-size: var(--text-sm) !important;
 }
