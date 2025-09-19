@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import styles from "../styles/projectcard.module.css";
 
 const ProjectCard = ({ project, onBookmarkToggle }) => {
   // Add null checks and default values
@@ -29,47 +30,32 @@ const ProjectCard = ({ project, onBookmarkToggle }) => {
     <Card 
       sx={{
         width: "100%",
-        minHeight: "280px",
+        height: "280px", // Fixed height
         display: "flex",
         flexDirection: "column",
         position: "relative",
-        backgroundColor: "var(--color-white)",
-        border: "1px solid var(--color-gray-200)",
-        borderRadius: "var(--space-8)",
-        padding: 0,
-        boxShadow: "none",
-        transition: "all var(--transition-fast)",
+        backgroundColor: "#fff",
+        transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
         "&:hover": {
-          transform: "translateY(-var(--space-2))",
-          borderColor: "var(--color-gray-300)",
-          boxShadow: "0 var(--space-5) var(--space-21) -var(--space-5) rgba(0,0,0,0.08)",
+          transform: "translateY(-4px)",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
         },
       }}
     >
-      <CardContent sx={{ 
-        flex: 1, 
-        padding: "var(--space-21)",
-        paddingBottom: "var(--space-13)",
-        "&:last-child": {
-          paddingBottom: "var(--space-13)"
-        }
-      }}>
-        {/* Title and bookmark */}
-        <Box display="flex" justifyContent="space-between" alignItems="flex-start" sx={{ marginBottom: "var(--space-8)" }}>
+      <CardContent sx={{ flex: 1, p: 2 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="flex-start">
           <Typography
             variant="h6"
             component="h2"
             sx={{
-              fontSize: "var(--text-lg)",
-              fontWeight: 500,
-              color: "var(--color-gray-900)",
-              letterSpacing: "-0.025em",
-              lineHeight: "var(--leading-tight)",
-              pr: "var(--space-34)", // Space for bookmark icon
+              fontSize: "1.1rem",
+              fontWeight: 600,
+              mb: 1,
+              pr: 4, // Space for bookmark icon
               overflow: "hidden",
               textOverflow: "ellipsis",
               display: "-webkit-box",
-              WebkitLineClamp: 2,
+              WebkitLineClamp: 1,
               WebkitBoxOrient: "vertical",
             }}
           >
@@ -83,29 +69,23 @@ const ProjectCard = ({ project, onBookmarkToggle }) => {
             }} 
             sx={{
               position: "absolute",
-              top: "var(--space-13)",
-              right: "var(--space-13)",
-              padding: "var(--space-5)",
-              color: project?.isBookmarked ? "var(--color-gray-900)" : "var(--color-gray-500)",
+              top: 8,
+              right: 8,
+              color: project?.isBookmarked ? "#ff1744" : "#666",
               "&:hover": {
-                backgroundColor: "var(--color-gray-100)",
-                color: "var(--color-gray-900)",
+                color: project?.isBookmarked ? "#ff1744" : "#1976d2",
               },
             }}
           >
-            {project?.isBookmarked ? <BookmarkIcon fontSize="small" /> : <BookmarkBorderIcon fontSize="small" />}
+            {project?.isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
           </IconButton>
         </Box>
 
-        {/* Category */}
         <Typography
+          color="primary"
           sx={{
-            fontSize: "var(--text-xs)",
-            color: "var(--color-gray-500)",
-            fontWeight: 500,
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-            marginBottom: "var(--space-13)",
+            fontSize: "0.875rem",
+            mb: 1,
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
@@ -114,153 +94,96 @@ const ProjectCard = ({ project, onBookmarkToggle }) => {
           {project?.category || 'Uncategorized'}
         </Typography>
 
-        {/* Description */}
         <Typography
           variant="body2"
           sx={{
-            color: "var(--color-gray-600)",
-            fontSize: "var(--text-sm)",
-            lineHeight: "var(--leading-relaxed)",
-            marginBottom: "var(--space-21)",
+            color: "#666",
+            mb: 2,
             overflow: "hidden",
             textOverflow: "ellipsis",
             display: "-webkit-box",
-            WebkitLineClamp: 3,
+            WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
-            minHeight: "calc(var(--text-sm) * var(--leading-relaxed) * 3)", // Fixed height for 3 lines
+            height: "40px", // Fixed height for 2 lines
           }}
         >
           {project?.description || 'No description available'}
         </Typography>
 
-        {/* Skills */}
-        <Box sx={{ marginBottom: "var(--space-21)" }}>
-          <Typography 
-            variant="body2" 
-            sx={{
-              fontSize: "var(--text-xs)",
-              color: "var(--color-gray-500)",
-              fontWeight: 500,
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              marginBottom: "var(--space-8)"
-            }}
-          >
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
             Skills Required:
           </Typography>
           <Box 
             sx={{
               display: "flex",
               flexWrap: "wrap",
-              gap: "var(--space-5)",
-              maxHeight: "calc(var(--space-21) * 2)",
+              gap: 0.5,
+              maxHeight: "48px",
               overflow: "hidden",
             }}
           >
             {tags.length > 0 ? (
-              tags.slice(0, 4).map((tag, index) => (
+              tags.map((tag, index) => (
                 <Chip
                   key={index}
                   label={tag}
                   size="small"
                   sx={{
-                    height: "var(--space-21)",
-                    fontSize: "var(--text-xs)",
-                    fontWeight: 500,
-                    backgroundColor: "var(--color-gray-100)",
-                    color: "var(--color-gray-700)",
-                    border: "1px solid var(--color-gray-200)",
-                    borderRadius: "var(--space-3)",
-                    "& .MuiChip-label": {
-                      padding: "0 var(--space-8)",
-                    }
+                    height: "20px",
+                    fontSize: "0.75rem",
+                    backgroundColor: "#e3f2fd",
+                    color: "#1976d2",
                   }}
                 />
               ))
             ) : (
-              <Typography variant="body2" sx={{ 
-                color: "var(--color-gray-400)",
-                fontSize: "var(--text-xs)",
-                fontStyle: "italic" 
-              }}>
+              <Typography variant="body2" color="textSecondary">
                 No skills specified
               </Typography>
             )}
           </Box>
         </Box>
 
-        {/* Team progress */}
-        <Box>
-          <Typography 
-            variant="body2" 
-            sx={{
-              fontSize: "var(--text-xs)",
-              color: "var(--color-gray-500)",
-              fontWeight: 500,
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              marginBottom: "var(--space-8)"
-            }}
-          >
+        <Box sx={{ mb: 1 }}>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
             Team Progress:
           </Typography>
-          <Box display="flex" alignItems="center" gap="var(--space-8)">
+          <Box display="flex" alignItems="center" gap={1}>
             <LinearProgress
               variant="determinate"
               value={progress}
               sx={{
                 flexGrow: 1,
-                height: "var(--space-3)",
-                borderRadius: "var(--space-2)",
-                backgroundColor: "var(--color-gray-200)",
+                height: 6,
+                borderRadius: 3,
+                backgroundColor: "#e0e0e0",
                 "& .MuiLinearProgress-bar": {
-                  backgroundColor: "var(--color-gray-900)",
-                  borderRadius: "var(--space-2)",
+                  backgroundColor: "#1976d2",
                 },
               }}
             />
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                fontSize: "var(--text-xs)",
-                color: "var(--color-gray-600)",
-                fontWeight: 500,
-                minWidth: "35px",
-                textAlign: "right"
-              }}
-            >
+            <Typography variant="body2" color="textSecondary" sx={{ minWidth: "45px" }}>
               {project?.members || 0}/{project?.teamSize || 0}
             </Typography>
           </Box>
         </Box>
       </CardContent>
 
-      {/* Footer with dates */}
       <CardActions 
         sx={{ 
-          borderTop: "1px solid var(--color-gray-200)",
-          padding: "var(--space-13) var(--space-21)",
+          borderTop: "1px solid #e0e0e0",
+          p: 2,
+          pt: 1,
+          pb: 1,
           display: "flex",
           justifyContent: "space-between",
-          backgroundColor: "var(--color-gray-50)",
         }}
       >
-        <Typography 
-          variant="caption" 
-          sx={{
-            fontSize: "var(--text-xs)",
-            color: "var(--color-gray-500)"
-          }}
-        >
+        <Typography variant="caption" color="textSecondary">
           Created: {createdAt}
         </Typography>
-        <Typography 
-          variant="caption" 
-          sx={{
-            fontSize: "var(--text-xs)",
-            color: "var(--color-gray-500)"
-          }}
-        >
+        <Typography variant="caption" color="textSecondary">
           Due: {expectedCompletionDate}
         </Typography>
       </CardActions>

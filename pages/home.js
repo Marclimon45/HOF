@@ -547,30 +547,9 @@ const Home = () => {
   return (
     <>
       <Navbar />
-      <Container maxWidth="lg" sx={{ 
-        mt: 4, 
-        mb: 4,
-        backgroundColor: 'var(--color-white)',
-        borderRadius: 'var(--space-8)'
-      }}>
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          mb: 3,
-          pb: 2,
-          borderBottom: '1px solid var(--color-gray-200)'
-        }}>
-          <Typography 
-            variant="h4" 
-            component="h1"
-            sx={{
-              fontSize: 'var(--text-3xl)',
-              fontWeight: 600,
-              color: 'var(--color-gray-900)',
-              letterSpacing: '-0.025em'
-            }}
-          >
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Typography variant="h4" component="h1">
             Projects
           </Typography>
           <Box sx={{ display: 'flex', gap: 2 }}>
