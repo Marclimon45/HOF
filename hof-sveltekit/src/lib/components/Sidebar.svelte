@@ -77,9 +77,9 @@
             <div class="user-details">
                 <div class="user-name" id="sidebar-user-name">{$user?.displayName || $user?.email || 'Loading...'}</div>
                 <div class="user-role" id="sidebar-user-role">Researcher</div>
+            </div>
         </div>
-    </div>
-    
+        
         <div id="sidebar-auth-buttons" class="sidebar-auth-buttons {$user ? 'hidden' : ''}">
             <button on:click={() => openModal('loginModal')} class="sidebar-btn sidebar-btn-primary">
                 <i class="fas fa-sign-in-alt"></i>
@@ -89,7 +89,7 @@
                 <i class="fas fa-user-plus"></i>
                 <span>Apply to Lab</span>
             </button>
-            </div>
+        </div>
         
         <div id="sidebar-logout-btn" class="sidebar-logout-btn {$user ? '' : 'hidden'}">
             <button on:click={handleSignOut} class="sidebar-btn sidebar-btn-logout">
