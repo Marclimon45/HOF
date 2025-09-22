@@ -8,13 +8,11 @@
   
   export let isOpen = false;
   
-  let name = '';
+  let firstName = '';
+  let lastName = '';
   let email = '';
   let password = '';
-  let university = '';
-  let major = '';
-  let year = '';
-  let experience = '';
+  let confirmPassword = '';
   let interests = '';
   let error = '';
   let loading = false;
@@ -22,13 +20,11 @@
   function closeModal() {
     isOpen = false;
     // Clear form when closing
-    name = '';
+    firstName = '';
+    lastName = '';
     email = '';
     password = '';
-    university = '';
-    major = '';
-    year = '';
-    experience = '';
+    confirmPassword = '';
     interests = '';
     error = '';
     loading = false;
@@ -36,7 +32,7 @@
   }
   
   async function handleRegister() {
-    if (!name || !email || !password || !university || !major || !year) {
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
       error = 'Please fill in all required fields';
       return;
     }
@@ -46,30 +42,45 @@
       return;
     }
     
+    if (password !== confirmPassword) {
+      error = 'Passwords do not match';
+      return;
+    }
+    
     loading = true;
     error = '';
     
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const fullName = `${firstName} ${lastName}`;
       await updateProfile(userCredential.user, {
-        displayName: name
+        displayName: fullName
       });
       closeModal();
-      showToast('Welcome to CPX Lab!', `Account created successfully! Welcome to CPX Lab, ${name}! Your application is now under review.`, 'success', 6000);
+      showToast('Welcome to CPX Lab!', `Account created successfully! Welcome to CPX Lab, ${fullName}! Your application is now under review.`, 'success', 6000);
     } catch (err: any) {
-      let errorMessage = 'An error occurred during registration';
+      let errorMessage = 'Registration failed. Please try again.';
       switch (err.code) {
         case 'auth/email-already-in-use':
-          errorMessage = 'An account with this email already exists. Please sign in instead.';
+          errorMessage = 'Account already exists. Please sign in instead.';
           break;
         case 'auth/weak-password':
-          errorMessage = 'Password is too weak. Please choose a stronger password.';
+          errorMessage = 'Password too weak. Choose a stronger password.';
           break;
         case 'auth/invalid-email':
           errorMessage = 'Please enter a valid email address.';
           break;
+        case 'auth/operation-not-allowed':
+          errorMessage = 'Registration is disabled. Contact support.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your connection.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many attempts. Please try again later.';
+          break;
         default:
-          errorMessage = err.message || 'Failed to create account';
+          errorMessage = 'Registration failed. Please try again.';
       }
       error = errorMessage;
     } finally {
@@ -89,12 +100,26 @@
       closeModal();
       showToast('Welcome to CPX Lab!', `Welcome back, ${result.user.displayName || 'Researcher'}!`, 'success', 4000);
     } catch (err: any) {
-      let errorMessage = 'Failed to sign in with Google. Please try again.';
+      let errorMessage = 'Google sign-in failed. Please try again.';
       
-      if (err.code === 'auth/popup-closed-by-user') {
-        errorMessage = 'Sign-in was cancelled. Please try again.';
-      } else if (err.code === 'auth/popup-blocked') {
-        errorMessage = 'Popup was blocked. Please allow popups and try again.';
+      switch (err.code) {
+        case 'auth/popup-closed-by-user':
+          errorMessage = 'Sign-in cancelled. Please try again.';
+          break;
+        case 'auth/popup-blocked':
+          errorMessage = 'Popup blocked. Please allow popups and try again.';
+          break;
+        case 'auth/account-exists-with-different-credential':
+          errorMessage = 'Account exists with different sign-in method.';
+          break;
+        case 'auth/operation-not-allowed':
+          errorMessage = 'Google sign-in is not enabled. Contact support.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your connection.';
+          break;
+        default:
+          errorMessage = 'Google sign-in failed. Please try again.';
       }
       
       showToast('Sign-in Error', errorMessage, 'error');
@@ -115,12 +140,26 @@
       closeModal();
       showToast('Welcome to CPX Lab!', `Welcome back, ${result.user.displayName || 'Researcher'}!`, 'success', 4000);
     } catch (err: any) {
-      let errorMessage = 'Failed to sign in with GitHub. Please try again.';
+      let errorMessage = 'GitHub sign-in failed. Please try again.';
       
-      if (err.code === 'auth/popup-closed-by-user') {
-        errorMessage = 'Sign-in was cancelled. Please try again.';
-      } else if (err.code === 'auth/popup-blocked') {
-        errorMessage = 'Popup was blocked. Please allow popups and try again.';
+      switch (err.code) {
+        case 'auth/popup-closed-by-user':
+          errorMessage = 'Sign-in cancelled. Please try again.';
+          break;
+        case 'auth/popup-blocked':
+          errorMessage = 'Popup blocked. Please allow popups and try again.';
+          break;
+        case 'auth/account-exists-with-different-credential':
+          errorMessage = 'Account exists with different sign-in method.';
+          break;
+        case 'auth/operation-not-allowed':
+          errorMessage = 'GitHub sign-in is not enabled. Contact support.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your connection.';
+          break;
+        default:
+          errorMessage = 'GitHub sign-in failed. Please try again.';
       }
       
       showToast('Sign-in Error', errorMessage, 'error');
@@ -133,6 +172,8 @@
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape') {
       closeModal();
+    } else if (event.key === 'Enter' && !loading) {
+      handleRegister();
     }
   }
 </script>
@@ -179,100 +220,76 @@
             
             <!-- Application Form -->
             <form on:submit|preventDefault={handleRegister} class="space-y-4">
-                <div>
-                    <label for="registerName" class="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
-                    <input 
-                        type="text" 
-                        id="registerName" 
-                        bind:value={name}
-                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-slate-900 placeholder-slate-400"
-                        placeholder="Enter your full name"
-                        required
-                        autocomplete="name"
-                        disabled={loading}
-                    >
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="registerFirstName" class="block text-sm font-medium text-slate-700 mb-2">First Name</label>
+                        <input 
+                            type="text" 
+                            id="registerFirstName" 
+                            bind:value={firstName}
+                            class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-slate-900 placeholder-slate-400"
+                            placeholder="Enter your first name"
+                            required
+                            autocomplete="given-name"
+                            disabled={loading}
+                        >
+                    </div>
+                    <div>
+                        <label for="registerLastName" class="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
+                        <input 
+                            type="text" 
+                            id="registerLastName" 
+                            bind:value={lastName}
+                            class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-slate-900 placeholder-slate-400"
+                            placeholder="Enter your last name"
+                            required
+                            autocomplete="family-name"
+                            disabled={loading}
+                        >
+                    </div>
                 </div>
                 <div>
-                    <label for="registerEmail" class="block text-sm font-medium text-slate-700 mb-2">Email address</label>
+                    <label for="registerEmail" class="block text-sm font-medium text-slate-700 mb-2">School Email</label>
                     <input 
                         type="email" 
                         id="registerEmail" 
                         bind:value={email}
                         class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-slate-900 placeholder-slate-400"
-                        placeholder="Enter your email"
+                        placeholder="Enter your school email address"
                         required
                         autocomplete="email"
                         disabled={loading}
                     >
                 </div>
-                <div>
-                    <label for="registerPassword" class="block text-sm font-medium text-slate-700 mb-2">Password</label>
-                    <input 
-                        type="password" 
-                        id="registerPassword" 
-                        bind:value={password}
-                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-slate-900 placeholder-slate-400"
-                        placeholder="Create a password"
-                        required
-                        minlength="6"
-                        autocomplete="new-password"
-                        disabled={loading}
-                    >
-                </div>
-                <div>
-                    <label for="registerUniversity" class="block text-sm font-medium text-slate-700 mb-2">University</label>
-                    <input 
-                        type="text" 
-                        id="registerUniversity" 
-                        bind:value={university}
-                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-slate-900 placeholder-slate-400"
-                        placeholder="Enter your university"
-                        required
-                        disabled={loading}
-                    >
-                </div>
-                <div>
-                    <label for="registerMajor" class="block text-sm font-medium text-slate-700 mb-2">Major/Field of Study</label>
-                    <input 
-                        type="text" 
-                        id="registerMajor" 
-                        bind:value={major}
-                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-slate-900 placeholder-slate-400"
-                        placeholder="Enter your major"
-                        required
-                        disabled={loading}
-                    >
-                </div>
-                <div>
-                    <label for="registerYear" class="block text-sm font-medium text-slate-700 mb-2">Academic Year</label>
-                    <select 
-                        id="registerYear" 
-                        bind:value={year}
-                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-slate-900"
-                        required
-                        disabled={loading}
-                    >
-                        <option value="">Select your academic year</option>
-                        <option value="Freshman">Freshman</option>
-                        <option value="Sophomore">Sophomore</option>
-                        <option value="Junior">Junior</option>
-                        <option value="Senior">Senior</option>
-                        <option value="Graduate">Graduate Student</option>
-                        <option value="PhD">PhD Student</option>
-                        <option value="Postdoc">Postdoc</option>
-                        <option value="Faculty">Faculty</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="registerExperience" class="block text-sm font-medium text-slate-700 mb-2">Research Experience (Optional)</label>
-                    <textarea 
-                        id="registerExperience" 
-                        bind:value={experience}
-                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-slate-900 placeholder-slate-400"
-                        placeholder="Briefly describe your research experience"
-                        rows="3"
-                        disabled={loading}
-                    ></textarea>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="registerPassword" class="block text-sm font-medium text-slate-700 mb-2">Password</label>
+                        <input 
+                            type="password" 
+                            id="registerPassword" 
+                            bind:value={password}
+                            class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-slate-900 placeholder-slate-400"
+                            placeholder="Create a password"
+                            required
+                            minlength="6"
+                            autocomplete="new-password"
+                            disabled={loading}
+                        >
+                    </div>
+                    <div>
+                        <label for="registerConfirmPassword" class="block text-sm font-medium text-slate-700 mb-2">Confirm Password</label>
+                        <input 
+                            type="password" 
+                            id="registerConfirmPassword" 
+                            bind:value={confirmPassword}
+                            class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-slate-900 placeholder-slate-400"
+                            placeholder="Confirm your password"
+                            required
+                            minlength="6"
+                            autocomplete="new-password"
+                            disabled={loading}
+                        >
+                    </div>
                 </div>
                 <div>
                     <label for="registerInterests" class="block text-sm font-medium text-slate-700 mb-2">Research Interests (Optional)</label>

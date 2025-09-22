@@ -41,19 +41,31 @@
       password = '';
       error = '';
     } catch (err: any) {
-      let errorMessage = 'An error occurred during sign in';
+      let errorMessage = 'Sign in failed. Please try again.';
       switch (err.code) {
         case 'auth/user-not-found':
-          errorMessage = 'No lab member found with this email address';
+          errorMessage = 'No account found with this email.';
           break;
         case 'auth/wrong-password':
-          errorMessage = 'Incorrect password. Please try again';
+          errorMessage = 'Incorrect password. Please try again.';
           break;
         case 'auth/invalid-email':
-          errorMessage = 'Please enter a valid email address';
+          errorMessage = 'Please enter a valid email address.';
+          break;
+        case 'auth/invalid-credential':
+          errorMessage = 'Invalid email or password. Please check and try again.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many failed attempts. Please try again later.';
+          break;
+        case 'auth/user-disabled':
+          errorMessage = 'This account has been disabled. Contact support.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your connection.';
           break;
         default:
-          errorMessage = err.message || 'Failed to sign in';
+          errorMessage = 'Sign in failed. Please try again.';
       }
       error = errorMessage;
     } finally {
@@ -73,12 +85,26 @@
       closeModal();
       showToast('Welcome to CPX Lab!', `Welcome back, ${result.user.displayName || 'Researcher'}!`, 'success', 4000);
     } catch (err: any) {
-      let errorMessage = 'Failed to sign in with Google. Please try again.';
+      let errorMessage = 'Google sign-in failed. Please try again.';
       
-      if (err.code === 'auth/popup-closed-by-user') {
-        errorMessage = 'Sign-in was cancelled. Please try again.';
-      } else if (err.code === 'auth/popup-blocked') {
-        errorMessage = 'Popup was blocked. Please allow popups and try again.';
+      switch (err.code) {
+        case 'auth/popup-closed-by-user':
+          errorMessage = 'Sign-in cancelled. Please try again.';
+          break;
+        case 'auth/popup-blocked':
+          errorMessage = 'Popup blocked. Please allow popups and try again.';
+          break;
+        case 'auth/account-exists-with-different-credential':
+          errorMessage = 'Account exists with different sign-in method.';
+          break;
+        case 'auth/operation-not-allowed':
+          errorMessage = 'Google sign-in is not enabled. Contact support.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your connection.';
+          break;
+        default:
+          errorMessage = 'Google sign-in failed. Please try again.';
       }
       
       showToast('Sign-in Error', errorMessage, 'error');
@@ -99,12 +125,26 @@
       closeModal();
       showToast('Welcome to CPX Lab!', `Welcome back, ${result.user.displayName || 'Researcher'}!`, 'success', 4000);
     } catch (err: any) {
-      let errorMessage = 'Failed to sign in with GitHub. Please try again.';
+      let errorMessage = 'GitHub sign-in failed. Please try again.';
       
-      if (err.code === 'auth/popup-closed-by-user') {
-        errorMessage = 'Sign-in was cancelled. Please try again.';
-      } else if (err.code === 'auth/popup-blocked') {
-        errorMessage = 'Popup was blocked. Please allow popups and try again.';
+      switch (err.code) {
+        case 'auth/popup-closed-by-user':
+          errorMessage = 'Sign-in cancelled. Please try again.';
+          break;
+        case 'auth/popup-blocked':
+          errorMessage = 'Popup blocked. Please allow popups and try again.';
+          break;
+        case 'auth/account-exists-with-different-credential':
+          errorMessage = 'Account exists with different sign-in method.';
+          break;
+        case 'auth/operation-not-allowed':
+          errorMessage = 'GitHub sign-in is not enabled. Contact support.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your connection.';
+          break;
+        default:
+          errorMessage = 'GitHub sign-in failed. Please try again.';
       }
       
       showToast('Sign-in Error', errorMessage, 'error');
@@ -117,6 +157,8 @@
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape') {
       closeModal();
+    } else if (event.key === 'Enter' && !loading) {
+      handleLogin();
     }
   }
 </script>
