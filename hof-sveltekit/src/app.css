@@ -454,7 +454,7 @@
     right: 0;
     height: 64px;
     background: white;
-    z-index: 1100;
+    z-index: 100;
     display: flex;
     align-items: center;
 }
@@ -479,7 +479,7 @@
     top: 64px; /* Start below the header */
     left: 0;
     height: calc(100vh - 64px); /* Full height minus header */
-    width: 280px;
+    width: 196px;
     background: white;
     z-index: 1000;
     overflow-y: auto;
@@ -718,21 +718,23 @@
     margin-top: 64px; /* Account for the header */
 }
 
-/* Only apply sidebar margin when sidebar is visible and user is logged in */
-.main-content.with-sidebar {
-    margin-left: 280px !important;
+/* Only apply sidebar margin on desktop when user is logged in */
+@media (min-width: 1024px) {
+    .main-content.with-sidebar {
+        margin-left: 196px !important;
+    }
+}
+
+/* On mobile/tablet, sidebar is overlay so no margin needed */
+@media (max-width: 1023px) {
+    .main-content.with-sidebar {
+        margin-left: 0 !important;
+    }
 }
 
 /* Ensure logged-out users get full width */
 .main-content:not(.with-sidebar) {
     margin-left: 0 !important;
-}
-
-/* Force margin for logged-in desktop users */
-@media (min-width: 1024px) {
-    .main-content.with-sidebar {
-        margin-left: 280px !important;
-    }
 }
 
 /* Ensure navigation bar stays in main content */
@@ -747,7 +749,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: transparent;
     z-index: 999;
     opacity: 0;
     visibility: hidden;
@@ -774,6 +776,11 @@
 
 .sidebar-toggle.hidden {
     display: none;
+}
+
+/* Ensure hidden class works for all elements */
+.hidden {
+    display: none !important;
 }
 
 /* Mobile specific adjustments */
@@ -866,6 +873,11 @@
 }
 
 /* Toast Notification Styles */
+/* Toast Container - Ensure it's above everything */
+#toast-container {
+    z-index: 9999 !important;
+}
+
 .toast {
     display: flex;
     align-items: center;
@@ -881,7 +893,7 @@
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    z-index: 1200;
+    z-index: 1;
 }
 
 .toast.show {

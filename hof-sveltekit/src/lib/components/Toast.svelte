@@ -36,7 +36,7 @@
 </script>
 
 <!-- Toast Container -->
-<div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2">
+<div id="toast-container" class="fixed top-4 right-4 space-y-2" style="z-index: 9999;">
   {#each $toasts as toast (toast.id)}
     <div 
       class="toast {getTypeClass(toast.type)} show"
