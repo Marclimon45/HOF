@@ -52,17 +52,21 @@
   }
   
   // Update main content class based on user state and sidebar visibility
+  // On desktop, sidebar is always visible when user is logged in
+  // On mobile/tablet, sidebar visibility depends on sidebarOpen state
   $: mainContentClass = $user ? 'main-content with-sidebar' : 'main-content';
 </script>
 
 <div class="min-h-screen">
   <Header on:toggleSidebar={toggleSidebar} />
   
-  <Sidebar 
-    bind:sidebarOpen 
-    on:openModal={openModal}
-    on:userSignedOut={closeSidebar}
-  />
+  {#if $user}
+    <Sidebar 
+      bind:sidebarOpen 
+      on:openModal={openModal}
+      on:userSignedOut={closeSidebar}
+    />
+  {/if}
   
   <!-- Main Content Wrapper -->
   <div id="main-content" class={mainContentClass}>
