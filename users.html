@@ -621,10 +621,10 @@
         // Access control for protected pages
         function requireAuth() {
             if (!currentUser) {
-                showMessage('Access Restricted', 'You need to be logged in to access this page. Please sign in to continue.', true);
+                showMessage('Access Restricted', 'You need to be logged in to access this page. Redirecting to home page...', true);
                 setTimeout(() => {
                     window.location.href = 'index.html';
-                }, 2000);
+                }, 1500);
                 return false;
             }
             return true;
@@ -641,6 +641,30 @@
             return true;
         }
 
+        // Redirect all navigation links for non-logged-in users
+        function setupAuthRedirects() {
+            // Override all navigation links to check authentication
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a[href]');
+                if (link) {
+                    const href = link.getAttribute('href');
+                    const protectedPages = ['projects.html', 'ideas.html', 'users.html'];
+                    
+                    // Check if the link points to a protected page
+                    if (protectedPages.some(page => href.includes(page))) {
+                        if (!currentUser) {
+                            e.preventDefault();
+                            showMessage('Sign In Required', 'Please sign in to access this page. Redirecting to home page...', true);
+                            setTimeout(() => {
+                                window.location.href = 'index.html';
+                            }, 1500);
+                            return false;
+                        }
+                    }
+                }
+            });
+        }
+
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
             // Check access first
@@ -649,6 +673,7 @@
             }
             
             initializeApp();
+            setupAuthRedirects();
         });
 
         // Mobile menu toggle

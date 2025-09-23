@@ -1055,6 +1055,10 @@
                 <i class="fas fa-cog"></i>
                 <span>Settings</span>
             </a>
+            <a href="admin.html" class="sidebar-nav-item hidden" data-page="admin" id="admin-nav-item">
+                <i class="fas fa-shield-alt"></i>
+                <span>Admin</span>
+            </a>
                 </div>
                 
         <!-- User Info and Auth Buttons -->
@@ -1238,6 +1242,23 @@
             </div>
         </div>
     </section>
+
+            <!-- Public Project Showcase Section -->
+            <section class="py-32" id="public-showcase">
+                <div class="max-w-6xl mx-auto px-6">
+                    <div class="text-center mb-24">
+                        <h2 class="text-5xl font-bold text-gray-900 mb-8" style="font-size: var(--text-5xl);">Featured Research Projects</h2>
+                        <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-normal" style="font-size: var(--text-xl);">
+                            Explore some of our most impactful research projects and innovations from our lab members.
+                        </p>
+                    </div>
+                    
+                    <!-- Project Showcase Grid -->
+                    <div id="showcase-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Projects will be dynamically loaded here -->
+                    </div>
+                </div>
+            </section>
 
             <!-- Integrated Platform Features Section -->
             <section class="py-32">
@@ -2072,17 +2093,21 @@
         auth.onAuthStateChanged((user) => {
             currentUser = user;
             if (user) {
-                // Get user type from Firestore
+                // Get user type and role from Firestore
                 db.collection('users').doc(user.uid).get().then((doc) => {
                     if (doc.exists) {
-                        userType = doc.data().userType || 'user';
+                        const userData = doc.data();
+                        userType = userData.userType || 'user';
+                        currentUser.role = userData.role || 'user';
                     } else {
                         userType = 'user';
+                        currentUser.role = 'user';
                     }
                     updateUI();
                 });
             } else {
                 userType = 'guest';
+                currentUser = null;
                 updateUI();
             }
         });
@@ -2105,6 +2130,7 @@
             loadRecentActivity();
             loadFeaturedProjects();
             loadLabInsights();
+            loadPublicShowcase();
             
             // Update sidebar visibility
             if (window.updateSidebarVisibility) {
@@ -2344,6 +2370,92 @@
                 .catch((error) => {
                     console.error('Error loading recent activity:', error);
                 });
+        }
+
+        // Load public showcase projects
+        function loadPublicShowcase() {
+            db.collection('publicShowcase').where('isPublic', '==', true).get()
+                .then((querySnapshot) => {
+                    const showcaseProjects = [];
+                    querySnapshot.forEach((doc) => {
+                        showcaseProjects.push({ id: doc.id, ...doc.data() });
+                    });
+                    displayPublicShowcase(showcaseProjects);
+                })
+                .catch((error) => {
+                    console.error('Error loading public showcase:', error);
+                    // Use fallback data
+                    const fallbackProjects = [
+                        {
+                            id: '1',
+                            title: 'AI-Powered Research Assistant',
+                            author: 'Dr. Sarah Chen',
+                            description: 'An intelligent system that helps researchers analyze complex datasets and generate insights.',
+                            mediaType: 'image',
+                            mediaUrl: '/static/images/CPX Lab Example.png',
+                            projectId: 'ai-research-assistant'
+                        },
+                        {
+                            id: '2',
+                            title: 'Quantum Computing Algorithms',
+                            author: 'Prof. Michael Rodriguez',
+                            description: 'Novel algorithms for quantum machine learning applications in scientific computing.',
+                            mediaType: 'video',
+                            mediaUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                            projectId: 'quantum-algorithms'
+                        },
+                        {
+                            id: '3',
+                            title: 'Sustainable Energy Solutions',
+                            author: 'Dr. Emily Watson',
+                            description: 'Research on renewable energy storage and distribution systems for smart cities.',
+                            mediaType: 'image',
+                            mediaUrl: '/static/images/CPX Lab Member 2024.webp',
+                            projectId: 'sustainable-energy'
+                        }
+                    ];
+                    displayPublicShowcase(fallbackProjects);
+                });
+        }
+
+        // Display public showcase projects
+        function displayPublicShowcase(projects) {
+            const showcaseContainer = document.getElementById('showcase-projects');
+            if (!showcaseContainer) return;
+
+            showcaseContainer.innerHTML = projects.map(project => `
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" onclick="handleProjectClick('${project.projectId}')">
+                    <div class="aspect-w-16 aspect-h-9">
+                        ${project.mediaType === 'video' ? 
+                            `<iframe src="${project.mediaUrl}" class="w-full h-48 object-cover" frameborder="0" allowfullscreen></iframe>` :
+                            `<img src="${project.mediaUrl}" alt="${project.title}" class="w-full h-48 object-cover">`
+                        }
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">${project.title}</h3>
+                        <p class="text-sm text-gray-600 mb-3">By ${project.author}</p>
+                        <p class="text-gray-600 text-sm">${project.description}</p>
+                        <div class="mt-4 flex items-center text-sm text-gray-500">
+                            <i class="fas fa-arrow-right mr-2"></i>
+                            <span>View Project Details</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Handle project click - redirect to project page or login
+        function handleProjectClick(projectId) {
+            if (currentUser) {
+                // User is logged in - redirect to project page
+                window.location.href = `projects.html#${projectId}`;
+            } else {
+                // User is not logged in - show login modal
+                showToast('Login Required', 'Please sign in to view project details.', 'info');
+                setTimeout(() => {
+                    openModal('loginModal');
+                }, 1000);
+            }
         }
 
         // Update activity display on the page
@@ -2770,14 +2882,19 @@
         function getUserRole() {
             if (!currentUser) return 'Guest';
             
-            // Check if user has admin privileges (you can customize this logic)
-            if (currentUser.email && currentUser.email.includes('admin')) {
+            // Check if user has admin privileges from Firestore role field
+            if (currentUser.role === 'admin') {
                 return 'Professor';
-            } else if (currentUser.email && currentUser.email.includes('senior')) {
+            } else if (currentUser.role === 'senior') {
                 return 'Senior Researcher';
             } else {
                 return 'Researcher';
             }
+        }
+
+        // Check if user is admin
+        function isAdmin() {
+            return currentUser && currentUser.role === 'admin';
         }
 
         // Update authentication buttons
@@ -2787,6 +2904,7 @@
             const sidebarLogoutBtn = document.getElementById('sidebar-logout-btn');
             const sidebarUserName = document.getElementById('sidebar-user-name');
             const sidebarUserRole = document.getElementById('sidebar-user-role');
+            const adminNavItem = document.getElementById('admin-nav-item');
 
             if (currentUser) {
                 // User is logged in - show user info and logout button
@@ -2798,11 +2916,19 @@
                 sidebarUserInfo.classList.remove('hidden');
                 sidebarAuthButtons.classList.add('hidden');
                 sidebarLogoutBtn.classList.remove('hidden');
+                
+                // Show admin nav item if user is admin
+                if (isAdmin()) {
+                    adminNavItem.classList.remove('hidden');
+                } else {
+                    adminNavItem.classList.add('hidden');
+                }
             } else {
                 // User is not logged in - show auth buttons
                 sidebarUserInfo.classList.add('hidden');
                 sidebarAuthButtons.classList.remove('hidden');
                 sidebarLogoutBtn.classList.add('hidden');
+                adminNavItem.classList.add('hidden');
             }
         }
 
@@ -3226,6 +3352,7 @@
             updateUI();
             initScrollReveal();
             initFormKeyHandlers();
+            setupAuthRedirects();
             initModalClickOutside();
             initSidebar();
         });
@@ -3300,10 +3427,10 @@
         // Access control for protected pages
         function requireAuth() {
             if (!currentUser) {
-                showToast('Access Restricted', 'You need to be logged in to access this page. Please sign in to continue.', 'error');
+                showToast('Access Restricted', 'You need to be logged in to access this page. Redirecting to home page...', 'error');
                 setTimeout(() => {
                     window.location.href = 'index.html';
-                }, 2000);
+                }, 1500);
                 return false;
             }
             return true;
@@ -3318,6 +3445,30 @@
                 return requireAuth();
             }
             return true;
+        }
+
+        // Redirect all navigation links for non-logged-in users
+        function setupAuthRedirects() {
+            // Override all navigation links to check authentication
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a[href]');
+                if (link) {
+                    const href = link.getAttribute('href');
+                    const protectedPages = ['projects.html', 'ideas.html', 'users.html'];
+                    
+                    // Check if the link points to a protected page
+                    if (protectedPages.some(page => href.includes(page))) {
+                        if (!currentUser) {
+                            e.preventDefault();
+                            showToast('Sign In Required', 'Please sign in to access this page. Redirecting to home page...', 'error');
+                            setTimeout(() => {
+                                window.location.href = 'index.html';
+                            }, 1500);
+                            return false;
+                        }
+                    }
+                }
+            });
         }
 
         // Sidebar functionality
