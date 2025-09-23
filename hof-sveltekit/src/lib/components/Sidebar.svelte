@@ -12,13 +12,13 @@
   const dispatch = createEventDispatcher();
   
   const navigation = [
-    { name: 'Dashboard', href: '/', icon: 'fas fa-home', page: 'home' },
-    { name: 'My Projects', href: '/projects', icon: 'fas fa-project-diagram', page: 'projects' },
-    { name: 'Research Ideas', href: '/ideas', icon: 'fas fa-lightbulb', page: 'ideas' },
-    { name: 'Lab Members', href: '/users', icon: 'fas fa-users', page: 'users' },
-    { name: 'Lab Calendar', href: '#', icon: 'fas fa-calendar-alt', page: 'calendar' },
-    { name: 'Progress Reports', href: '#', icon: 'fas fa-chart-line', page: 'reports' },
-    { name: 'Settings', href: '#', icon: 'fas fa-cog', page: 'settings' },
+    { name: 'Dashboard', href: '/app', icon: 'fas fa-home', page: 'dashboard' },
+    { name: 'Projects', href: '/app/projects', icon: 'fas fa-project-diagram', page: 'projects' },
+    { name: 'Ideas', href: '/app/ideas', icon: 'fas fa-lightbulb', page: 'ideas' },
+    { name: 'People', href: '/app/people', icon: 'fas fa-users', page: 'people' },
+    { name: 'Announcements', href: '/app/announcements', icon: 'fas fa-bullhorn', page: 'announcements' },
+    { name: 'Files & Links', href: '/app/links', icon: 'fas fa-link', page: 'links' },
+    { name: 'Settings', href: '/app/settings', icon: 'fas fa-cog', page: 'settings' },
   ];
   
   async function handleSignOut() {
@@ -40,10 +40,6 @@
     dispatch('openModal', { modalId });
   }
   
-  function getCurrentPageName() {
-    const currentNav = navigation.find(nav => isActive(nav.href));
-    return currentNav?.name || 'Dashboard';
-  }
 </script>
 
 <!-- Sidebar Overlay -->
@@ -52,12 +48,6 @@
 <!-- Left Sidebar -->
 <div id="sidebar" class="sidebar {sidebarOpen ? 'open' : ''}">
         
-    <!-- Breadcrumb Navigation -->
-    <div id="breadcrumb" class="breadcrumb">
-        <a href="/" class="breadcrumb-item">Home</a>
-        <span class="breadcrumb-separator">/</span>
-        <span class="breadcrumb-current">{getCurrentPageName()}</span>
-    </div>
     
     <!-- Sidebar Navigation -->
     <div class="sidebar-nav">
