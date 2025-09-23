@@ -1,5 +1,6 @@
 <script lang="ts">
   import { user } from '../stores/auth';
+  import { userProfile, profileLoading } from '../stores/userProfile';
   import { page } from '$app/stores';
   import { signOut } from 'firebase/auth';
   import { auth } from '../firebase';
@@ -75,7 +76,15 @@
                 <i class="fas fa-user"></i>
             </div>
             <div class="user-details">
-                <div class="user-name" id="sidebar-user-name">{$user?.displayName?.split(' ')[0] || $user?.email?.split('@')[0] || 'Loading...'}</div>
+                <div class="user-name" id="sidebar-user-name">
+                  {#if $profileLoading}
+                    Loading...
+                  {:else if $userProfile?.firstName}
+                    {$userProfile.firstName}
+                  {:else}
+                    {$user?.displayName || $user?.email || 'User'}
+                  {/if}
+                </div>
                 <div class="user-role" id="sidebar-user-role">Researcher</div>
             </div>
         </div>

@@ -1,7 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { createUserWithEmailAndPassword, GoogleAuthProvider, GithubAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
-  import { auth } from '../firebase';
+  import { auth, db } from '../firebase';
+  import { doc, setDoc } from 'firebase/firestore';
   import { showToast } from '../stores/toast';
   
   const dispatch = createEventDispatcher();
@@ -53,11 +54,24 @@
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const fullName = `${firstName} ${lastName}`;
+      
+      // Update Firebase Auth profile
       await updateProfile(userCredential.user, {
         displayName: fullName
       });
+      
+      // Save user profile to Firestore
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        interests: interests || '',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+      
       closeModal();
-      showToast('Welcome to CPX Lab!', `Account created successfully! Welcome to CPX Lab, ${fullName}! Your application is now under review.`, 'success', 6000);
+      showToast('Welcome to CPX Lab!', `Account created successfully! Welcome to CPX Lab, ${firstName}! Your application is now under review.`, 'success', 6000);
     } catch (err: any) {
       let errorMessage = 'Registration failed. Please try again.';
       switch (err.code) {
