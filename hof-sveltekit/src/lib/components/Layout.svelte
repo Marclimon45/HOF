@@ -5,6 +5,7 @@
   import RegisterModal from './RegisterModal.svelte';
   import Toast from './Toast.svelte';
   import { user } from '../stores/auth';
+  import { page } from '$app/stores';
   import { onMount } from 'svelte';
   
   let sidebarOpen = false;
@@ -34,6 +35,16 @@
   }
   
   function closeSidebar() {
+    sidebarOpen = false;
+  }
+  
+  // Track previous path to detect navigation changes
+  let previousPath = '';
+  
+  // Ensure sidebar closes when navigating to different routes
+  $: if ($page && $page.url.pathname !== previousPath) {
+    previousPath = $page.url.pathname;
+    // Close sidebar when navigating to a different page
     sidebarOpen = false;
   }
   

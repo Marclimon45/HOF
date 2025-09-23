@@ -6,6 +6,7 @@
   import { auth } from '../firebase';
   import { createEventDispatcher } from 'svelte';
   import { showToast } from '../stores/toast';
+  import { goto } from '$app/navigation';
   
   export let sidebarOpen = false;
   
@@ -59,17 +60,26 @@
     // Close sidebar when navigating to any page (including current page)
     // This ensures consistent behavior and better UX on mobile
     if (href) {
-      // Small delay to ensure navigation happens first
-      setTimeout(() => {
-        dispatch('closeSidebar');
-      }, 100);
+      // Prevent default link behavior first
+      event.preventDefault();
+      
+      // Close sidebar immediately
+      dispatch('closeSidebar');
+      
+      // Navigate to the page using SvelteKit's goto
+      goto(href);
     }
+  }
+  
+  function handleOverlayClick() {
+    // Close sidebar when overlay is clicked
+    dispatch('closeSidebar');
   }
   
 </script>
 
 <!-- Sidebar Overlay -->
-<div id="sidebar-overlay" class="sidebar-overlay {sidebarOpen ? 'open' : ''}"></div>
+<div id="sidebar-overlay" class="sidebar-overlay {sidebarOpen ? 'open' : ''}" on:click={handleOverlayClick} on:keydown={(e) => e.key === 'Escape' && handleOverlayClick()} role="button" tabindex="0" aria-label="Close sidebar"></div>
 
 <!-- Left Sidebar -->
 <div id="sidebar" class="sidebar {sidebarOpen ? 'open' : ''}">

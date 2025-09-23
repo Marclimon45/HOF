@@ -1,6 +1,7 @@
 <script lang="ts">
   import { user, loading } from '$lib/stores/auth';
   import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
   import { onMount } from 'svelte';
   import Sidebar from '$lib/components/Sidebar.svelte';
   import Header from '$lib/components/Header.svelte';
@@ -40,6 +41,16 @@
   function toggleSidebar() {
     sidebarOpen = !sidebarOpen;
   }
+  
+  // Track previous path to detect navigation changes
+  let previousPath = '';
+  
+  // Ensure sidebar closes when navigating to different routes
+  $: if ($page && $page.url.pathname !== previousPath) {
+    previousPath = $page.url.pathname;
+    // Close sidebar when navigating to a different page
+    sidebarOpen = false;
+  }
 </script>
 
 <svelte:head>
@@ -67,6 +78,7 @@
       bind:sidebarOpen 
       on:openModal={handleOpenModal}
       on:userSignedOut={handleUserSignedOut}
+      on:closeSidebar={() => sidebarOpen = false}
     />
     
     <!-- Main Content -->
