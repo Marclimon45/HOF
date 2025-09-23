@@ -40,11 +40,6 @@
   <meta name="description" content="Advanced research project management and student progress tracking for academic excellence" />
 </svelte:head>
 
-<!-- Geometric Background Animation -->
-<div class="geometric-background">
-  <div class="grid-overlay"></div>
-</div>
-
 {#if $loading}
   <div class="flex items-center justify-center min-h-screen">
     <div class="text-center">
@@ -53,6 +48,46 @@
     </div>
   </div>
 {:else}
+  <!-- Physics Background Animation -->
+  <div class="physics-background">
+    <!-- Law of Levers -->
+    <div class="lever-system">
+      <div class="lever-weight-left"></div>
+      <div class="lever-weight-right"></div>
+      <div class="lever-fulcrum"></div>
+    </div>
+    
+    <!-- Center of Gravity Studies -->
+    <div class="gravity-shapes">
+      <div class="gravity-triangle"></div>
+      <div class="gravity-circle"></div>
+      <div class="gravity-square"></div>
+    </div>
+    
+    <!-- Hydraulics & Fluid Flow -->
+    <div class="fluid-flow">
+      <div class="fluid-line-1"></div>
+      <div class="fluid-line-2"></div>
+      <div class="fluid-line-3"></div>
+      <div class="fluid-pump"></div>
+    </div>
+    
+    <!-- Geometric Grid -->
+    <div class="geometric-grid">
+      <div class="grid-line-h"></div>
+      <div class="grid-line-h"></div>
+      <div class="grid-line-h"></div>
+      <div class="grid-line-v"></div>
+      <div class="grid-line-v"></div>
+    </div>
+    
+    <!-- Floating Particles -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
   <Hero on:openModal={openModal} />
   
   {#if !$user}
