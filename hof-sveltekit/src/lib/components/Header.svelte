@@ -12,7 +12,7 @@
 <!-- Top Header -->
 <header id="top-header" class="top-header">
     <div class="header-content">
-        <div class="header-logo">CPX Lab</div>
+        <a href="/" class="header-logo">CPX Lab</a>
         <button id="sidebar-toggle" class="sidebar-toggle {$user ? '' : 'hidden'}" on:click={toggleSidebar}>
             <i class="fas fa-bars"></i>
         </button>
