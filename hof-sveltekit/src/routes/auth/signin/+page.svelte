@@ -2,11 +2,20 @@
   import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, GithubAuthProvider } from 'firebase/auth';
   import { auth } from '$lib/firebase';
   import { goto } from '$app/navigation';
+  import { user, loading as authLoading } from '$lib/stores/auth';
+  import { onMount } from 'svelte';
   
   let email = '';
   let password = '';
   let loading = false;
   let error = '';
+  
+  onMount(() => {
+    // Redirect authenticated users to app
+    if (!$authLoading && $user) {
+      goto('/app');
+    }
+  });
   
   async function handleEmailSignIn() {
     if (!email || !password) {
@@ -18,7 +27,7 @@
       loading = true;
       error = '';
       await signInWithEmailAndPassword(auth, email, password);
-      goto('/');
+      goto('/app');
     } catch (err: any) {
       error = err.message;
     } finally {
@@ -32,7 +41,7 @@
       error = '';
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
-      goto('/');
+      goto('/app');
     } catch (err: any) {
       error = err.message;
     } finally {
@@ -46,7 +55,7 @@
       error = '';
       const provider = new GithubAuthProvider();
       await signInWithPopup(auth, provider);
-      goto('/');
+      goto('/app');
     } catch (err: any) {
       error = err.message;
     } finally {

@@ -1,7 +1,9 @@
 <script lang="ts">
-  import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, GithubAuthProvider } from 'firebase/auth';
+  import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, updateProfile } from 'firebase/auth';
   import { auth } from '$lib/firebase';
   import { goto } from '$app/navigation';
+  import { user, loading as authLoading } from '$lib/stores/auth';
+  import { onMount } from 'svelte';
   
   let email = '';
   let password = '';
@@ -9,6 +11,13 @@
   let displayName = '';
   let loading = false;
   let error = '';
+  
+  onMount(() => {
+    // Redirect authenticated users to app
+    if (!$authLoading && $user) {
+      goto('/app');
+    }
+  });
   
   async function handleEmailSignUp() {
     if (!email || !password || !confirmPassword || !displayName) {
@@ -31,8 +40,8 @@
       error = '';
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       // Update display name
-      await userCredential.user.updateProfile({ displayName });
-      goto('/');
+      await updateProfile(userCredential.user, { displayName });
+      goto('/app');
     } catch (err: any) {
       error = err.message;
     } finally {
@@ -46,7 +55,7 @@
       error = '';
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
-      goto('/');
+      goto('/app');
     } catch (err: any) {
       error = err.message;
     } finally {
@@ -60,7 +69,7 @@
       error = '';
       const provider = new GithubAuthProvider();
       await signInWithPopup(auth, provider);
-      goto('/');
+      goto('/app');
     } catch (err: any) {
       error = err.message;
     } finally {

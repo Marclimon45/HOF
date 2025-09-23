@@ -98,7 +98,7 @@
         <AboutSection />
         
         <!-- Lab Recruitment Section -->
-        <section class="py-32">
+        <section class="py-32 bg-white">
           <div class="max-w-6xl mx-auto px-6">
             <div class="text-center mb-24">
               <h2 class="text-5xl font-light text-gray-900 mb-8" style="font-size: var(--text-5xl);">Join Our Research Community</h2>
@@ -109,12 +109,13 @@
                   
             <!-- Team Collaboration Image -->
             <div class="mb-16">
-              <div class="section-image">
+              <div class="section-image relative group">
                 <img 
                   src="/images/CPXLabExample.png" 
                   alt="CPX Lab Research Environment" 
                   class="w-full h-full object-cover object-top rounded-lg"
                 />
+                <div class="absolute inset-0 bg-white opacity-40 group-hover:opacity-0 transition-opacity duration-[3000ms] rounded-lg"></div>
               </div>
             </div>
             
@@ -132,7 +133,7 @@
               <div class="p-12 rounded-lg border border-gray-200 hover-lift fade-in">
                 <div class="w-16 h-16 text-gray-900 rounded-lg flex items-center justify-center mb-8 text-2xl font-light">2</div>
                 <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Submit Survey Form</h3>
-                <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Complete our survey to help us understand your background, interests, and experience to find the best research match.</p>
+                <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Complete our <a href="https://docs.google.com/forms/d/e/1FAIpQLSdMjPE2wMVAhvOlM2XLVG9hAP2z1RkYzF8D4VAN6OzrTilToQ/viewform" target="_blank" class="text-gray-900 hover:text-gray-700 underline font-medium">research interest survey</a> to help us understand your background, interests, and experience to find the best research match.</p>
                 <ul class="text-sm text-gray-500 space-y-3 font-light">
                   <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Background assessment</li>
                   <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research interests</li>

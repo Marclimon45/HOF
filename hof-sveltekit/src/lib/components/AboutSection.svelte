@@ -11,12 +11,13 @@
             
         <!-- Lab Environment Image -->
         <div class="mb-16">
-            <div class="section-image">
+            <div class="section-image relative group">
                 <img 
                     src="/images/CPXLabMember2024.webp" 
                     alt="CPX Lab Members 2024" 
                     class="w-full h-full object-cover object-center rounded-lg"
                 />
+                <div class="absolute inset-0 bg-white opacity-40 group-hover:opacity-0 transition-opacity duration-[3000ms] rounded-lg"></div>
             </div>
         </div>
         

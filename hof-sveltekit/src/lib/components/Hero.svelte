@@ -50,19 +50,19 @@
             
             <!-- Lab Stats -->
             <div id="lab-stats" class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-                <div class="text-center p-8 rounded-lg border border-gray-200">
+                <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
                     <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">15+</div>
                     <div class="text-gray-600 text-sm font-medium uppercase tracking-wide">Active Research Projects</div>
                 </div>
-                <div class="text-center p-8 rounded-lg border border-gray-200">
+                <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
                     <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">25+</div>
                     <div class="text-gray-600 text-sm font-medium uppercase tracking-wide">Graduate Students</div>
                 </div>
-                <div class="text-center p-8 rounded-lg border border-gray-200">
+                <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
                     <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">8+</div>
                     <div class="text-gray-600 text-sm font-medium uppercase tracking-wide">Publications</div>
                 </div>
-                <div class="text-center p-8 rounded-lg border border-gray-200">
+                <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
                     <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">3+</div>
                     <div class="text-gray-600 text-sm font-medium uppercase tracking-wide">Years Active</div>
                 </div>
