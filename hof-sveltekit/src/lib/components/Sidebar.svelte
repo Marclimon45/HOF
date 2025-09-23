@@ -39,13 +39,6 @@
     dispatch('openModal', { modalId });
   }
   
-  function handleNavigationClick() {
-    // Close sidebar when navigation link is clicked (mobile/tablet)
-    if (sidebarOpen) {
-      dispatch('closeSidebar');
-    }
-  }
-  
   function getCurrentPageName() {
     const currentNav = navigation.find(nav => isActive(nav.href));
     return currentNav?.name || 'Dashboard';
@@ -68,7 +61,7 @@
     <!-- Sidebar Navigation -->
     <div class="sidebar-nav">
         {#each navigation as item}
-            <a href={item.href} class="sidebar-nav-item {isActive(item.href) ? 'active' : ''}" data-page={item.page} on:click={handleNavigationClick}>
+            <a href={item.href} class="sidebar-nav-item {isActive(item.href) ? 'active' : ''}" data-page={item.page}>
                 <i class={item.icon}></i>
                 <span>{item.name}</span>
             </a>
@@ -82,7 +75,7 @@
                 <i class="fas fa-user"></i>
             </div>
             <div class="user-details">
-                <div class="user-name" id="sidebar-user-name">{$user?.displayName || $user?.email || 'Loading...'}</div>
+                <div class="user-name" id="sidebar-user-name">{$user?.displayName?.split(' ')[0] || $user?.email?.split('@')[0] || 'Loading...'}</div>
                 <div class="user-role" id="sidebar-user-role">Researcher</div>
             </div>
         </div>
