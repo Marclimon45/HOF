@@ -3,6 +3,7 @@
   import AboutSection from '$lib/components/AboutSection.svelte';
   import { user, loading } from '$lib/stores/auth';
   import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
   
   let stats = {
     totalProjects: 0,
@@ -12,6 +13,12 @@
   };
   
   onMount(async () => {
+    // Redirect authenticated users to app
+    if ($user) {
+      goto('/app');
+      return;
+    }
+    
     // Load basic stats - in the original these were hardcoded
     stats = {
       totalProjects: 15,
@@ -138,85 +145,6 @@
             </div>
           </div>
         </section>
-      </div>
-    </div>
-  {:else}
-    <!-- Logged-in user content -->
-    <div class="pt-8">
-      <!-- Welcome Section -->
-      <div class="bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div class="text-center">
-            <h1 class="text-4xl font-bold text-gray-900 mb-4" style="font-size: var(--text-4xl);">
-              Welcome back, {$user.displayName || $user.email || 'Researcher'}!
-            </h1>
-            <p class="text-xl text-gray-600 mb-8" style="font-size: var(--text-xl);">
-              Continue your research journey and collaborate with fellow innovators
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Stats Section -->
-      <div class="bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
-              <div class="text-3xl font-bold text-gray-900 mb-2">{stats.totalProjects}</div>
-              <div class="text-sm text-gray-600">Active Projects</div>
-            </div>
-            <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
-              <div class="text-3xl font-bold text-gray-900 mb-2">{stats.activeMembers}</div>
-              <div class="text-sm text-gray-600">Lab Members</div>
-            </div>
-            <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
-              <div class="text-3xl font-bold text-gray-900 mb-2">{stats.researchIdeas}</div>
-              <div class="text-sm text-gray-600">Research Ideas</div>
-            </div>
-            <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
-              <div class="text-3xl font-bold text-gray-900 mb-2">{stats.publications}</div>
-              <div class="text-sm text-gray-600">Publications</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h2 class="text-2xl font-bold text-gray-900 mb-6" style="font-size: var(--text-2xl);">Quick Actions</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <a href="/projects" class="p-6 rounded-lg border border-gray-200 hover:shadow-lg transition-all duration-300">
-              <div class="flex items-center mb-4">
-                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
-                  <i class="fas fa-project-diagram text-gray-600 text-xl"></i>
-                </div>
-                <h3 class="text-lg font-semibold text-gray-900">My Projects</h3>
-              </div>
-              <p class="text-gray-600">View and manage your active research projects</p>
-            </a>
-            
-            <a href="/ideas" class="p-6 rounded-lg border border-gray-200 hover:shadow-lg transition-all duration-300">
-              <div class="flex items-center mb-4">
-                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
-                  <i class="fas fa-lightbulb text-gray-600 text-xl"></i>
-                </div>
-                <h3 class="text-lg font-semibold text-gray-900">Research Ideas</h3>
-              </div>
-              <p class="text-gray-600">Explore new research opportunities and ideas</p>
-            </a>
-            
-            <a href="/users" class="p-6 rounded-lg border border-gray-200 hover:shadow-lg transition-all duration-300">
-              <div class="flex items-center mb-4">
-                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
-                  <i class="fas fa-users text-gray-600 text-xl"></i>
-                </div>
-                <h3 class="text-lg font-semibold text-gray-900">Lab Members</h3>
-              </div>
-              <p class="text-gray-600">Connect with other researchers in the lab</p>
-            </a>
-          </div>
-        </div>
       </div>
     </div>
   {/if}
