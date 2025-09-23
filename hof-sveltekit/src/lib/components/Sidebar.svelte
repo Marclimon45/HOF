@@ -39,6 +39,13 @@
     dispatch('openModal', { modalId });
   }
   
+  function handleNavigationClick() {
+    // Close sidebar when navigation link is clicked (mobile/tablet)
+    if (sidebarOpen) {
+      dispatch('closeSidebar');
+    }
+  }
+  
   function getCurrentPageName() {
     const currentNav = navigation.find(nav => isActive(nav.href));
     return currentNav?.name || 'Dashboard';
@@ -61,7 +68,7 @@
     <!-- Sidebar Navigation -->
     <div class="sidebar-nav">
         {#each navigation as item}
-            <a href={item.href} class="sidebar-nav-item {isActive(item.href) ? 'active' : ''}" data-page={item.page}>
+            <a href={item.href} class="sidebar-nav-item {isActive(item.href) ? 'active' : ''}" data-page={item.page} on:click={handleNavigationClick}>
                 <i class={item.icon}></i>
                 <span>{item.name}</span>
             </a>
