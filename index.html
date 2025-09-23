@@ -480,6 +480,12 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: #000000;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .header-logo:hover {
+            color: #3b82f6;
         }
 
         /* Left Sidebar Styles - Responsive Design */
@@ -1005,7 +1011,7 @@
     <!-- Top Header -->
     <header id="top-header" class="top-header">
         <div class="header-content">
-            <div class="header-logo">CPX Lab</div>
+            <a href="index.html" class="header-logo">CPX Lab</a>
             <button id="sidebar-toggle" class="sidebar-toggle hidden">
                 <i class="fas fa-bars"></i>
             </button>
@@ -1018,12 +1024,6 @@
     <!-- Left Sidebar -->
     <div id="sidebar" class="sidebar">
                 
-        <!-- Breadcrumb Navigation -->
-        <div id="breadcrumb" class="breadcrumb">
-            <a href="index.html" class="breadcrumb-item">Home</a>
-            <span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-current">Dashboard</span>
-                        </div>
         
         <!-- Sidebar Navigation -->
         <div class="sidebar-nav">
@@ -1113,19 +1113,19 @@
                 
                 <!-- Lab Stats -->
                 <div id="lab-stats" class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-                    <div class="text-center p-8 rounded-lg border border-gray-200">
-                        <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">15+</div>
+                    <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
+                        <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">2+</div>
                         <div class="text-gray-600 text-sm font-medium uppercase tracking-wide">Active Research Projects</div>
             </div>
-                    <div class="text-center p-8 rounded-lg border border-gray-200">
-                        <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">25+</div>
+                    <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
+                        <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">15+</div>
                         <div class="text-gray-600 text-sm font-medium uppercase tracking-wide">Graduate Students</div>
                     </div>
-                    <div class="text-center p-8 rounded-lg border border-gray-200">
-                        <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">8+</div>
+                    <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
+                        <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">4+</div>
                         <div class="text-gray-600 text-sm font-medium uppercase tracking-wide">Publications</div>
                     </div>
-                    <div class="text-center p-8 rounded-lg border border-gray-200">
+                    <div class="text-center p-8 rounded-lg border border-gray-200 bg-white">
                         <div class="text-4xl font-bold text-gray-900 mb-3" style="font-size: var(--text-4xl);">3+</div>
                         <div class="text-gray-600 text-sm font-medium uppercase tracking-wide">Years Active</div>
                     </div>
@@ -1152,7 +1152,7 @@
                     <!-- Lab Environment Image -->
                     <div class="mb-16">
                         <div class="section-image">
-                            <img src="CPX Lab Member 2024.webp" alt="CPX Lab Members" class="w-full h-full object-cover rounded-lg" style="position: relative; z-index: 0;">
+                            <img src="/static/images/CPX Lab Member 2024.webp" alt="CPX Lab Members" class="w-full h-full object-cover rounded-lg" style="position: relative; z-index: 0;">
                         </div>
                     </div>
                     
@@ -1195,39 +1195,44 @@
                     <!-- Team Collaboration Image -->
                     <div class="mb-16">
                         <div class="section-image">
-                            <img src="CPX Lab Example.png" alt="CPX Lab Example" class="w-full h-full object-cover rounded-lg" style="position: relative; z-index: 0;">
+                            <img src="static/images/CPX Lab Example.png" alt="CPX Lab Example" class="w-full h-full object-cover rounded-lg" style="position: relative; z-index: 0;">
                         </div>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                        <div class="p-12 rounded-lg border border-gray-200 hover-lift slide-in-left">
+                        <div class="p-12 rounded-lg border border-gray-200 hover-lift slide-in-left bg-white">
                             <div class="w-16 h-16 text-gray-900 rounded-lg flex items-center justify-center mb-8 text-2xl font-light">1</div>
-                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Apply to Lab</h3>
-                            <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Submit your research interests, CV, and academic background through our application portal.</p>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Meet Dr. Qin</h3>
+                            <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Connect with Dr. Qin to discuss your research interests and learn about our lab's cutting-edge projects.</p>
                             <ul class="text-sm text-gray-500 space-y-3 font-light">
-                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research statement</li>
-                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Academic transcripts</li>
-                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Reference letters</li>
-                            </ul>
-                        </div>
-                        <div class="p-12 rounded-lg border border-gray-200 hover-lift fade-in">
-                            <div class="w-16 h-16 text-gray-900 rounded-lg flex items-center justify-center mb-8 text-2xl font-light">2</div>
-                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Interview Process</h3>
-                            <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Meet with lab members and discuss potential research projects and collaboration opportunities.</p>
-                            <ul class="text-sm text-gray-500 space-y-3 font-light">
-                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Technical interview</li>
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Initial consultation</li>
                                 <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research discussion</li>
-                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Lab culture fit</li>
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Lab introduction</li>
                             </ul>
                         </div>
-                        <div class="p-12 rounded-lg border border-gray-200 hover-lift slide-in-right">
+                        <div class="p-12 rounded-lg border border-gray-200 hover-lift fade-in bg-white">
+                            <div class="w-16 h-16 text-gray-900 rounded-lg flex items-center justify-center mb-8 text-2xl font-light">2</div>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Submit Survey Form</h3>
+                            <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Complete our comprehensive survey to share your background, interests, and research experience with our team.</p>
+                            <ul class="text-sm text-gray-500 space-y-3 font-light">
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Background information</li>
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research interests</li>
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Experience details</li>
+                            </ul>
+                            <div class="mt-6">
+                                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdMjPE2wMVAhvOlM2XLVG9hAP2z1RkYzF8D4VAN6OzrTilToQ/viewform" target="_blank" class="inline-flex items-center px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Complete Survey
+                                </a>
+                            </div>
+                        </div>
+                        <div class="p-12 rounded-lg border border-gray-200 hover-lift slide-in-right bg-white">
                             <div class="w-16 h-16 text-gray-900 rounded-lg flex items-center justify-center mb-8 text-2xl font-light">3</div>
-                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Onboard & Research</h3>
-                            <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Get access to our platform, join research projects, and start your academic journey with us.</p>
+                            <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Onboard and Research and Have Fun</h3>
+                            <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Join our research community, get access to our platform, and embark on an exciting academic journey filled with discovery and collaboration.</p>
                             <ul class="text-sm text-gray-500 space-y-3 font-light">
                                 <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Platform training</li>
                                 <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Project assignment</li>
-                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Mentorship program</li>
+                                <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research collaboration</li>
                             </ul>
                         </div>
             </div>
@@ -3223,7 +3228,6 @@
             initFormKeyHandlers();
             initModalClickOutside();
             initSidebar();
-            initBreadcrumb();
         });
 
         // Add Enter key support for forms
@@ -3356,9 +3360,6 @@
                     // Add active class to clicked item
                     this.classList.add('active');
                     
-                    // Update breadcrumb using the span text
-                    const spanText = this.querySelector('span').textContent.trim();
-                    updateBreadcrumb(spanText, this.getAttribute('data-page'));
                 });
             });
 
@@ -3415,54 +3416,6 @@
             window.updateSidebarVisibility = updateSidebarVisibility;
         }
 
-        // Update breadcrumb navigation
-        function updateBreadcrumb(pageName, pageId) {
-            const breadcrumb = document.getElementById('breadcrumb');
-            if (!breadcrumb) return;
-
-            const breadcrumbItems = {
-                'home': 'Dashboard',
-                'projects': 'My Projects',
-                'ideas': 'Research Ideas',
-                'users': 'Lab Members',
-                'calendar': 'Lab Calendar',
-                'reports': 'Progress Reports',
-                'settings': 'Settings'
-            };
-
-            const currentPageName = breadcrumbItems[pageId] || pageName;
-            
-            breadcrumb.innerHTML = `
-                <a href="index.html" class="breadcrumb-item">Home</a>
-                <span class="breadcrumb-separator">/</span>
-                <span class="breadcrumb-current">${currentPageName}</span>
-            `;
-        }
-
-        // Initialize breadcrumb based on current page
-        function initBreadcrumb() {
-            const currentPage = window.location.pathname.split('/').pop();
-            const pageMap = {
-                'index.html': { id: 'home', name: 'Dashboard' },
-                'projects.html': { id: 'projects', name: 'My Projects' },
-                'ideas.html': { id: 'ideas', name: 'Research Ideas' },
-                'users.html': { id: 'users', name: 'Lab Members' }
-            };
-
-            const currentPageInfo = pageMap[currentPage];
-            if (currentPageInfo) {
-                updateBreadcrumb(currentPageInfo.name, currentPageInfo.id);
-                
-                // Update active sidebar item
-                const sidebarItems = document.querySelectorAll('.sidebar-nav-item');
-                sidebarItems.forEach(item => {
-                    item.classList.remove('active');
-                    if (item.getAttribute('data-page') === currentPageInfo.id) {
-                        item.classList.add('active');
-                    }
-                });
-            }
-        }
     </script>
     </div> <!-- End main-content wrapper -->
 </body>
