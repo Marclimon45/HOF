@@ -65,7 +65,6 @@
       bind:sidebarOpen 
       on:openModal={openModal}
       on:userSignedOut={closeSidebar}
-      on:closeSidebar={closeSidebar}
     />
   {/if}
   
