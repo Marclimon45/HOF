@@ -561,9 +561,10 @@
 }
 
 .sidebar-nav-item.active {
-    background: #f8f9fa;
+    background: #e5e7eb;
     color: #000000;
     font-weight: 700;
+    border-left: 3px solid #000000;
 }
 
 .sidebar-nav-item i {

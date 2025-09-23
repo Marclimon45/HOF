@@ -33,7 +33,19 @@
   }
   
   function isActive(href: string) {
-    return $page.url.pathname === href;
+    const currentPath = $page.url.pathname;
+    
+    // Exact match for dashboard
+    if (href === '/app' && currentPath === '/app') {
+      return true;
+    }
+    
+    // For other routes, check if current path starts with the href
+    if (href !== '/app' && currentPath.startsWith(href)) {
+      return true;
+    }
+    
+    return false;
   }
   
   function openModal(modalId: string) {
