@@ -52,6 +52,20 @@
     dispatch('openModal', { modalId });
   }
   
+  function handleNavClick(event: MouseEvent) {
+    const target = event.currentTarget as HTMLAnchorElement;
+    const href = target.getAttribute('href');
+    
+    // Close sidebar when navigating to any page (including current page)
+    // This ensures consistent behavior and better UX on mobile
+    if (href) {
+      // Small delay to ensure navigation happens first
+      setTimeout(() => {
+        dispatch('closeSidebar');
+      }, 100);
+    }
+  }
+  
 </script>
 
 <!-- Sidebar Overlay -->
@@ -64,7 +78,7 @@
     <!-- Sidebar Navigation -->
     <div class="sidebar-nav">
         {#each navigation as item}
-            <a href={item.href} class="sidebar-nav-item {isActive(item.href) ? 'active' : ''}" data-page={item.page}>
+            <a href={item.href} class="sidebar-nav-item {isActive(item.href) ? 'active' : ''}" data-page={item.page} on:click={handleNavClick}>
                 <i class={item.icon}></i>
                 <span>{item.name}</span>
             </a>
