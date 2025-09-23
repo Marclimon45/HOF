@@ -204,6 +204,12 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: #000000;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .header-logo:hover {
+            color: #3b82f6;
         }
 
         /* Left Sidebar Styles - Responsive Design */
@@ -405,18 +411,12 @@
     <!-- Top Header -->
     <header id="top-header" class="top-header">
         <div class="header-content">
-            <div class="header-logo">CPX Lab</div>
+            <a href="index.html" class="header-logo">CPX Lab</a>
         </div>
     </header>
 
     <!-- Left Sidebar -->
     <div id="sidebar" class="sidebar">
-        <!-- Breadcrumb Navigation -->
-        <div id="breadcrumb" class="breadcrumb">
-            <a href="index.html" class="breadcrumb-item">Home</a>
-            <span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-current">Lab Members</span>
-        </div>
         
         <!-- Sidebar Navigation -->
         <div class="sidebar-nav">
@@ -1148,24 +1148,10 @@
                     // Add active class to clicked item
                     this.classList.add('active');
                     
-                    // Update breadcrumb using the span text
-                    const spanText = this.querySelector('span').textContent.trim();
-                    updateBreadcrumb(spanText, this.getAttribute('data-page'));
                 });
             });
         }
 
-        // Update breadcrumb
-        function updateBreadcrumb(currentPage, pageId) {
-            const breadcrumb = document.getElementById('breadcrumb');
-            if (breadcrumb) {
-                breadcrumb.innerHTML = `
-                    <a href="index.html" class="breadcrumb-item">Home</a>
-                    <span class="breadcrumb-separator">/</span>
-                    <span class="breadcrumb-current">${currentPage}</span>
-                `;
-            }
-        }
 
         // Initialize sidebar on page load
         document.addEventListener('DOMContentLoaded', function() {
