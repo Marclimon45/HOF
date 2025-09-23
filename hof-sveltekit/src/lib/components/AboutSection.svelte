@@ -11,12 +11,12 @@
             
         <!-- Lab Environment Image -->
         <div class="mb-16">
-            <div class="section-image image-placeholder">
-                <div>
-                    <i class="fas fa-users text-4xl mb-4"></i>
-                    <div>Lab Research Environment</div>
-                    <div class="text-sm mt-2">Graduate students collaborating on research projects</div>
-                </div>
+            <div class="section-image">
+                <img 
+                    src="/images/CPXLabMember2024.webp" 
+                    alt="CPX Lab Members 2024" 
+                    class="w-full h-full object-cover object-center rounded-lg"
+                />
             </div>
         </div>
         

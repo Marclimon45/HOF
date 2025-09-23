@@ -40,6 +40,11 @@
   <meta name="description" content="Advanced research project management and student progress tracking for academic excellence" />
 </svelte:head>
 
+<!-- Geometric Background Animation -->
+<div class="geometric-background">
+  <div class="grid-overlay"></div>
+</div>
+
 {#if $loading}
   <div class="flex items-center justify-center min-h-screen">
     <div class="text-center">
@@ -69,44 +74,44 @@
                   
             <!-- Team Collaboration Image -->
             <div class="mb-16">
-              <div class="section-image image-placeholder">
-                <div>
-                  <i class="fas fa-handshake text-4xl mb-4"></i>
-                  <div>Team Collaboration</div>
-                  <div class="text-sm mt-2">Researchers working together on innovative projects</div>
-                </div>
+              <div class="section-image">
+                <img 
+                  src="/images/CPXLabExample.png" 
+                  alt="CPX Lab Research Environment" 
+                  class="w-full h-full object-cover object-top rounded-lg"
+                />
               </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
               <div class="p-12 rounded-lg border border-gray-200 hover-lift slide-in-left">
                 <div class="w-16 h-16 text-gray-900 rounded-lg flex items-center justify-center mb-8 text-2xl font-light">1</div>
-                <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Apply to Lab</h3>
-                <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Submit your research interests, CV, and academic background through our application portal.</p>
+                <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Meet Dr. Qin</h3>
+                <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Schedule a meeting with Dr. Qin to discuss your research interests and learn about our lab's mission and ongoing projects.</p>
                 <ul class="text-sm text-gray-500 space-y-3 font-light">
-                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research statement</li>
-                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Academic transcripts</li>
-                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Reference letters</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Initial consultation</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research discussion</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Lab culture overview</li>
                 </ul>
               </div>
               <div class="p-12 rounded-lg border border-gray-200 hover-lift fade-in">
                 <div class="w-16 h-16 text-gray-900 rounded-lg flex items-center justify-center mb-8 text-2xl font-light">2</div>
-                <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Interview Process</h3>
-                <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Meet with lab members and discuss potential research projects and collaboration opportunities.</p>
+                <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Submit Survey Form</h3>
+                <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Complete our survey to help us understand your background, interests, and experience to find the best research match.</p>
                 <ul class="text-sm text-gray-500 space-y-3 font-light">
-                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Technical interview</li>
-                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research discussion</li>
-                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Lab culture fit</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Background assessment</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research interests</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Experience evaluation</li>
                 </ul>
               </div>
               <div class="p-12 rounded-lg border border-gray-200 hover-lift slide-in-right">
                 <div class="w-16 h-16 text-gray-900 rounded-lg flex items-center justify-center mb-8 text-2xl font-light">3</div>
-                <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Onboard & Research</h3>
-                <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Get access to our platform, join research projects, and start your academic journey with us.</p>
+                <h3 class="text-2xl font-light mb-6 text-gray-900" style="font-size: var(--text-2xl);">Onboard & Have Fun</h3>
+                <p class="text-gray-600 leading-relaxed mb-6 font-light" style="font-size: var(--text-lg);">Join our research community, get access to our platform, and start your exciting research journey with us.</p>
                 <ul class="text-sm text-gray-500 space-y-3 font-light">
-                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Platform training</li>
-                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Project assignment</li>
-                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Mentorship program</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Platform access</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Research collaboration</li>
+                  <li class="flex items-center"><span class="w-1 h-1 bg-gray-400 rounded-full mr-3"></span>Fun learning experience</li>
                 </ul>
               </div>
             </div>
