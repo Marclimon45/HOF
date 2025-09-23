@@ -43,3 +43,4 @@ user.subscribe((firebaseUser) => {
     profileLoading.set(false);
   }
 });
+

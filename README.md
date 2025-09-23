@@ -33,3 +33,4 @@ The active development happens in the `hof-sveltekit/` directory. See the [Svelt
 ## Archive
 
 The original HTML-based project has been moved to the `archive/` folder for reference. All functionality has been migrated to the SvelteKit version.
+
