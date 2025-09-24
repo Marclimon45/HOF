@@ -2213,9 +2213,11 @@
                         const userData = doc.data();
                         userType = userData.userType || 'user';
                         currentUser.role = userData.role || 'user';
+                        currentUser.firstName = userData.firstName || '';
                     } else {
                         userType = 'user';
                         currentUser.role = 'user';
+                        currentUser.firstName = '';
                     }
                     updateUI();
                 });
@@ -3062,7 +3064,8 @@
                     `;
                     break;
                 case 'user':
-                    heroTitle.textContent = 'Welcome back, Researcher!';
+                    const firstName = currentUser?.firstName || 'Researcher';
+                    heroTitle.textContent = `Welcome back, ${firstName}!`;
                     heroDescription.textContent = 'Continue your research projects and track your academic progress';
                     heroActions.innerHTML = `
                         <a href="projects.html" class="bg-gray-900 text-white px-12 py-4 rounded-lg font-medium text-lg hover:bg-gray-800 transition-colors inline-block">
@@ -3421,7 +3424,7 @@
                 .then((result) => {
                     updateUserType(result.user);
                     closeModal('loginModal');
-                    showToast('Welcome to CPX Lab!', `Welcome back, ${result.user.displayName || 'Researcher'}!`, 'success', 4000);
+                    showToast('Welcome to CPX Lab!', `Welcome back, ${result.user.displayName || result.user.email?.split('@')[0] || 'Researcher'}!`, 'success', 4000);
                 })
                 .catch((error) => {
                     console.error('Google sign-in error:', error);
@@ -3445,7 +3448,7 @@
                 .then((result) => {
                     updateUserType(result.user);
                     closeModal('loginModal');
-                    showToast('Welcome to CPX Lab!', `Welcome back, ${result.user.displayName || 'Researcher'}!`, 'success', 4000);
+                    showToast('Welcome to CPX Lab!', `Welcome back, ${result.user.displayName || result.user.email?.split('@')[0] || 'Researcher'}!`, 'success', 4000);
                 })
                 .catch((error) => {
                     console.error('GitHub sign-in error:', error);
