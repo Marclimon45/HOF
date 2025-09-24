@@ -1005,9 +1005,283 @@
         .toast.info .toast-progress {
             background: #3b82f6;
         }
+
+        /* Scientific Background Animation */
+        .scientific-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+            overflow: hidden;
+        }
+
+        /* Law of Levers - Rotating Balance Beam */
+        .lever-system {
+            position: absolute;
+            top: 20%;
+            left: 10%;
+            width: 200px;
+            height: 4px;
+            background: var(--gray-300);
+            transform-origin: center;
+            animation: leverBalance 8s ease-in-out infinite;
+        }
+
+        .lever-system::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: var(--gray-500);
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+
+        .lever-weight-1 {
+            position: absolute;
+            top: -15px;
+            left: 20%;
+            width: 12px;
+            height: 12px;
+            background: var(--gray-400);
+            border-radius: 50%;
+            animation: weightSwing 6s ease-in-out infinite;
+        }
+
+        .lever-weight-2 {
+            position: absolute;
+            top: -15px;
+            right: 20%;
+            width: 8px;
+            height: 8px;
+            background: var(--gray-400);
+            border-radius: 50%;
+            animation: weightSwing 6s ease-in-out infinite reverse;
+        }
+
+        /* Center of Gravity - Floating Geometric Shapes */
+        .gravity-shape-1 {
+            position: absolute;
+            top: 15%;
+            right: 15%;
+            width: 40px;
+            height: 40px;
+            background: var(--gray-200);
+            border: 2px solid var(--gray-300);
+            transform: rotate(45deg);
+            animation: gravityFloat 12s ease-in-out infinite;
+        }
+
+        .gravity-shape-2 {
+            position: absolute;
+            top: 60%;
+            right: 25%;
+            width: 30px;
+            height: 30px;
+            background: var(--gray-200);
+            border: 2px solid var(--gray-300);
+            border-radius: 50%;
+            animation: gravityFloat 10s ease-in-out infinite reverse;
+        }
+
+        .gravity-shape-3 {
+            position: absolute;
+            top: 40%;
+            right: 5%;
+            width: 25px;
+            height: 25px;
+            background: var(--gray-200);
+            border: 2px solid var(--gray-300);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            animation: gravityFloat 14s ease-in-out infinite;
+        }
+
+        /* Hydraulics & Fluid Flow - Flowing Lines */
+        .fluid-line-1 {
+            position: absolute;
+            top: 30%;
+            left: 5%;
+            width: 300px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gray-300), transparent);
+            animation: fluidFlow 15s linear infinite;
+        }
+
+        .fluid-line-2 {
+            position: absolute;
+            top: 70%;
+            left: 10%;
+            width: 250px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gray-300), transparent);
+            animation: fluidFlow 18s linear infinite reverse;
+        }
+
+        .fluid-line-3 {
+            position: absolute;
+            top: 50%;
+            right: 10%;
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gray-300), transparent);
+            animation: fluidFlow 20s linear infinite;
+        }
+
+        /* Pressure Points - Pulsing Circles */
+        .pressure-point-1 {
+            position: absolute;
+            top: 25%;
+            left: 30%;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--gray-300);
+            border-radius: 50%;
+            animation: pressurePulse 6s ease-in-out infinite;
+        }
+
+        .pressure-point-2 {
+            position: absolute;
+            top: 65%;
+            left: 40%;
+            width: 15px;
+            height: 15px;
+            border: 1px solid var(--gray-300);
+            border-radius: 50%;
+            animation: pressurePulse 8s ease-in-out infinite reverse;
+        }
+
+        .pressure-point-3 {
+            position: absolute;
+            top: 45%;
+            right: 30%;
+            width: 12px;
+            height: 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: 50%;
+            animation: pressurePulse 7s ease-in-out infinite;
+        }
+
+        /* Geometric Grid Pattern */
+        .geometric-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--gray-200) 1px, transparent 1px),
+                linear-gradient(90deg, var(--gray-200) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.1;
+            animation: gridShift 25s linear infinite;
+        }
+
+        /* Keyframe Animations */
+        @keyframes leverBalance {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(2deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-2deg); }
+        }
+
+        @keyframes weightSwing {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes gravityFloat {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg); 
+                opacity: 0.6;
+            }
+            25% { 
+                transform: translateY(-10px) rotate(90deg); 
+                opacity: 0.8;
+            }
+            50% { 
+                transform: translateY(-5px) rotate(180deg); 
+                opacity: 0.7;
+            }
+            75% { 
+                transform: translateY(-15px) rotate(270deg); 
+                opacity: 0.9;
+            }
+        }
+
+        @keyframes fluidFlow {
+            0% { 
+                transform: translateX(-100px); 
+                opacity: 0;
+            }
+            10% { 
+                opacity: 0.3;
+            }
+            90% { 
+                opacity: 0.3;
+            }
+            100% { 
+                transform: translateX(100vw); 
+                opacity: 0;
+            }
+        }
+
+        @keyframes pressurePulse {
+            0%, 100% { 
+                transform: scale(1); 
+                opacity: 0.4;
+            }
+            50% { 
+                transform: scale(1.5); 
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes gridShift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .lever-system { width: 150px; }
+            .fluid-line-1, .fluid-line-2, .fluid-line-3 { width: 200px; }
+            .geometric-grid { background-size: 30px 30px; }
+        }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="bg-gray-50 min-h-screen">
+    <!-- Scientific Background Animation -->
+    <div class="scientific-bg">
+        <!-- Law of Levers - Rotating Balance Beam -->
+        <div class="lever-system">
+            <div class="lever-weight-1"></div>
+            <div class="lever-weight-2"></div>
+        </div>
+        
+        <!-- Center of Gravity - Floating Geometric Shapes -->
+        <div class="gravity-shape-1"></div>
+        <div class="gravity-shape-2"></div>
+        <div class="gravity-shape-3"></div>
+        
+        <!-- Hydraulics & Fluid Flow - Flowing Lines -->
+        <div class="fluid-line-1"></div>
+        <div class="fluid-line-2"></div>
+        <div class="fluid-line-3"></div>
+        
+        <!-- Pressure Points - Pulsing Circles -->
+        <div class="pressure-point-1"></div>
+        <div class="pressure-point-2"></div>
+        <div class="pressure-point-3"></div>
+        
+        <!-- Geometric Grid Pattern -->
+        <div class="geometric-grid"></div>
+    </div>
+
     <!-- Top Header -->
     <header id="top-header" class="top-header">
         <div class="header-content">
@@ -1289,166 +1563,6 @@
                             </div>
                         </div>
                         <p class="text-center text-gray-600 font-normal">All your research tools, unified in one place</p>
-                    </div>
-
-                    <!-- GitHub Integration Features -->
-                    <div class="mb-16">
-                        <div class="flex items-center mb-8">
-                            <i class="fab fa-github text-4xl text-gray-600 mr-4"></i>
-                            <h3 class="text-3xl font-bold text-gray-900" style="font-size: var(--text-3xl);">GitHub Integration</h3>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            <div class="p-6 rounded-lg border border-gray-200 hover-lift">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4 bg-gray-100">
-                                    <i class="fas fa-code-branch text-xl text-gray-600"></i>
-                                </div>
-                                <h4 class="text-lg font-bold text-gray-900 mb-2">Real-time Commit Tracking</h4>
-                                <p class="text-gray-600 text-sm font-normal">Live updates on code commits, pull requests, and branch activity across all lab repositories.</p>
-                            </div>
-                            <div class="p-6 rounded-lg border border-gray-200 hover-lift">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4 bg-gray-100">
-                                    <i class="fas fa-chart-line text-xl text-gray-600"></i>
-                                </div>
-                                <h4 class="text-lg font-bold text-gray-900 mb-2">Code Analytics Dashboard</h4>
-                                <p class="text-gray-600 text-sm font-normal">Visualize coding activity, language usage, and contribution patterns for each researcher.</p>
-                            </div>
-                            <div class="p-6 rounded-lg border border-gray-200 hover-lift">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4 bg-gray-100">
-                                    <i class="fas fa-bug text-xl text-gray-600"></i>
-                                </div>
-                                <h4 class="text-lg font-bold text-gray-900 mb-2">Issue & Bug Tracking</h4>
-                                <p class="text-gray-600 text-sm font-normal">Integrated issue management with automatic project assignment and progress tracking.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Discord Integration Features -->
-                    <div class="mb-16">
-                        <div class="flex items-center mb-8">
-                            <i class="fab fa-discord text-4xl text-gray-600 mr-4"></i>
-                            <h3 class="text-3xl font-bold text-gray-900" style="font-size: var(--text-3xl);">Discord Integration</h3>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            <div class="p-6 rounded-lg border border-gray-200 hover-lift">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4 bg-gray-100">
-                                    <i class="fas fa-comments text-xl text-gray-600"></i>
-                                </div>
-                                <h4 class="text-lg font-bold text-gray-900 mb-2">Lab Communication Hub</h4>
-                                <p class="text-gray-600 text-sm font-normal">Integrated Discord channels for project discussions, announcements, and real-time collaboration.</p>
-                            </div>
-                            <div class="p-6 rounded-lg border border-gray-200 hover-lift">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4 bg-gray-100">
-                                    <i class="fas fa-robot text-xl text-gray-600"></i>
-                                </div>
-                                <h4 class="text-lg font-bold text-gray-900 mb-2">Smart Lab Bot</h4>
-                                <p class="text-gray-600 text-sm font-normal">Custom Discord bot with lab-specific commands for project updates, meeting reminders, and quick actions.</p>
-                            </div>
-                            <div class="p-6 rounded-lg border border-gray-200 hover-lift">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4 bg-gray-100">
-                                    <i class="fas fa-video text-xl text-gray-600"></i>
-                                </div>
-                                <h4 class="text-lg font-bold text-gray-900 mb-2">Voice & Video Meetings</h4>
-                                <p class="text-gray-600 text-sm font-normal">Seamless integration with Discord voice channels for impromptu meetings and screen sharing.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Overleaf Integration Features -->
-                    <div class="mb-16">
-                        <div class="flex items-center mb-8">
-                            <i class="fas fa-file-code text-4xl text-gray-600 mr-4"></i>
-                            <h3 class="text-3xl font-bold text-gray-900" style="font-size: var(--text-3xl);">Overleaf Integration</h3>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            <div class="p-6 rounded-lg border border-gray-200 hover-lift">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4 bg-gray-100">
-                                    <i class="fas fa-edit text-xl text-gray-600"></i>
-                                </div>
-                                <h4 class="text-lg font-bold text-gray-900 mb-2">Collaborative Writing</h4>
-                                <p class="text-gray-600 text-sm font-normal">Real-time LaTeX document collaboration with live editing status and version control.</p>
-                            </div>
-                            <div class="p-6 rounded-lg border border-gray-200 hover-lift">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4 bg-gray-100">
-                                    <i class="fas fa-history text-xl text-gray-600"></i>
-                                </div>
-                                <h4 class="text-lg font-bold text-gray-900 mb-2">Document Version Control</h4>
-                                <p class="text-gray-600 text-sm font-normal">Track paper revisions, compare versions, and maintain complete document history.</p>
-                            </div>
-                            <div class="p-6 rounded-lg border border-gray-200 hover-lift">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4 bg-gray-100">
-                                    <i class="fas fa-share-alt text-xl text-gray-600"></i>
-                                </div>
-                                <h4 class="text-lg font-bold text-gray-900 mb-2">Publication Pipeline</h4>
-                                <p class="text-gray-600 text-sm font-normal">Streamlined workflow from draft to submission with integrated journal templates and formatting.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Unified Dashboard Preview -->
-                    <div class="p-8 rounded-lg border-2 border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Unified Research Dashboard</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="p-4 bg-white rounded-lg border border-gray-200">
-                                <div class="flex items-center mb-3">
-                                    <i class="fab fa-github text-lg text-gray-600 mr-2"></i>
-                                    <span class="font-bold text-gray-900">GitHub Activity</span>
-                                </div>
-                                <div class="space-y-2 text-sm text-gray-600">
-                                    <div class="flex justify-between">
-                                        <span>Recent Commits:</span>
-                                        <span class="font-bold">12</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span>Open PRs:</span>
-                                        <span class="font-bold">3</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span>Active Repos:</span>
-                                        <span class="font-bold">8</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="p-4 bg-white rounded-lg border border-gray-200">
-                                <div class="flex items-center mb-3">
-                                    <i class="fab fa-discord text-lg text-gray-600 mr-2"></i>
-                                    <span class="font-bold text-gray-900">Discord Activity</span>
-                                </div>
-                                <div class="space-y-2 text-sm text-gray-600">
-                                    <div class="flex justify-between">
-                                        <span>Online Members:</span>
-                                        <span class="font-bold">15</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span>Active Channels:</span>
-                                        <span class="font-bold">6</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span>Recent Messages:</span>
-                                        <span class="font-bold">47</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="p-4 bg-white rounded-lg border border-gray-200">
-                                <div class="flex items-center mb-3">
-                                    <i class="fas fa-file-code text-lg text-gray-600 mr-2"></i>
-                                    <span class="font-bold text-gray-900">Overleaf Projects</span>
-                                </div>
-                                <div class="space-y-2 text-sm text-gray-600">
-                                    <div class="flex justify-between">
-                                        <span>Active Papers:</span>
-                                        <span class="font-bold">5</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span>Collaborators:</span>
-                                        <span class="font-bold">12</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span>Recent Edits:</span>
-                                        <span class="font-bold">23</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </section>
