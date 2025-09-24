@@ -1307,33 +1307,25 @@
             </a>
             <a href="projects.html" class="sidebar-nav-item" data-page="projects">
                 <i class="fas fa-project-diagram"></i>
-                <span>My Projects</span>
+                <span>Projects</span>
             </a>
             <a href="ideas.html" class="sidebar-nav-item" data-page="ideas">
                 <i class="fas fa-lightbulb"></i>
-                <span>Research Ideas</span>
+                <span>Ideas</span>
             </a>
             <a href="users.html" class="sidebar-nav-item" data-page="users">
                 <i class="fas fa-users"></i>
-                <span>Lab Members</span>
+                <span>Members</span>
             </a>
-            <a href="#" class="sidebar-nav-item" data-page="calendar">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Lab Calendar</span>
+            <a href="#" class="sidebar-nav-item" data-page="account">
+                <i class="fas fa-user-cog"></i>
+                <span>Account</span>
             </a>
-            <a href="#" class="sidebar-nav-item" data-page="reports">
-                <i class="fas fa-chart-line"></i>
-                <span>Progress Reports</span>
-            </a>
-            <a href="#" class="sidebar-nav-item" data-page="settings">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </a>
-            <a href="admin.html" class="sidebar-nav-item hidden" data-page="admin" id="admin-nav-item">
+            <a href="admin.html" class="sidebar-nav-item admin-only" data-page="admin" id="admin-nav-item" style="display: none;">
                 <i class="fas fa-shield-alt"></i>
                 <span>Admin</span>
             </a>
-                </div>
+        </div>
                 
         <!-- User Info and Auth Buttons -->
         <div class="sidebar-footer">
@@ -1953,10 +1945,10 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Site Map</h4>
                     <ul class="space-y-2">
-                        <li><a href="index.html" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
-                        <li><a href="projects.html" class="text-gray-400 hover:text-white transition-colors">My Projects</a></li>
-                        <li><a href="ideas.html" class="text-gray-400 hover:text-white transition-colors">Research Ideas</a></li>
-                        <li><a href="users.html" class="text-gray-400 hover:text-white transition-colors">Lab Members</a></li>
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition-colors">Dashboard</a></li>
+                        <li><a href="projects.html" class="text-gray-400 hover:text-white transition-colors">Projects</a></li>
+                        <li><a href="ideas.html" class="text-gray-400 hover:text-white transition-colors">Ideas</a></li>
+                        <li><a href="users.html" class="text-gray-400 hover:text-white transition-colors">Members</a></li>
                     </ul>
                 </div>
             </div>
@@ -3026,16 +3018,16 @@
                 
                 // Show admin nav item if user is admin
                 if (isAdmin()) {
-                    adminNavItem.classList.remove('hidden');
+                    adminNavItem.style.display = 'flex';
                 } else {
-                    adminNavItem.classList.add('hidden');
+                    adminNavItem.style.display = 'none';
                 }
             } else {
                 // User is not logged in - show auth buttons
                 sidebarUserInfo.classList.add('hidden');
                 sidebarAuthButtons.classList.remove('hidden');
                 sidebarLogoutBtn.classList.add('hidden');
-                adminNavItem.classList.add('hidden');
+                adminNavItem.style.display = 'none';
             }
         }
 

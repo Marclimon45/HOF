@@ -459,27 +459,23 @@
             </a>
             <a href="projects.html" class="sidebar-nav-item active" data-page="projects">
                 <i class="fas fa-project-diagram"></i>
-                <span>My Projects</span>
+                <span>Projects</span>
             </a>
             <a href="ideas.html" class="sidebar-nav-item" data-page="ideas">
                 <i class="fas fa-lightbulb"></i>
-                <span>Research Ideas</span>
+                <span>Ideas</span>
             </a>
             <a href="users.html" class="sidebar-nav-item" data-page="users">
                 <i class="fas fa-users"></i>
-                <span>Lab Members</span>
+                <span>Members</span>
             </a>
-            <a href="#" class="sidebar-nav-item" data-page="calendar">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Lab Calendar</span>
+            <a href="#" class="sidebar-nav-item" data-page="account">
+                <i class="fas fa-user-cog"></i>
+                <span>Account</span>
             </a>
-            <a href="#" class="sidebar-nav-item" data-page="reports">
-                <i class="fas fa-chart-line"></i>
-                <span>Progress Reports</span>
-            </a>
-            <a href="#" class="sidebar-nav-item" data-page="settings">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
+            <a href="admin.html" class="sidebar-nav-item admin-only" data-page="admin" style="display: none;">
+                <i class="fas fa-shield-alt"></i>
+                <span>Admin</span>
             </a>
         </div>
         
@@ -1345,6 +1341,7 @@
             const sidebarAuthButtons = document.getElementById('sidebar-auth-buttons');
             const sidebarUserName = document.getElementById('sidebar-user-name');
             const sidebarUserRole = document.getElementById('sidebar-user-role');
+            const adminLink = document.querySelector('.admin-only');
             
             if (currentUser) {
                 // User is logged in - show user info
@@ -1358,10 +1355,24 @@
                 if (sidebarUserRole) {
                     sidebarUserRole.textContent = getUserRole();
                 }
+                
+                // Show admin link only for admin users
+                if (adminLink) {
+                    if (currentUser.email && currentUser.email.includes('admin')) {
+                        adminLink.style.display = 'flex';
+                    } else {
+                        adminLink.style.display = 'none';
+                    }
+                }
             } else {
                 // User is not logged in - show auth buttons
                 sidebarUserInfo.classList.add('hidden');
                 sidebarAuthButtons.classList.remove('hidden');
+                
+                // Hide admin link for non-logged in users
+                if (adminLink) {
+                    adminLink.style.display = 'none';
+                }
             }
         }
 
@@ -1490,10 +1501,10 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Site Map</h4>
                     <ul class="space-y-2">
-                        <li><a href="index.html" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
-                        <li><a href="projects.html" class="text-gray-400 hover:text-white transition-colors">My Projects</a></li>
-                        <li><a href="ideas.html" class="text-gray-400 hover:text-white transition-colors">Research Ideas</a></li>
-                        <li><a href="users.html" class="text-gray-400 hover:text-white transition-colors">Lab Members</a></li>
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition-colors">Dashboard</a></li>
+                        <li><a href="projects.html" class="text-gray-400 hover:text-white transition-colors">Projects</a></li>
+                        <li><a href="ideas.html" class="text-gray-400 hover:text-white transition-colors">Ideas</a></li>
+                        <li><a href="users.html" class="text-gray-400 hover:text-white transition-colors">Members</a></li>
                     </ul>
                 </div>
             </div>
