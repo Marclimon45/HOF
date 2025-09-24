@@ -1925,7 +1925,7 @@
                 </div>
             </div>
             <div class="border-t border-gray-800 mt-8 pt-8 text-center">
-                <p class="text-gray-400">&copy; 2024 CPX Lab. All rights reserved.</p>
+                <p class="text-gray-400">&copy; <span id="current-year"></span> CPX Lab. All rights reserved.</p>
             </div>
         </div>
 
@@ -1961,7 +1961,7 @@
                 </div>
             </div>
             <div class="border-t border-gray-800 mt-8 pt-8 text-center">
-                <p class="text-gray-400">&copy; 2024 CPX Lab. All rights reserved. | <span id="user-role-display">Lab Member</span></p>
+                <p class="text-gray-400">&copy; <span id="current-year-logged-in"></span> CPX Lab. All rights reserved. | <span id="user-role-display">Lab Member</span></p>
             </div>
         </div>
     </footer>
@@ -2991,7 +2991,7 @@
             
             // Check if user has admin privileges from Firestore role field
             if (currentUser.role === 'admin') {
-                return 'Professor';
+                return 'California State University, Long Beach';
             } else if (currentUser.role === 'senior') {
                 return 'Senior Researcher';
             } else {
@@ -3457,6 +3457,13 @@
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', () => {
+            // Set current year
+            const currentYear = new Date().getFullYear();
+            const yearElements = document.querySelectorAll('#current-year, #current-year-logged-in');
+            yearElements.forEach(element => {
+                if (element) element.textContent = currentYear;
+            });
+            
             updateUI();
             initScrollReveal();
             initFormKeyHandlers();

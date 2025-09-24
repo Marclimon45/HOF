@@ -156,7 +156,7 @@
                 </div>
             </div>
             <div class="border-t border-gray-800 mt-8 pt-8 text-center">
-                <p class="text-gray-400">&copy; 2024 CPX Lab. All rights reserved.</p>
+                <p class="text-gray-400">&copy; <span id="current-year"></span> CPX Lab. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -168,6 +168,13 @@
       }, 2000);
 
       document.addEventListener('DOMContentLoaded', function() {
+        // Set current year
+        const currentYear = new Date().getFullYear();
+        const yearElement = document.getElementById('current-year');
+        if (yearElement) {
+            yearElement.textContent = currentYear;
+        }
+        
         const loadEl = document.querySelector('#load');
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
         // // The Firebase SDK is initialized and available here!
