@@ -449,6 +449,21 @@
             margin-right: 0.5rem;
         }
 
+        .sidebar-btn-logout {
+            background: white;
+            color: #000000;
+            font-weight: 400;
+        }
+
+        .sidebar-btn-logout:hover {
+            background: #f8f9fa;
+            font-weight: 700;
+        }
+
+        .sidebar-logout-btn {
+            width: 100%;
+        }
+
         .main-content {
             transition: margin-left 0.3s ease;
             margin-left: 0;
@@ -583,6 +598,13 @@
                 <button onclick="openModal('registerModal')" class="sidebar-btn sidebar-btn-secondary">
                     <i class="fas fa-user-plus"></i>
                     Sign Up
+                </button>
+            </div>
+            
+            <div id="sidebar-logout-btn" class="sidebar-logout-btn hidden">
+                <button onclick="handleLogout()" class="sidebar-btn sidebar-btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sign Out</span>
                 </button>
             </div>
         </div>
@@ -1418,19 +1440,39 @@
             }
         }
 
+        // Handle logout
+        function handleLogout() {
+            if (currentUser) {
+                auth.signOut().then(() => {
+                    showMessage('Signed Out', 'You have been successfully signed out', false);
+                    currentUser = null;
+                    updateSidebar();
+                    updateSidebarVisibility();
+                    updateFooter();
+                    // Clear any user-specific data
+                    loadProjects();
+                }).catch((error) => {
+                    console.error('Error signing out:', error);
+                    showMessage('Error', 'Failed to sign out. Please try again.', true);
+                });
+            }
+        }
+
         // Update sidebar based on login status
         function updateSidebar() {
             const sidebar = document.getElementById('sidebar');
             const sidebarUserInfo = document.getElementById('sidebar-user-info');
             const sidebarAuthButtons = document.getElementById('sidebar-auth-buttons');
+            const sidebarLogoutBtn = document.getElementById('sidebar-logout-btn');
             const sidebarUserName = document.getElementById('sidebar-user-name');
             const sidebarUserRole = document.getElementById('sidebar-user-role');
             const adminLink = document.querySelector('.admin-only');
             
             if (currentUser) {
-                // User is logged in - show user info
+                // User is logged in - show user info and logout button
                 sidebarUserInfo.classList.remove('hidden');
                 sidebarAuthButtons.classList.add('hidden');
+                sidebarLogoutBtn.classList.remove('hidden');
                 
                 // Update user details
                 if (sidebarUserName) {
@@ -1452,6 +1494,7 @@
                 // User is not logged in - show auth buttons
                 sidebarUserInfo.classList.add('hidden');
                 sidebarAuthButtons.classList.remove('hidden');
+                sidebarLogoutBtn.classList.add('hidden');
                 
                 // Hide admin link for non-logged in users
                 if (adminLink) {
