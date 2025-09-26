@@ -3497,6 +3497,11 @@
                 if (element) element.textContent = currentYear;
             });
             
+            // Check access first
+            if (!checkPageAccess()) {
+                return;
+            }
+            
             updateUI();
             initScrollReveal();
             initFormKeyHandlers();

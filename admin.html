@@ -1150,9 +1150,62 @@
             }
         }
 
+        // Access control for protected pages
+        function requireAuth() {
+            if (!currentUser) {
+                showToast('Access Restricted', 'You need to be logged in to access this page. Redirecting to home page...', 'error');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+                return false;
+            }
+            return true;
+        }
+
+        // Check if current page requires authentication
+        function checkPageAccess() {
+            const currentPage = window.location.pathname.split('/').pop();
+            const protectedPages = ['projects.html', 'ideas.html', 'users.html', 'admin.html'];
+            
+            if (protectedPages.includes(currentPage)) {
+                return requireAuth();
+            }
+            return true;
+        }
+
+        // Redirect all navigation links for non-logged-in users
+        function setupAuthRedirects() {
+            // Override all navigation links to check authentication
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a[href]');
+                if (link) {
+                    const href = link.getAttribute('href');
+                    const protectedPages = ['projects.html', 'ideas.html', 'users.html', 'admin.html'];
+                    
+                    // Check if the link points to a protected page
+                    if (protectedPages.some(page => href.includes(page))) {
+                        if (!currentUser) {
+                            e.preventDefault();
+                            showToast('Sign In Required', 'Please sign in to access this page. Redirecting to home page...', 'error');
+                            setTimeout(() => {
+                                window.location.href = 'index.html';
+                            }, 1500);
+                            return false;
+                        }
+                    }
+                }
+            });
+        }
+
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
+            // Check access first
+            if (!checkPageAccess()) {
+                return;
+            }
+            
             initSidebar();
+            setupAuthRedirects();
         });
     </script>
 </body>
