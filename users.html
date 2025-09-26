@@ -803,6 +803,22 @@
                 updateFooter();
                 updateSidebar();
                 updateSidebarVisibility();
+                
+                // Force margin update for logged-in users
+                const mainContent = document.getElementById('main-content');
+                if (currentUser && mainContent) {
+                    if (window.innerWidth >= 1024) {
+                        mainContent.style.marginLeft = '280px';
+                        mainContent.classList.add('with-sidebar');
+                    } else {
+                        mainContent.style.marginLeft = '0';
+                        mainContent.classList.remove('with-sidebar');
+                    }
+                } else if (mainContent) {
+                    mainContent.style.marginLeft = '0';
+                    mainContent.classList.remove('with-sidebar');
+                }
+                
                 loadUsers();
             });
         }
