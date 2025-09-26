@@ -223,6 +223,12 @@
             z-index: 1100;
             display: flex;
             align-items: center;
+            transition: left 0.3s ease;
+        }
+
+        /* Adjust header when sidebar is visible */
+        .top-header.with-sidebar {
+            left: 280px !important;
         }
 
         .header-content {
@@ -255,7 +261,7 @@
             background: white;
             border-right: 1px solid #e5e7eb;
             overflow-y: auto;
-            z-index: 1000;
+            z-index: 40;
             transition: transform 0.3s ease;
         }
 
@@ -452,6 +458,7 @@
         /* Only apply sidebar margin when sidebar is visible and user is logged in */
         .main-content.with-sidebar {
             margin-left: 280px !important;
+            margin-top: 0px !important;
         }
 
         /* Ensure logged-out users get full width */
@@ -463,6 +470,7 @@
         @media (min-width: 1024px) {
             .main-content.with-sidebar {
                 margin-left: 280px !important;
+                margin-top: 0px !important;
             }
         }
 
@@ -473,7 +481,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
+            z-index: 30;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
@@ -917,21 +925,6 @@
                 updateFooter();
                 updateSidebar();
                 updateSidebarVisibility();
-                
-                // Force margin update for logged-in users
-                const mainContent = document.getElementById('main-content');
-                if (currentUser && mainContent) {
-                    if (window.innerWidth >= 1024) {
-                        mainContent.style.marginLeft = '280px';
-                        mainContent.classList.add('with-sidebar');
-                    } else {
-                        mainContent.style.marginLeft = '0';
-                        mainContent.classList.remove('with-sidebar');
-                    }
-                } else if (mainContent) {
-                    mainContent.style.marginLeft = '0';
-                    mainContent.classList.remove('with-sidebar');
-                }
                 
                 if (user) {
                     loadProjects();
@@ -1485,11 +1478,13 @@
                     sidebar.style.display = 'block';
                     sidebarToggle.classList.add('hidden');
                     mainContent.classList.add('with-sidebar');
+                    topHeader.classList.add('with-sidebar');
                 } else {
                     // Mobile: sidebar hidden by default, can be toggled
                     sidebar.style.display = 'block';
                     sidebarToggle.classList.remove('hidden');
                     mainContent.classList.remove('with-sidebar');
+                    topHeader.classList.remove('with-sidebar');
                 }
             } else {
                 // Hide header and sidebar for logged-out users
@@ -1497,6 +1492,7 @@
                 sidebar.style.display = 'none';
                 sidebarToggle.classList.add('hidden');
                 mainContent.classList.remove('with-sidebar');
+                topHeader.classList.remove('with-sidebar');
             }
         }
 
