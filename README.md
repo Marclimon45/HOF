@@ -129,3 +129,4 @@ The website uses Tailwind CSS for styling. You can customize:
 ## License
 
 MIT License - feel free to use this project as a starting point for your own website.
+
