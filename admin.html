@@ -885,6 +885,21 @@
                         
                         updateUI();
                         loadShowcaseProjects();
+                        
+                        // Force margin update for logged-in users
+                        const mainContent = document.getElementById('main-content');
+                        if (currentUser && mainContent) {
+                            if (window.innerWidth >= 1024) {
+                                mainContent.style.marginLeft = '280px';
+                                mainContent.classList.add('with-sidebar');
+                            } else {
+                                mainContent.style.marginLeft = '0';
+                                mainContent.classList.remove('with-sidebar');
+                            }
+                        } else if (mainContent) {
+                            mainContent.style.marginLeft = '0';
+                            mainContent.classList.remove('with-sidebar');
+                        }
                     } else {
                         showToast('Access Denied', 'User data not found.', 'error');
                         setTimeout(() => {
@@ -900,6 +915,24 @@
             }
         });
 
+        // Get user role for display
+        function getUserRole() {
+            if (!currentUser) return 'Guest';
+            
+            if (currentUser.email && currentUser.email.includes('admin')) {
+                return 'California State University, Long Beach';
+            } else if (currentUser.email && currentUser.email.includes('senior')) {
+                return 'Senior Researcher';
+            } else {
+                return 'Researcher';
+            }
+        }
+
+        // Check if user is admin
+        function isAdmin() {
+            return currentUser && currentUser.email && currentUser.email.includes('admin');
+        }
+
         // Update UI based on user state
         function updateUI() {
             updateAuthButtons();
@@ -909,29 +942,85 @@
         // Update authentication buttons
         function updateAuthButtons() {
             const sidebarUserInfo = document.getElementById('sidebar-user-info');
+            const sidebarAuthButtons = document.getElementById('sidebar-auth-buttons');
             const sidebarLogoutBtn = document.getElementById('sidebar-logout-btn');
             const sidebarUserName = document.getElementById('sidebar-user-name');
             const sidebarUserRole = document.getElementById('sidebar-user-role');
+            const adminNavItem = document.querySelector('.admin-only');
 
             if (currentUser) {
-                const userDisplayName = currentUser.displayName || currentUser.email?.split('@')[0] || 'Admin';
+                // User is logged in - show user info and logout button
+                const userDisplayName = currentUser.displayName || currentUser.email?.split('@')[0] || 'Researcher';
                 
-                sidebarUserName.textContent = userDisplayName;
-                sidebarUserRole.textContent = 'Admin';
+                if (sidebarUserName) {
+                    sidebarUserName.textContent = userDisplayName;
+                }
+                if (sidebarUserRole) {
+                    sidebarUserRole.textContent = getUserRole();
+                }
                 
-                sidebarUserInfo.classList.remove('hidden');
-                sidebarLogoutBtn.classList.remove('hidden');
+                if (sidebarUserInfo) sidebarUserInfo.classList.remove('hidden');
+                if (sidebarAuthButtons) sidebarAuthButtons.classList.add('hidden');
+                if (sidebarLogoutBtn) sidebarLogoutBtn.classList.remove('hidden');
+                
+                // Show admin nav item if user is admin
+                if (adminNavItem) {
+                    if (isAdmin()) {
+                        adminNavItem.style.display = 'flex';
+                    } else {
+                        adminNavItem.style.display = 'none';
+                    }
+                }
+            } else {
+                // User is not logged in - show auth buttons
+                if (sidebarUserInfo) sidebarUserInfo.classList.add('hidden');
+                if (sidebarAuthButtons) sidebarAuthButtons.classList.remove('hidden');
+                if (sidebarLogoutBtn) sidebarLogoutBtn.classList.add('hidden');
+                if (adminNavItem) adminNavItem.style.display = 'none';
             }
         }
 
         // Show/hide sidebar based on login status and screen size
         function updateSidebarVisibility() {
+            const sidebar = document.getElementById('sidebar');
+            const topHeader = document.getElementById('top-header');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const mainContent = document.getElementById('main-content');
+            
             if (currentUser) {
-                mainContent.classList.add('with-sidebar');
-                sidebarToggle.classList.remove('hidden');
+                // Show header and sidebar for logged-in users
+                if (topHeader) topHeader.style.display = 'flex';
+                if (sidebar) sidebar.style.display = 'block';
+                
+                // Check screen size for responsive behavior
+                if (window.innerWidth >= 1024) {
+                    // Desktop: Always visible, no toggle needed
+                    if (sidebarToggle) sidebarToggle.classList.add('hidden');
+                    if (mainContent) {
+                        mainContent.classList.add('with-sidebar');
+                        mainContent.style.marginLeft = '280px';
+                    }
+                    if (sidebar) sidebar.classList.remove('open');
+                } else {
+                    // Mobile/Tablet: Overlay menu with toggle
+                    if (sidebarToggle) sidebarToggle.classList.remove('hidden');
+                    if (mainContent) {
+                        mainContent.classList.remove('with-sidebar');
+                        mainContent.style.marginLeft = '0';
+                    }
+                    if (sidebar) sidebar.classList.remove('open');
+                }
             } else {
-                mainContent.classList.remove('with-sidebar');
-                sidebarToggle.classList.add('hidden');
+                // Hide header and sidebar completely for logged-out users
+                if (topHeader) topHeader.style.display = 'none';
+                if (sidebar) sidebar.style.display = 'none';
+                if (sidebarToggle) sidebarToggle.classList.add('hidden');
+                if (mainContent) {
+                    mainContent.classList.remove('with-sidebar');
+                    mainContent.style.marginLeft = '0';
+                    mainContent.style.marginTop = '0';
+                }
+                if (sidebar) sidebar.classList.remove('open');
             }
         }
 
@@ -1206,6 +1295,9 @@
             
             initSidebar();
             setupAuthRedirects();
+            
+            // Store function globally for use in updateUI
+            window.updateSidebarVisibility = updateSidebarVisibility;
         });
     </script>
 </body>
